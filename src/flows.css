@@ -1,4 +1,46 @@
 .field-help{color:#909a90;font-size:8px;font-weight:400;line-height:1.45}
+.account-dialog-backdrop{position:fixed;z-index:150;inset:0;display:grid;place-items:center;overflow:auto;padding:22px;background:rgba(18,15,21,.72);backdrop-filter:blur(7px)}
+.account-dialog,.workspace-setup-card{width:min(100%,460px);padding:27px;border:1px solid #e7ebe5;border-radius:16px;background:#fff;color:#344035;box-shadow:0 24px 80px rgba(0,0,0,.23);animation:modal-in .18s ease-out}
+.account-dialog-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.account-dialog-heading h2,.workspace-setup-card h1{margin:8px 0 0;color:#2d392f;font:700 25px/1.2 'Manrope',sans-serif;letter-spacing:-.7px}
+.account-dialog-copy,.workspace-setup-card>p{margin:13px 0 20px;color:#788378;font-size:12px;line-height:1.65}
+.account-form{display:grid;gap:13px}
+.account-field{display:grid;gap:6px;color:#59665b;font-size:10px;font-weight:650}
+.account-field input{width:100%;height:42px;padding:0 12px;border:1px solid #e0e6de;border-radius:8px;background:#fbfcfa;color:#354237;font-family:inherit;font-size:12px;outline:none}
+.account-field input:focus{border-color:#91aa6a;box-shadow:0 0 0 3px rgba(145,170,106,.15)}
+.account-field input::placeholder{color:#a0a99f}
+.account-submit{width:100%;min-height:43px;margin-top:4px}
+.account-submit:disabled{cursor:wait;opacity:.7}
+.account-spinner{animation:account-spin .8s linear infinite}
+.account-feedback{margin:0;padding:10px 11px;border:1px solid;border-radius:8px;font-size:10px;line-height:1.5}
+.account-error{border-color:#f0d5d1;background:#fff6f4;color:#9b4d45}
+.account-success{border-color:#dce9d5;background:#f5f9f1;color:#587443}
+.account-mode-toggle{display:block;margin:17px auto 0;padding:5px;border:0;background:transparent;color:#6f8954;cursor:pointer;font-size:10px;font-weight:700}
+.account-dialog-privacy{display:flex;align-items:center;gap:7px;margin-top:20px;padding-top:14px;border-top:1px solid #edf0eb;color:#8b958b;font-size:9px;line-height:1.5}
+.account-dialog-privacy svg{flex:0 0 auto;color:#819766}
+.demo-request-success{display:grid;justify-items:center;gap:10px;padding-top:22px;text-align:center}
+.demo-request-success>span,.workspace-setup-icon{display:grid;width:48px;height:48px;place-items:center;border:1px solid #deead7;border-radius:14px;background:#f3f8ed;color:#769454}
+.demo-request-success p{margin:0 0 6px;color:#788378;font-size:12px;line-height:1.7}
+.dashboard-empty{display:flex;min-height:74px;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;color:#899389;font-size:10px}
+.dashboard-empty .text-action{flex:0 0 auto}
+.product-empty{display:flex;min-height:50px;align-items:center;padding:10px;border:1px dashed rgba(190,195,184,.28);border-radius:8px;color:#9ba195;font-size:9px;line-height:1.5}
+.workspace-setup-page{display:grid;min-height:100vh;place-items:center;padding:24px;background:#f6f8f4}
+.workspace-setup-card{display:grid;justify-items:start;width:min(100%,500px);padding:35px}
+.workspace-setup-card .account-form{width:100%}
+.workspace-setup-card h1{margin-top:10px}
+.workspace-setup-card .account-mode-toggle{margin:15px 0 0}
+.sidebar{overflow-x:hidden;overflow-y:auto;scrollbar-color:#716975 #201a24;scrollbar-width:thin;scrollbar-gutter:stable}
+.sidebar::-webkit-scrollbar{width:8px}
+.sidebar::-webkit-scrollbar-track{margin:10px 2px;border-radius:99px;background:#201a24}
+.sidebar::-webkit-scrollbar-thumb{min-height:44px;border:2px solid #201a24;border-radius:99px;background:#716975}
+.sidebar::-webkit-scrollbar-thumb:hover{background:#9b8f9e}
+.sidebar-top,.workspace-switch,.nav-group,.sidebar-bottom{flex-shrink:0}
+html,*{scrollbar-color:#716975 transparent;scrollbar-width:thin}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{min-height:42px;border:2px solid transparent;border-radius:99px;background:#716975;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:#9b8f9e;background-clip:padding-box}
+@keyframes account-spin{to{transform:rotate(360deg)}}
 .detail-scope{margin:14px 0;padding:11px 12px;border:1px solid #e8ede4;border-radius:8px;background:#fafbf8}
 .detail-scope>div{display:grid;gap:4px}
 .detail-scope>div span{color:#96a094;font-size:7px;font-weight:700;letter-spacing:.65px}

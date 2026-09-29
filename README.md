@@ -1,62 +1,38 @@
 # FechaProposta
 
-Aplicação para criar propostas comerciais, acompanhar cada etapa e registrar o aceite do cliente. A experiência segue a stack visual e técnica do Prumo: React, Vite, Tailwind CSS, Supabase e ícones Lucide.
+Plataforma para criar propostas comerciais, acompanhar as respostas e registrar o aceite do cliente. Usa React, Vite e Supabase.
 
-## Iniciar
+## Rodar localmente
 
 ```bash
 npm install
 npm run dev
 ```
 
-O modo de demonstração abre sem configurar serviços externos. Propostas e aceites ficam no armazenamento local do navegador.
+Copie `.env.example` para `.env.local` e configure a URL e a publishable key do seu projeto Supabase. Para usar no Vercel, cadastre as mesmas variáveis em **Project → Settings → Environment Variables** e faça um novo deploy.
 
-A primeira tela é a apresentação comercial da plataforma, com recursos, etapas, planos e preços mensais. Escolher um plano abre uma explicação antes de entrar na demonstração; não há cobrança ativa nesta base.
+## Preparar o Supabase
 
-## O que já dá para fazer
+Se ainda não aplicou o banco, abra o **SQL Editor** do Supabase e execute `supabase/schema.sql`. Ele cria autenticação por conta, espaços de trabalho, clientes, propostas e itens, com RLS para restringir os dados aos membros do espaço. Também prepara os pedidos de demonstração e os links públicos de proposta.
 
-- Acompanhar valores em aberto, aceites e propostas recentes no painel.
-- Conhecer os planos Starter (R$ 29/mês), Pro (R$ 59/mês) e Business (R$ 99/mês) na tela inicial.
-- Criar propostas com objetivo, entregas, prazo, próximo passo, itens, valores, exclusões e condições.
-- Revisar rascunhos e propostas prontas para envio antes de compartilhar.
-- Buscar e filtrar por cliente, título, código ou status.
-- Abrir a visão do cliente, compartilhar um link de demonstração e preparar um e-mail no aplicativo padrão.
-- Imprimir ou salvar uma proposta como PDF pelo diálogo do navegador.
-- Dar ao cliente uma visão completa do escopo, prazo, investimento, condições e próximo passo antes do aceite.
-- Registrar um aceite demonstrativo com nome, assinatura desenhada ou digitada e confirmação explícita.
-- Consultar clientes, modelos iniciais e um resumo de resultados.
+Se você já executou a versão inicial do schema, aplique apenas `supabase/migrations/20260929000000_platform_access.sql`. Essa migração acrescenta o formulário de demonstração, as operações de gravação das propostas e as funções protegidas para leitura e aceite por link público.
 
-## Heurísticas de Nielsen na experiência
+Ative e configure o provedor de e-mail em **Authentication** no Supabase. Defina a URL do site e inclua os domínios locais e do Vercel na lista de redirect URLs para que a confirmação de cadastro possa voltar à aplicação.
 
-1. **Visibilidade do estado:** status claros por proposta, indicadores da carteira e confirmação ao salvar ou registrar uma ação.
-2. **Correspondência com o mundo real:** datas, valores em reais, linguagem direta e termos comerciais familiares.
-3. **Controle e liberdade:** fechar janelas, voltar ao painel, limpar busca e corrigir uma assinatura antes de confirmar.
-4. **Consistência e padrões:** navegação, botões, campos, estados e ações usam os mesmos padrões nas telas.
-5. **Prevenção de erros:** campos obrigatórios, formato de e-mail, validade, quantidades e valores são validados antes de criar.
-6. **Reconhecimento em vez de memorização:** resumo da proposta, cliente, valor, validade e status aparecem junto das ações.
-7. **Flexibilidade e eficiência:** busca, filtros de status e navegação direta entre propostas, clientes e resultados.
-8. **Design minimalista:** a página inicial apresenta o produto e os planos; a proposta prioriza escopo, valores e a decisão do cliente.
-9. **Ajuda para reconhecer e recuperar erros:** mensagens de estado, instruções junto aos campos, opção de assinatura digitada e orientação em estados vazios.
-10. **Ajuda e documentação:** dicas contextuais e este guia acompanham o fluxo de criação.
+## Como funciona o acesso
 
-## Limites da demonstração e próximos passos
+- **Acessar plataforma** abre login e criação de conta pelo Supabase Auth.
+- No primeiro acesso, a pessoa cria o nome do espaço de trabalho.
+- Clientes, propostas, itens e aceites são gravados no Supabase; não há propostas de demonstração carregadas no app.
+- **Agendar demonstração** registra o e-mail em `demo_requests` para retorno da equipe. O formulário solicita um horário; ele não reserva uma faixa de calendário automaticamente.
+- Os links de proposta usam um token próprio. O banco só retorna propostas compartilhadas e registra o aceite por funções controladas.
+- Convites e permissões de equipe ainda não estão disponíveis na interface. O cadastro começa com um espaço de trabalho da própria conta.
 
-Esta base ainda não cria contas, cobra uma assinatura, envia mensagens por um servidor, persiste dados em uma conta Supabase nem produz uma assinatura certificada. A escolha de plano leva à demonstração sem cobrança. O botão de e-mail abre uma mensagem para revisão no cliente de e-mail; o PDF usa a impressão do navegador; o aceite ilustrativo é guardado localmente.
-
-Para uso real com clientes, os próximos blocos são autenticação e empresas no Supabase com políticas RLS, armazenamento seguro de documentos, envio por provedor de e-mail, assinatura eletrônica com trilha de auditoria, acesso público com token e proteção contra reuso, histórico de versões e notificações de abertura/expiração. As variáveis públicas do Supabase estão documentadas em `.env.example`; a conexão e as regras de acesso precisam ser configuradas antes de armazenar propostas comerciais reais.
+Os valores exibidos na seção de planos são informativos; a cobrança recorrente ainda não está integrada.
 
 ## Stack
 
 - React 19 e Vite 6
-- Tailwind CSS 3 e estilos responsivos próprios
-- Supabase JS (cliente preparado para configuração)
+- Supabase JS para autenticação e persistência
+- Row Level Security (RLS) no Supabase
 - Lucide React
-
-## Preparar os CTAs para produção
-
-Configure estas variáveis em `.env.local` durante o desenvolvimento e nas variáveis de ambiente do projeto na Vercel:
-
-- `VITE_PLATFORM_URL`: URL real de login da plataforma. Deixe vazia enquanto a autenticação não estiver implementada; a home mostrará a demonstração local.
-- `VITE_DEMO_BOOKING_URL`: link real do calendário de demonstração. Deixe vazio para oferecer a demonstração interativa no próprio site.
-
-Esta aplicação ainda é uma demonstração: propostas e aceites ficam no navegador, e o cliente Supabase ainda não é usado para autenticação ou persistência. Antes de receber dados reais, implemente login, tabelas e políticas RLS; conecte o envio de e-mail e o provedor de assinatura. Os CTAs devem apontar apenas para destinos que já estejam ativos.

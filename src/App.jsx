@@ -8,39 +8,11 @@ import {
 } from 'lucide-react'
 import LandingPage from './components/landing-page'
 import useDialogAccessibility from './lib/use-dialog-accessibility'
-
-const STORAGE_KEY = 'fechaproposta.proposals.v1'
-
-const seed = [
-  { id: 'FP-2026-042', title: 'Redesign do site institucional', client: 'Clínica Horizonte', email: 'contato@clinicahorizonte.com.br', initials: 'CH', color: 'lavender', date: '2026-09-25', due: '2026-10-04', status: 'Enviada', amount: 18400, summary: 'Uma nova presença digital para aproximar a Clínica Horizonte de quem busca cuidado e confiança.', items: [{ name: 'Estratégia e arquitetura', qty: 1, price: 4200 }, { name: 'Design e desenvolvimento', qty: 1, price: 11200 }, { name: 'Conteúdo e publicação', qty: 1, price: 3000 }], terms: 'Entrada de 40% na aprovação. Saldo em 2 parcelas mensais. Prazo estimado de 6 semanas após o recebimento dos materiais.' },
-  { id: 'FP-2026-041', title: 'Plano de mídia para Q4', client: 'Mercado Aurora', email: 'marketing@mercadoaurora.com.br', initials: 'MA', color: 'peach', date: '2026-09-23', due: '2026-10-02', status: 'Em negociação', amount: 12800, summary: 'Planejamento de mídia integrada para fortalecer a marca e as vendas no último trimestre.', items: [{ name: 'Diagnóstico e plano de canais', qty: 1, price: 4800 }, { name: 'Gestão de campanhas (3 meses)', qty: 3, price: 2000 }, { name: 'Relatórios mensais', qty: 1, price: 2000 }], terms: 'Investimento em mídia não incluso. Pagamento mensal, com vencimento no início de cada ciclo.' },
-  { id: 'FP-2026-040', title: 'Identidade visual + brandbook', client: 'Grupo Nexo', email: 'paula@gruponexo.com.br', initials: 'GN', color: 'blue', date: '2026-09-21', due: '2026-09-30', status: 'Aceita', amount: 24500, summary: 'Um sistema de marca claro, consistente e pronto para acompanhar o próximo capítulo do Grupo Nexo.', items: [{ name: 'Imersão e estratégia', qty: 1, price: 5500 }, { name: 'Identidade visual', qty: 1, price: 12600 }, { name: 'Brandbook e aplicações', qty: 1, price: 6400 }], terms: 'Projeto em 4 etapas. Pagamento em 3 parcelas iguais. O cronograma começa após a reunião de abertura.' },
-  { id: 'FP-2026-039', title: 'Consultoria de processos', client: 'Casa Forma', email: 'oi@casaforma.com.br', initials: 'CF', color: 'mint', date: '2026-09-19', due: '2026-10-01', status: 'Rascunho', amount: 9600, summary: 'Mapeamento e simplificação dos principais processos de atendimento.', items: [{ name: 'Mapeamento dos processos', qty: 2, price: 2400 }, { name: 'Plano de melhoria', qty: 1, price: 4800 }], terms: 'Pagamento em 2 parcelas. A agenda será combinada após a aprovação.' },
-  { id: 'FP-2026-038', title: 'Campanha de lançamento', client: 'Nativa Café', email: 'marina@nativacafe.com.br', initials: 'NC', color: 'gold', date: '2026-09-16', due: '2026-10-01', status: 'Visualizada', amount: 14750, summary: 'Conceito e peças para apresentar a nova linha de cafés especiais.', items: [{ name: 'Conceito criativo', qty: 1, price: 4250 }, { name: 'Peças digitais', qty: 1, price: 6500 }, { name: 'Kit de lançamento', qty: 1, price: 4000 }], terms: '50% para início e 50% na entrega final.' },
-  { id: 'FP-2026-037', title: 'Apresentação comercial', client: 'Vitta Saúde', email: 'compras@vittasaude.com.br', initials: 'VS', color: 'rose', date: '2026-09-12', due: '2026-09-22', status: 'Expirada', amount: 7200, summary: 'Apresentação para apoiar a equipe comercial em reuniões com novos parceiros.', items: [{ name: 'Roteiro e narrativa', qty: 1, price: 2200 }, { name: 'Design da apresentação', qty: 1, price: 5000 }], terms: 'Proposta válida por 10 dias.' },
-]
-
-const sampleScope = {
-  'FP-2026-042': { deliverables: ['Reunião de imersão e definição dos objetivos do site', 'Mapa de páginas e arquitetura da informação', 'Design responsivo das páginas principais', 'Desenvolvimento, revisão de conteúdo e publicação'], timeline: '6 semanas após a reunião inicial', nextStep: 'Após o aceite, vamos agendar a reunião de imersão e solicitar os materiais atuais da marca.', notIncluded: 'Hospedagem, domínio e produção de fotos não estão incluídos.' },
-  'FP-2026-041': { deliverables: ['Análise dos canais e campanhas atuais', 'Plano de mídia e calendário para o trimestre', 'Configuração e acompanhamento das campanhas', 'Relatórios mensais com aprendizados e próximos testes'], timeline: '3 meses de acompanhamento', nextStep: 'Após o aceite, vamos alinhar metas, canais prioritários e acessos às contas de anúncio.', notIncluded: 'O valor de mídia pago às plataformas não está incluído no investimento.' },
-  'FP-2026-040': { deliverables: ['Entrevistas e imersão na estratégia da marca', 'Conceito e sistema de identidade visual', 'Aplicações essenciais para canais digitais e impressos', 'Brandbook com regras de uso e arquivos finais'], timeline: '4 a 6 semanas após a reunião inicial', nextStep: 'O projeto começa com a reunião de abertura e a validação do cronograma.', notIncluded: 'Impressão de materiais e desenvolvimento de site não estão incluídos.' },
-  'FP-2026-039': { deliverables: ['Mapeamento dos processos de atendimento atuais', 'Entrevistas com as pessoas envolvidas', 'Identificação de gargalos e oportunidades', 'Plano de melhoria priorizado para a equipe'], timeline: '2 semanas de diagnóstico e 1 semana de devolutiva', nextStep: 'Após o aceite, vamos combinar entrevistas e reunir os documentos existentes.', notIncluded: 'A execução das mudanças no sistema operacional não está incluída.' },
-  'FP-2026-038': { deliverables: ['Conceito criativo para a nova linha de cafés', 'Peças para redes sociais e mídia digital', 'Kit de lançamento para a equipe comercial', 'Guia de aplicação da campanha'], timeline: '4 semanas após a aprovação do conceito', nextStep: 'Depois do aceite, vamos validar o conceito e as datas de lançamento.', notIncluded: 'Investimento em mídia e impressão do kit não estão incluídos.' },
-  'FP-2026-037': { deliverables: ['Entrevista com a equipe de vendas', 'Roteiro e narrativa comercial', 'Design da apresentação em formato editável', 'Rodada de revisão e entrega dos arquivos finais'], timeline: '3 semanas após o recebimento dos materiais', nextStep: 'Envie os materiais comerciais atuais para iniciarmos o roteiro.', notIncluded: 'Treinamento da equipe e produção de vídeo não estão incluídos.' },
-}
-
-function proposalScope(proposal) {
-  const example = sampleScope[proposal.id] || {}
-  return {
-    deliverables: proposal.deliverables?.length ? proposal.deliverables : example.deliverables || proposal.items.map((item) => item.name),
-    timeline: proposal.timeline || example.timeline || 'Prazo a combinar após o aceite',
-    nextStep: proposal.nextStep || example.nextStep || 'Após o aceite, vamos combinar o início do projeto e os materiais necessários.',
-    notIncluded: proposal.notIncluded || example.notIncluded || '',
-  }
-}
+import { DemoRequest, PlatformAccess, WorkspaceSetup } from './components/account-flows'
+import { supabase } from './lib/supabase'
 
 const navGroups = [
-  { title: 'ESPAÇO DE TRABALHO', items: [{ id: 'inicio', label: 'Visão geral', icon: LayoutDashboard }, { id: 'propostas', label: 'Propostas', icon: FileText, count: '06' }, { id: 'clientes', label: 'Clientes', icon: Users }, { id: 'modelos', label: 'Modelos', icon: FileCheck2 }] },
+  { title: 'ESPAÇO DE TRABALHO', items: [{ id: 'inicio', label: 'Visão geral', icon: LayoutDashboard }, { id: 'propostas', label: 'Propostas', icon: FileText }, { id: 'clientes', label: 'Clientes', icon: Users }, { id: 'modelos', label: 'Modelos', icon: FileCheck2 }] },
   { title: 'ACOMPANHAMENTO', items: [{ id: 'resultados', label: 'Resultados', icon: Activity }] },
 ]
 
@@ -54,14 +26,51 @@ const statusTone = {
   'Expirada': 'muted',
 }
 
-function readProposals() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : seed
-  } catch {
-    return seed
+const dbToUiStatus = { draft: 'Rascunho', ready: 'Pronta para envio', sent: 'Enviada', viewed: 'Visualizada', negotiating: 'Em negociação', accepted: 'Aceita', expired: 'Expirada' }
+const uiToDbStatus = Object.fromEntries(Object.entries(dbToUiStatus).map(([database, label]) => [label, database]))
+const avatarColors = ['lavender', 'peach', 'blue', 'mint', 'gold', 'rose']
+
+function proposalScope(proposal) {
+  return {
+    deliverables: proposal.deliverables?.length ? proposal.deliverables : proposal.items.map((item) => item.name),
+    timeline: proposal.timeline || 'Prazo a combinar após o aceite',
+    nextStep: proposal.nextStep || 'Após o aceite, vamos combinar o início do projeto e os materiais necessários.',
+    notIncluded: proposal.notIncluded || '',
   }
 }
+
+function mapProposal(row, index = 0) {
+  const client = row.client || row.clients || {}
+  const items = row.items || row.proposal_items || []
+  return {
+    dbId: row.id,
+    clientId: row.client_id,
+    id: row.code || row.id,
+    shareToken: row.share_token,
+    shareEnabled: row.share_enabled,
+    title: row.title,
+    client: client.name || '',
+    email: client.email || '',
+    initials: initials(client.name),
+    color: avatarColors[index % avatarColors.length],
+    date: (row.created_at || new Date().toISOString()).slice(0, 10),
+    due: row.due_date,
+    status: dbToUiStatus[row.status] || 'Rascunho',
+    amount: Number(row.total_amount || 0),
+    summary: row.summary || '',
+    deliverables: row.deliverables || [],
+    timeline: row.timeline || '',
+    nextStep: row.next_step || '',
+    notIncluded: row.exclusions || '',
+    terms: row.terms || '',
+    items: items.slice().sort((a, b) => (a.position || 0) - (b.position || 0)).map((item) => ({ name: item.name, qty: Number(item.quantity), price: Number(item.unit_price) })),
+    signedBy: row.accepted_by || '',
+    signedAt: row.accepted_at || '',
+    signature: row.signature_text || '',
+  }
+}
+
+function databaseStatus(status) { return uiToDbStatus[status] || 'draft' }
 
 function money(value) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(Number(value || 0))
@@ -141,7 +150,7 @@ function ProposalForm({ onSave, onClose, existing = null }) {
         <div className="form-scroll">
           <div className="form-section-title"><span>01</span><div><strong>Quem vai receber?</strong><small>Os dados aparecem na proposta do cliente.</small></div></div>
           <div className="form-grid two-col">
-            <label className="field"><span>Nome do cliente <b>*</b></span><input name="client" required defaultValue={existing && existing.client} placeholder="Ex.: Estúdio Horizonte" autoFocus /></label>
+            <label className="field"><span>Nome do cliente <b>*</b></span><input name="client" required defaultValue={existing && existing.client} placeholder="Ex.: Nome do cliente" autoFocus /></label>
             <label className="field"><span>E-mail do cliente <b>*</b></span><input name="email" type="email" required defaultValue={existing && existing.email} placeholder="nome@empresa.com.br" /></label>
           </div>
           <div className="form-section-title section-spaced"><span>02</span><div><strong>O que vamos propor?</strong><small>Descreva o resultado, organize os itens e defina o prazo.</small></div></div>
@@ -168,7 +177,7 @@ function ProposalForm({ onSave, onClose, existing = null }) {
           <div className="total-box"><span>Investimento total</span><strong>{money(total)}</strong></div>
           <label className="field terms-field"><span>Condições de pagamento <small>(opcional)</small></span><textarea name="terms" rows="3" defaultValue={existing && existing.terms} placeholder="Ex.: 50% no aceite e 50% na entrega." /></label>
         </div>
-        <div className="modal-footer form-footer"><span><ShieldCheck size={15} /> {existing ? 'As alterações ficam salvas neste navegador.' : 'Seu rascunho fica salvo neste navegador.'}</span><div><button type="button" className="btn-secondary" onClick={() => save(existing ? existing.status : 'Rascunho')}>{existing ? 'Salvar alterações' : 'Salvar rascunho'}</button><button type="button" className="btn-primary" onClick={() => save('Pronta para envio')}>{existing ? 'Salvar e preparar envio' : 'Criar proposta'} <ArrowRight size={15} /></button></div></div>
+        <div className="modal-footer form-footer"><span><ShieldCheck size={15} /> {existing ? 'As alterações ficam salvas no Supabase.' : 'Seu rascunho fica salvo no Supabase.'}</span><div><button type="button" className="btn-secondary" onClick={() => save(existing ? existing.status : 'Rascunho')}>{existing ? 'Salvar alterações' : 'Salvar rascunho'}</button><button type="button" className="btn-primary" onClick={() => save('Pronta para envio')}>{existing ? 'Salvar e preparar envio' : 'Criar proposta'} <ArrowRight size={15} /></button></div></div>
       </form>
     </Modal>
   )
@@ -228,12 +237,12 @@ function SignatureModal({ proposal, onClose, onSign }) {
   return <Modal title="Assine para aceitar" eyebrow="ACEITE DA PROPOSTA" onClose={onClose} className="sign-modal">
     <form onSubmit={submit}>
       <div className="sign-doc-summary"><span>{proposal.id}</span><strong>{proposal.title}</strong><span>{proposal.client} <i>·</i> {money(proposal.amount)}</span></div>
-      <p className="sign-intro">Confira os dados e assine abaixo. Ao confirmar, o aceite fica registrado nesta demonstração.</p>
+      <p className="sign-intro">Confira os dados e assine abaixo. O aceite será registrado nesta proposta.</p>
       <label className="field"><span>Nome completo <b>*</b></span><input value={name} onChange={(event) => setName(event.target.value)} required placeholder="Como aparece no documento" /></label>
       <div className="signature-heading"><label htmlFor={signatureMode === 'desenhar' ? 'signature-canvas' : 'signature-name'}>Sua assinatura <b>*</b></label><div className="signature-options" role="group" aria-label="Forma de assinatura"><button type="button" className={signatureMode === 'desenhar' ? 'option-active' : ''} onClick={() => { setSignatureMode('desenhar'); setHasInk(false) }}>Desenhar</button><button type="button" className={signatureMode === 'digitar' ? 'option-active' : ''} onClick={() => { setSignatureMode('digitar'); setHasInk(false) }}>Digitar nome</button></div></div>
       {signatureMode === 'desenhar' ? <><canvas id="signature-canvas" ref={canvasRef} width="560" height="150" className="signature-canvas" aria-label="Desenhe sua assinatura aqui" onPointerDown={start} onPointerMove={draw} onPointerUp={() => { drawing.current = false }} onPointerCancel={() => { drawing.current = false }} /><span className="signature-hint">Use o mouse, dedo ou caneta para assinar</span></> : <div id="signature-name" className="typed-signature-preview" aria-label="Prévia da assinatura digitada">{name || 'Seu nome aparecerá aqui'}</div>}
       <label className="consent-check"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>Li a proposta e concordo com o escopo, os valores e as condições descritas.</span></label>
-      <div className="signature-notice"><ShieldCheck size={15} /><span>Registro de aceite demonstrativo. Para assinatura eletrônica com validade e trilha de auditoria, conecte um provedor especializado.</span></div>
+      <div className="signature-notice"><ShieldCheck size={15} /><span>Registro de aceite guardado no Supabase. Para assinatura eletrônica com validade e trilha de auditoria, conecte um provedor especializado.</span></div>
       <div className="modal-footer"><button type="button" className="btn-secondary" onClick={onClose}>Voltar</button><button className="btn-primary" type="submit" disabled={!canSign}>Confirmar aceite <Check size={15} /></button></div>
     </form>
   </Modal>
@@ -272,7 +281,7 @@ function ClientProposal({ proposal, onSign, onBack, onPdf }) {
       <section className="client-next-step"><span className="client-next-icon"><ArrowRight size={16} /></span><div><span className="client-section-kicker">DEPOIS DO ACEITE</span><h2>Próximo passo</h2><p>{scope.nextStep}</p></div></section>
       <p className="client-document-footnote"><ShieldCheck size={14} /> Leia todas as entregas, valores e condições antes de confirmar sua decisão.</p>
     </article>
-    <aside className="client-decision-card"><span className="client-decision-kicker">RESUMO DA PROPOSTA</span><h2>{proposal.title}</h2><div className="decision-total"><span>Investimento total</span><strong>{money(proposal.amount)}</strong></div><div className="decision-meta"><span><CalendarDays size={15} /> Válida até {longDate(proposal.due)}</span><span><Clock3 size={15} /> {scope.timeline}</span></div>{proposal.status === 'Aceita' ? <div className="accepted-panel"><CheckCircle2 size={22} /><div><strong>Proposta aceita</strong><span>{proposal.signedBy ? 'Assinada por ' + proposal.signedBy : 'Aceite registrado'}{proposal.signedAt ? ' · ' + new Date(proposal.signedAt).toLocaleString('pt-BR') : ''}</span></div></div> : expired ? <div className="expired-panel"><Clock3 size={17} /><span>Esta proposta expirou. Entre em contato com quem enviou para solicitar uma nova versão.</span></div> : <><p className="decision-note">Ao aceitar, você confirma que leu o escopo e as condições descritas nesta proposta.</p><button className="btn-primary client-sign-cta" onClick={() => onSign(proposal)}><FileSignature size={16} /> Assinar e aceitar proposta</button></>}<button className="client-pdf-action" onClick={() => onPdf(proposal)}><Download size={15} /> Salvar proposta em PDF</button><p className="client-demo-note">Este aceite é uma demonstração local, sem certificação eletrônica.</p></aside></div>
+    <aside className="client-decision-card"><span className="client-decision-kicker">RESUMO DA PROPOSTA</span><h2>{proposal.title}</h2><div className="decision-total"><span>Investimento total</span><strong>{money(proposal.amount)}</strong></div><div className="decision-meta"><span><CalendarDays size={15} /> Válida até {longDate(proposal.due)}</span><span><Clock3 size={15} /> {scope.timeline}</span></div>{proposal.status === 'Aceita' ? <div className="accepted-panel"><CheckCircle2 size={22} /><div><strong>Proposta aceita</strong><span>{proposal.signedBy ? 'Assinada por ' + proposal.signedBy : 'Aceite registrado'}{proposal.signedAt ? ' · ' + new Date(proposal.signedAt).toLocaleString('pt-BR') : ''}</span></div></div> : expired ? <div className="expired-panel"><Clock3 size={17} /><span>Esta proposta expirou. Entre em contato com quem enviou para solicitar uma nova versão.</span></div> : <><p className="decision-note">Ao aceitar, você confirma que leu o escopo e as condições descritas nesta proposta.</p><button className="btn-primary client-sign-cta" onClick={() => onSign(proposal)}><FileSignature size={16} /> Assinar e aceitar proposta</button></>}<button className="client-pdf-action" onClick={() => onPdf(proposal)}><Download size={15} /> Salvar proposta em PDF</button><p className="client-demo-note">Este registro de aceite não substitui uma assinatura eletrônica certificada.</p></aside></div>
     <button className="client-back" onClick={onBack}><ChevronLeft size={15} /> Voltar</button></main>
 }
 
@@ -288,10 +297,16 @@ function EmptyState({ search, onCreate, onReset }) {
 }
 
 function App() {
-  const [proposals, setProposals] = useState(readProposals)
+  const [proposals, setProposals] = useState([])
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [workspaces, setWorkspaces] = useState([])
+  const [workspace, setWorkspace] = useState(null)
+  const [workspaceLoading, setWorkspaceLoading] = useState(false)
+  const [dataLoading, setDataLoading] = useState(false)
   const [view, setView] = useState('inicio')
-  const [workspaceEntered, setWorkspaceEntered] = useState(() => window.location.hash === '#app')
-  const [demoPlan, setDemoPlan] = useState(() => localStorage.getItem('fechaproposta.demo-plan') || '')
+  const [accessOpen, setAccessOpen] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('Todas')
   const [createOpen, setCreateOpen] = useState(false)
@@ -304,9 +319,93 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [filterOpen, setFilterOpen] = useState(false)
   const publicId = new URLSearchParams(window.location.search).get('proposta')
+  const [publicProposal, setPublicProposal] = useState(null)
+  const [publicLoading, setPublicLoading] = useState(Boolean(publicId))
 
-  useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(proposals)) }, [proposals])
   useEffect(() => { if (!toast) return undefined; const timer = window.setTimeout(() => setToast(''), 5200); return () => window.clearTimeout(timer) }, [toast])
+  useEffect(() => {
+    if (!supabase) {
+      setAuthLoading(false)
+      return undefined
+    }
+    let active = true
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return
+      if (error) setToast('Não foi possível recuperar a sessão da plataforma.')
+      setSession(data?.session || null)
+      setAuthLoading(false)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession)
+      setAuthLoading(false)
+      if (!nextSession) {
+        setWorkspace(null)
+        setWorkspaces([])
+        setProposals([])
+      }
+    })
+    return () => { active = false; subscription.unsubscribe() }
+  }, [])
+
+  useEffect(() => {
+    if (!session?.user?.id || !supabase) {
+      setWorkspaces([])
+      setWorkspace(null)
+      setWorkspaceLoading(false)
+      return undefined
+    }
+    let active = true
+    setWorkspaceLoading(true)
+    supabase.from('workspaces').select('*').order('created_at', { ascending: true }).then(({ data, error }) => {
+      if (!active) return
+      if (error) {
+        setToast('Não foi possível carregar seus espaços de trabalho.')
+        setWorkspaceLoading(false)
+        return
+      }
+      const available = data || []
+      setWorkspaces(available)
+      setWorkspace((current) => available.find((item) => item.id === current?.id) || available[0] || null)
+      setWorkspaceLoading(false)
+    })
+    return () => { active = false }
+  }, [session?.user?.id])
+
+  useEffect(() => {
+    if (!workspace?.id || !supabase) {
+      setProposals([])
+      return undefined
+    }
+    let active = true
+    setDataLoading(true)
+    supabase.from('proposals')
+      .select('*, client:clients!proposals_workspace_id_client_id_fkey(name,email), items:proposal_items(*)')
+      .eq('workspace_id', workspace.id)
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (!active) return
+        if (error) {
+          setToast('Não foi possível carregar as propostas deste espaço.')
+          setProposals([])
+        } else {
+          setProposals((data || []).map(mapProposal))
+        }
+        setDataLoading(false)
+      })
+    return () => { active = false }
+  }, [workspace?.id])
+
+  useEffect(() => {
+    if (!publicId || !supabase) { setPublicLoading(false); return undefined }
+    let active = true
+    supabase.rpc('get_shared_proposal', { target_share_token: publicId }).then(({ data, error }) => {
+      if (!active) return
+      if (error || !data) setPublicProposal(null)
+      else setPublicProposal(mapProposal({ ...data, id: data.id, code: data.code, client: data.client, items: data.items }))
+      setPublicLoading(false)
+    })
+    return () => { active = false }
+  }, [publicId])
   useEffect(() => {
     const handleShortcut = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -319,7 +418,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [])
 
-  const currentPublicProposal = publicId ? proposals.find((proposal) => proposal.id === publicId) : null
+  const currentPublicProposal = publicProposal
   const previewScope = clientPreview ? proposalScope(clientPreview) : null
   const matchingProposals = useMemo(() => proposals.filter((proposal) => {
     const term = query.trim().toLocaleLowerCase('pt-BR')
@@ -350,80 +449,121 @@ function App() {
     { label: 'Rascunho', statuses: ['Rascunho', 'Pronta para envio'], bar: 'bar-rascunho' },
   ].map((stage) => ({ ...stage, value: proposals.filter((proposal) => stage.statuses.includes(proposal.status)).reduce((sum, proposal) => sum + proposal.amount, 0) }))
   const maxPipeline = Math.max(1, ...pipelineStages.map((stage) => stage.value))
+  const userName = session?.user?.user_metadata?.full_name?.trim() || session?.user?.email?.split('@')[0] || 'Minha conta'
 
   function notify(message) { setToast(message) }
 
-  function enterWorkspace(planId) {
-    if (planId) {
-      setDemoPlan(planId)
-      localStorage.setItem('fechaproposta.demo-plan', planId)
-    }
-    window.history.replaceState(null, '', window.location.pathname + window.location.search + '#app')
-    setWorkspaceEntered(true)
-    window.scrollTo(0, 0)
+  function enterWorkspace() {
+    setAccessOpen(true)
   }
 
-  function exitWorkspace() {
-    window.history.replaceState(null, '', window.location.pathname + window.location.search)
-    setWorkspaceEntered(false)
-    setView('inicio')
-    window.scrollTo(0, 0)
+  async function exitWorkspace() {
+    if (!supabase) return
+    const { error } = await supabase.auth.signOut()
+    if (error) notify('Não foi possível sair da plataforma. Tente novamente.')
+    else setView('inicio')
   }
 
-  function createProposal(data, existingId) {
-    if (existingId) {
-      const original = proposals.find((proposal) => proposal.id === existingId)
-      const updated = { ...original, ...data, id: existingId, date: original.date, initials: initials(data.client), color: original.color }
-      setProposals((current) => current.map((proposal) => proposal.id === existingId ? updated : proposal))
-      setCreateOpen(false)
-      setEditing(null)
-      setSelected(updated)
-      notify('Alterações salvas. Confira a proposta atualizada.')
+  async function createProposal(data, existingCode) {
+    if (!workspace || !supabase) return
+    const original = existingCode ? proposals.find((proposal) => proposal.id === existingCode) : null
+    const code = original?.id || 'FP-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6)
+    const { data: savedId, error } = await supabase.rpc('save_workspace_proposal', {
+      target_workspace_id: workspace.id,
+      target_proposal_id: original?.dbId || null,
+      target_client_id: original?.clientId || null,
+      target_client_name: data.client,
+      target_client_email: data.email || '',
+      target_code: code,
+      target_title: data.title,
+      target_status: databaseStatus(data.status),
+      target_summary: data.summary,
+      target_deliverables: data.deliverables,
+      target_timeline: data.timeline,
+      target_next_step: data.nextStep,
+      target_exclusions: data.notIncluded,
+      target_terms: data.terms,
+      target_due_date: data.due,
+      target_total_amount: data.amount,
+      target_items: data.items.map((item, position) => ({ position, name: item.name, quantity: item.qty, unit_price: item.price })),
+    })
+    if (error) {
+      notify('Não foi possível salvar a proposta no Supabase: ' + error.message)
       return
     }
-    const proposal = { ...data, id: 'FP-' + new Date().getFullYear() + '-' + String(Math.floor(100 + Math.random() * 900)), date: new Date().toISOString().slice(0, 10), initials: initials(data.client), color: ['lavender', 'peach', 'blue', 'mint', 'gold'][proposals.length % 5] }
-    setProposals((current) => [proposal, ...current])
+    const { data: row, error: loadError } = await supabase.from('proposals')
+      .select('*, client:clients!proposals_workspace_id_client_id_fkey(name,email), items:proposal_items(*)')
+      .eq('workspace_id', workspace.id)
+      .eq('id', savedId)
+      .single()
+    if (loadError) {
+      notify('A proposta foi gravada, mas não foi possível atualizar a tela. Recarregue a página.')
+      return
+    }
+    const savedProposal = { ...mapProposal(row), color: original?.color || avatarColors[proposals.length % avatarColors.length] }
+    setProposals((current) => [savedProposal, ...current.filter((proposal) => proposal.dbId !== savedProposal.dbId)])
     setCreateOpen(false)
+    setEditing(null)
     setView('propostas')
-    if (proposal.status === 'Pronta para envio') setSelected(proposal)
-    notify(proposal.status === 'Rascunho' ? 'Rascunho salvo. Você pode continuar editando depois.' : 'Proposta criada. Confira os dados e prepare o envio.')
+    if (savedProposal.status === 'Pronta para envio') setSelected(savedProposal)
+    notify(original ? 'Alterações salvas no Supabase.' : 'Proposta salva no Supabase.')
   }
 
-  function updateProposal(id, changes) {
-    let updated
-    setProposals((current) => current.map((proposal) => {
-      if (proposal.id !== id) return proposal
-      updated = { ...proposal, ...changes }
-      return updated
-    }))
+  async function persistProposalChanges(id, changes) {
+    const original = proposals.find((proposal) => proposal.id === id || proposal.dbId === id)
+    if (!original || !workspace || !supabase) return null
+    const patch = {}
+    if (changes.status) patch.status = databaseStatus(changes.status)
+    if (changes.shareEnabled !== undefined) patch.share_enabled = changes.shareEnabled
+    if (changes.signedBy) {
+      patch.accepted_by = changes.signedBy
+      patch.accepted_at = changes.signedAt || new Date().toISOString()
+      patch.signature_mode = changes.signature?.startsWith('typed:') ? 'typed' : 'drawn'
+      patch.signature_text = changes.signature || changes.signedBy
+      patch.status = 'accepted'
+    }
+    const { error } = await supabase.from('proposals').update(patch).eq('workspace_id', workspace.id).eq('id', original.dbId)
+    if (error) {
+      notify('Não foi possível salvar esta alteração no Supabase: ' + error.message)
+      return null
+    }
+    const updated = { ...original, ...changes }
+    setProposals((current) => current.map((proposal) => proposal.dbId === original.dbId ? updated : proposal))
+    setSelected((current) => current?.dbId === original.dbId ? updated : current)
     return updated
   }
 
   function makeLink(proposal) {
-    return window.location.origin + window.location.pathname + '?proposta=' + encodeURIComponent(proposal.id)
+    return window.location.origin + window.location.pathname + '?proposta=' + encodeURIComponent(proposal.shareToken)
   }
 
   async function shareProposal(proposal) {
-    const link = makeLink(proposal)
+    const enabledProposal = await persistProposalChanges(proposal.id, { shareEnabled: true })
+    if (!enabledProposal?.shareToken) return
+    const link = makeLink(enabledProposal)
     try {
       await navigator.clipboard.writeText(link)
-      notify('Link de demonstração copiado. Ele funciona neste navegador enquanto os dados locais existirem.')
+      notify('Link público copiado. Você pode compartilhar com seu cliente.')
     } catch {
       window.prompt('Copie o link da proposta:', link)
     }
   }
 
-  function emailProposal(proposal) {
+  async function emailProposal(proposal) {
+    const enabledProposal = await persistProposalChanges(proposal.id, { shareEnabled: true })
+    if (!enabledProposal) return
     const subject = encodeURIComponent('Proposta: ' + proposal.title)
-    const body = encodeURIComponent('Olá, ' + proposal.client.split(' ')[0] + '!\n\nPreparei uma proposta para você: ' + proposal.title + '.\n\nAcesse por este link: ' + makeLink(proposal) + '\n\nA proposta é válida até ' + longDate(proposal.due) + '.\n\nAté mais!')
+    const body = encodeURIComponent('Olá, ' + proposal.client.split(' ')[0] + '!\n\nPreparei uma proposta para você: ' + proposal.title + '.\n\nAcesse por este link: ' + makeLink(enabledProposal) + '\n\nA proposta é válida até ' + longDate(proposal.due) + '.\n\nAté mais!')
     window.location.href = 'mailto:' + encodeURIComponent(proposal.email || '') + '?subject=' + subject + '&body=' + body
     notify('Rascunho de e-mail aberto. Revise e envie pelo seu aplicativo de e-mail.')
   }
 
-  function markSent(proposal) {
-    updateProposal(proposal.id, { status: 'Enviada' })
-    setSelected(null)
-    notify('Status atualizado para enviada. O envio real depende do seu aplicativo de e-mail.')
+  async function markSent(proposal) {
+    const updated = await persistProposalChanges(proposal.id, { status: 'Enviada' })
+    if (updated) {
+      setSelected(null)
+      notify('Status atualizado no Supabase. O envio real depende do seu aplicativo de e-mail.')
+    }
   }
 
   function editProposal(proposal) {
@@ -431,7 +571,6 @@ function App() {
     setEditing(proposal)
     setCreateOpen(true)
   }
-
   function printProposal(proposal) {
     const popup = window.open('', '_blank', 'width=900,height=740')
     if (!popup) { notify('Permita a abertura da janela para gerar o PDF.'); return }
@@ -462,48 +601,71 @@ function App() {
     const popup = window.open('', '_blank', 'width=900,height=740')
     if (!popup) { notify('Permita a abertura da janela para exportar o resumo.'); return }
     const rows = proposals.map((proposal) => '<tr><td>' + escapeHtml(proposal.id) + '</td><td>' + escapeHtml(proposal.title) + '</td><td>' + escapeHtml(proposal.client) + '</td><td>' + escapeHtml(proposal.status) + '</td><td>' + money(proposal.amount) + '</td></tr>').join('')
-    popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Resumo de propostas</title><style>body{font:13px Arial,sans-serif;color:#29362c;max-width:980px;margin:54px auto;padding:0 30px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e4e9e2;padding-bottom:16px}h1{margin:34px 0 6px;font-size:27px}.muted{color:#7c887e}section{display:flex;gap:30px;margin:23px 0;padding:14px 0;border-top:1px solid #e9ede7;border-bottom:1px solid #e9ede7}section div{display:grid;gap:6px}small{color:#899489;font-size:9px;letter-spacing:.6px}strong{font-size:15px}table{width:100%;border-collapse:collapse}th,td{padding:12px 8px;border-bottom:1px solid #edf0eb;text-align:left}th{color:#7c887e;font-size:9px;letter-spacing:.5px}td{font-size:10px}td:last-child{text-align:right;font-weight:bold}footer{margin-top:40px;color:#899489;font-size:10px}@media print{body{margin:20px auto}}</style></head><body><header><strong>fecha<span style="color:#91ae42">.</span> / Resumo da carteira</strong><span class="muted">Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</span></header><h1>Propostas comerciais</h1><p class="muted">Panorama atual das propostas do Estúdio Aurora.</p><section><div><small>TOTAL DE PROPOSTAS</small><strong>' + proposals.length + '</strong></div><div><small>VALOR EM ABERTO</small><strong>' + money(pendingValue) + '</strong></div><div><small>VALOR ACEITO</small><strong>' + money(acceptedValue) + '</strong></div><div><small>TAXA DE ACEITE</small><strong>' + acceptanceRate + '%</strong></div></section><table><thead><tr><th>CÓDIGO</th><th>PROPOSTA</th><th>CLIENTE</th><th>STATUS</th><th>VALOR</th></tr></thead><tbody>' + rows + '</tbody></table><footer>FechaProposta · Os dados deste resumo vêm do armazenamento local de demonstração.</footer><script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script></body></html>')
+    popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Resumo de propostas</title><style>body{font:13px Arial,sans-serif;color:#29362c;max-width:980px;margin:54px auto;padding:0 30px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e4e9e2;padding-bottom:16px}h1{margin:34px 0 6px;font-size:27px}.muted{color:#7c887e}section{display:flex;gap:30px;margin:23px 0;padding:14px 0;border-top:1px solid #e9ede7;border-bottom:1px solid #e9ede7}section div{display:grid;gap:6px}small{color:#899489;font-size:9px;letter-spacing:.6px}strong{font-size:15px}table{width:100%;border-collapse:collapse}th,td{padding:12px 8px;border-bottom:1px solid #edf0eb;text-align:left}th{color:#7c887e;font-size:9px;letter-spacing:.5px}td{font-size:10px}td:last-child{text-align:right;font-weight:bold}footer{margin-top:40px;color:#899489;font-size:10px}@media print{body{margin:20px auto}}</style></head><body><header><strong>fecha<span style="color:#91ae42">.</span> / Resumo da carteira</strong><span class="muted">Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</span></header><h1>Propostas comerciais</h1><p class="muted">Panorama atual de ' + escapeHtml(workspace?.name) + '.</p><section><div><small>TOTAL DE PROPOSTAS</small><strong>' + proposals.length + '</strong></div><div><small>VALOR EM ABERTO</small><strong>' + money(pendingValue) + '</strong></div><div><small>VALOR ACEITO</small><strong>' + money(acceptedValue) + '</strong></div><div><small>TAXA DE ACEITE</small><strong>' + acceptanceRate + '%</strong></div></section><table><thead><tr><th>CÓDIGO</th><th>PROPOSTA</th><th>CLIENTE</th><th>STATUS</th><th>VALOR</th></tr></thead><tbody>' + rows + '</tbody></table><footer>FechaProposta · Os dados deste resumo vêm do Supabase.</footer><script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script></body></html>')
     popup.document.close()
   }
 
-  function signProposal(proposal, signed) {
-    updateProposal(proposal.id, { status: 'Aceita', signedBy: signed.name, signedAt: new Date().toISOString(), signature: signed.signature })
+  async function signProposal(proposal, signed) {
+    const mode = signed.signature.startsWith('typed:') ? 'typed' : 'drawn'
+    if (publicId) {
+      const { data: acceptedResult, error } = await supabase.rpc('accept_shared_proposal', {
+        target_share_token: publicId,
+        target_signatory_name: signed.name,
+        target_sign_mode: mode,
+        target_sign_text: signed.signature,
+      })
+      if (error || !acceptedResult) {
+        notify('Não foi possível registrar o aceite. O link pode ter expirado ou a proposta já foi aceita.')
+        return
+      }
+      const { data, error: refreshError } = await supabase.rpc('get_shared_proposal', { target_share_token: publicId })
+      if (!refreshError && data) setPublicProposal(mapProposal({ ...data, code: data.code, client: data.client, items: data.items }))
+    } else {
+      const updated = await persistProposalChanges(proposal.id, {
+        status: 'Aceita', signedBy: signed.name,
+        signedAt: new Date().toISOString(), signature: signed.signature,
+      })
+      if (!updated) return
+    }
     setSigning(null)
     setClientPreview(null)
     setSelected(null)
-    notify('Aceite registrado nesta demonstração. A proposta agora aparece como aceita.')
+    notify('Aceite registrado no Supabase.')
   }
 
   function openNav(id) { setView(id); setMobileNav(false); setQuery(''); setFilter('Todas') }
 
   if (publicId) {
+    if (publicLoading) return <main className="client-page"><div className="client-top"><Brand /></div><div className="not-found"><FileText size={24} /><h1>Carregando proposta</h1><p>Buscando os dados compartilhados com segurança.</p></div></main>
     if (currentPublicProposal) return <><ClientProposal proposal={currentPublicProposal} onSign={setSigning} onPdf={printProposal} onBack={() => { window.location.href = window.location.origin + window.location.pathname }} />{signing && <SignatureModal proposal={signing} onClose={() => setSigning(null)} onSign={(data) => signProposal(signing, data)} />}{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
-    return <main className="client-page"><div className="client-top"><Brand /></div><div className="not-found"><FileText size={24} /><h1>Não encontramos essa proposta.</h1><p>Este link de demonstração só abre no navegador onde a proposta foi criada.</p><button className="btn-primary" onClick={() => { window.location.href = window.location.origin + window.location.pathname }}>Voltar ao painel</button></div></main>
+    return <main className="client-page"><div className="client-top"><Brand /></div><div className="not-found"><FileText size={24} /><h1>Não encontramos essa proposta.</h1><p>O link pode estar desativado ou a proposta não está mais disponível.</p><button className="btn-primary" onClick={() => { window.location.href = window.location.origin + window.location.pathname }}>Sair da plataforma</button></div></main>
   }
 
-  if (!workspaceEntered) return <LandingPage onEnter={enterWorkspace} />
-
+  if (authLoading) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">FECHAPROPOSTA</span><h1>Conectando sua conta...</h1></section></main>
+  if (!session) return <><LandingPage onEnter={enterWorkspace} onScheduleDemo={() => setDemoOpen(true)} />{accessOpen && <PlatformAccess onClose={() => setAccessOpen(false)} onAuthenticated={setSession} />}{demoOpen && <DemoRequest onClose={() => setDemoOpen(false)} />}{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
+  if (workspaceLoading) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">FECHAPROPOSTA</span><h1>Carregando seu espaço...</h1></section></main>
+  if (!workspace) return <><WorkspaceSetup session={session} onCreated={(created) => { setWorkspaces((current) => [...current, created]); setWorkspace(created) }} onSignOut={exitWorkspace} />{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
   return <div className="app-shell">
     <aside className={'sidebar' + (mobileNav ? ' sidebar-open' : '')}>
       <div className="sidebar-top"><Brand /><button className="sidebar-close icon-btn" onClick={() => setMobileNav(false)} aria-label="Fechar navegação"><X size={18} /></button></div>
-      <button className="workspace-switch"><span className="workspace-avatar">A</span><span><strong>Estúdio Aurora</strong><small>{demoPlan ? 'Plano ' + demoPlan.toUpperCase() + ' · demonstração' : 'Ambiente de demonstração'}</small></span><ChevronDown size={15} /></button>
+      <div className="workspace-switch"><span className="workspace-avatar">{initials(workspace?.name)}</span><span><strong>{workspace?.name}</strong><small>Espaço de trabalho</small></span></div>
       {navGroups.map((group) => <div className="nav-group" key={group.title}><span className="nav-caption">{group.title}</span><nav aria-label={group.title}>{group.items.map(({ id, label, icon: Icon, count }) => <button key={id} onClick={() => openNav(id)} className={'nav-link' + (view === id ? ' nav-active' : '')} aria-current={view === id ? 'page' : undefined}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <small>{proposals.length.toString().padStart(2, '0')}</small>}</button>)}</nav></div>)}
-      <div className="sidebar-bottom"><div className="sidebar-help"><span><CircleHelp size={16} /></span><div><strong>Precisa de uma mão?</strong><small>Veja como preparar uma proposta.</small><button onClick={() => notify('Dica: comece com um título claro, descreva o resultado e deixe valores e validade visíveis.')}>Acessar guia <ArrowUpRight size={12} /></button></div></div><button className="nav-link settings-link" onClick={() => openNav('configuracoes')}><Settings2 size={17} /><span>Configurações</span></button><button className="nav-link site-link" onClick={exitWorkspace}><ArrowUpRight size={17} /><span>Voltar ao site</span></button><div className="profile-row"><Avatar name="Marina Alves" mark="MA" color="mint" /><span><strong>Marina Alves</strong><small>Administradora</small></span><button className="icon-btn" aria-label="Abrir menu do perfil" onClick={() => openNav('configuracoes')}><Ellipsis size={18} /></button></div></div>
+      <div className="sidebar-bottom"><div className="sidebar-help"><span><CircleHelp size={16} /></span><div><strong>Precisa de uma mão?</strong><small>Veja como preparar uma proposta.</small><button onClick={() => notify('Dica: comece com um título claro, descreva o resultado e deixe valores e validade visíveis.')}>Acessar guia <ArrowUpRight size={12} /></button></div></div><button className="nav-link settings-link" onClick={() => openNav('configuracoes')}><Settings2 size={17} /><span>Configurações</span></button><button className="nav-link site-link" onClick={exitWorkspace}><ArrowUpRight size={17} /><span>Sair da plataforma</span></button><div className="profile-row"><Avatar name={userName} color="mint" /><span><strong>{userName}</strong><small>Conta ativa</small></span><button className="icon-btn" aria-label="Abrir menu do perfil" onClick={() => openNav('configuracoes')}><Ellipsis size={18} /></button></div></div>
     </aside>
     {mobileNav && <button className="mobile-scrim" aria-label="Fechar navegação" onClick={() => setMobileNav(false)} />}
     <main className="main-area">
-      <header className="topbar"><button className="mobile-menu icon-btn" aria-label="Abrir navegação" onClick={() => setMobileNav(true)}><Menu size={20} /></button><div className="breadcrumbs"><span>Estúdio Aurora</span><ChevronRight size={14} /><strong>{navGroups.flatMap((group) => group.items).find((item) => item.id === view)?.label || (view === 'configuracoes' ? 'Configurações' : 'Resultados')}</strong></div><div className="top-actions"><span className="sync-status"><i /> Salvo neste navegador</span><span className="top-divider" /><button className="top-icon icon-btn" aria-label="Notificações" onClick={() => setNotificationsOpen((open) => !open)}><Bell size={17} /><i className="notification-dot" /></button>{notificationsOpen && <div className="notification-pop"><strong>Novidades da sua conta</strong><span><CheckCircle2 size={15} /> Suas propostas estão salvas neste navegador.</span><span><Clock3 size={15} /> {openProposals.length} propostas aguardam retorno.</span><button onClick={() => setNotificationsOpen(false)}>Entendi</button></div>}<button className="top-profile" onClick={() => openNav('configuracoes')}><Avatar name="Marina Alves" mark="MA" color="mint" small /><span>Marina Alves</span><ChevronDown size={14} /></button></div></header>
+      <header className="topbar"><button className="mobile-menu icon-btn" aria-label="Abrir navegação" onClick={() => setMobileNav(true)}><Menu size={20} /></button><div className="breadcrumbs"><span>{workspace?.name}</span><ChevronRight size={14} /><strong>{navGroups.flatMap((group) => group.items).find((item) => item.id === view)?.label || (view === 'configuracoes' ? 'Configurações' : 'Resultados')}</strong></div><div className="top-actions"><span className="sync-status"><i /> Sincronizado com Supabase</span><span className="top-divider" /><button className="top-icon icon-btn" aria-label="Notificações" onClick={() => setNotificationsOpen((open) => !open)}><Bell size={17} /></button>{notificationsOpen && <div className="notification-pop"><strong>Propostas em acompanhamento</strong><span><Clock3 size={15} /> {openProposals.length} propostas aguardam retorno.</span><button onClick={() => setNotificationsOpen(false)}>Entendi</button></div>}<button className="top-profile" onClick={() => openNav('configuracoes')}><Avatar name={userName} color="mint" small /><span>{userName}</span><ChevronDown size={14} /></button></div></header>
       <div className="page-content">
         {view === 'inicio' && <>
-          <div className="welcome-row"><div><span className="eyebrow"><span className="eyebrow-dot" /> {todayLabel}</span><h1>{greeting}, Marina <span className="wave">✳</span></h1><p>Suas boas conversas podem virar bons projetos. Veja o que está acontecendo.</p></div><button className="btn-primary" onClick={() => setCreateOpen(true)}><Plus size={17} /> Nova proposta</button></div>
-          <div className="stats-grid"><article className="stat-card"><div className="stat-top"><span>Em propostas abertas</span><span className="stat-icon icon-lilac"><FileText size={16} /></span></div><strong>{money(pendingValue)}</strong><div className="stat-foot"><span className="stat-trend"><ArrowUpRight size={13} /> {openProposals.length} propostas</span><span>aguardando retorno</span></div><div className="stat-sparkline spark-lilac"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div></article>
-            <article className="stat-card"><div className="stat-top"><span>Valor aceito</span><span className="stat-icon icon-mint"><Handshake size={16} /></span></div><strong>{money(acceptedValue)}</strong><div className="stat-foot"><span className="stat-trend trend-green"><ArrowUpRight size={13} /> {accepted.length} aceitas</span><span>nesta carteira</span></div><div className="stat-sparkline spark-green"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div></article>
+          <div className="welcome-row"><div><span className="eyebrow"><span className="eyebrow-dot" /> {todayLabel}</span><h1>{greeting}, {userName.split(' ')[0]} <span className="wave">✳</span></h1><p>Suas boas conversas podem virar bons projetos. Veja o que está acontecendo.</p></div><button className="btn-primary" onClick={() => setCreateOpen(true)}><Plus size={17} /> Nova proposta</button></div>
+          <div className="stats-grid"><article className="stat-card"><div className="stat-top"><span>Em propostas abertas</span><span className="stat-icon icon-lilac"><FileText size={16} /></span></div><strong>{money(pendingValue)}</strong><div className="stat-foot"><span className="stat-trend"><ArrowUpRight size={13} /> {openProposals.length} propostas</span><span>aguardando retorno</span></div></article>
+            <article className="stat-card"><div className="stat-top"><span>Valor aceito</span><span className="stat-icon icon-mint"><Handshake size={16} /></span></div><strong>{money(acceptedValue)}</strong><div className="stat-foot"><span className="stat-trend trend-green"><ArrowUpRight size={13} /> {accepted.length} aceitas</span><span>nesta carteira</span></div></article>
             <article className="stat-card"><div className="stat-top"><span>Taxa de aceite</span><span className="stat-icon icon-amber"><Activity size={16} /></span></div><strong>{acceptanceRate}<small>%</small></strong><div className="stat-foot"><span>propostas enviadas ou concluídas</span></div><div className="rate-track"><span style={{ width: acceptanceRate + '%' }} /></div></article>
-            <article className="stat-card"><div className="stat-top"><span>Próximos vencimentos</span><span className="stat-icon icon-blue"><CalendarDays size={16} /></span></div><strong>{upcomingCount.toString().padStart(2, '0')}</strong><div className="stat-foot"><span>Nos próximos 7 dias</span><span className="stat-reminder"><i /> atenção</span></div><div className="expiry-dots"><i /><i /><i /><i /><i /><i /><i /></div></article></div>
-          <div className="dashboard-grid"><section className="panel recent-panel"><div className="panel-heading"><div><h2>Propostas recentes</h2><p>Acompanhe as conversas que estão em andamento.</p></div><button className="text-action" onClick={() => openNav('propostas')}>Ver todas <ArrowRight size={14} /></button></div><div className="table-scroll"><div className="proposal-table"><div className="table-header"><span>PROPOSTA</span><span>CLIENTE</span><span>CRIADA EM</span><span>VALOR</span><span>STATUS</span><span /></div>{proposals.slice(0, 5).map((proposal) => <ProposalRow key={proposal.id} proposal={proposal} onOpen={setSelected} />)}</div></div><button className="mobile-see-all" onClick={() => openNav('propostas')}>Ver todas as propostas <ArrowRight size={14} /></button></section>
+            <article className="stat-card"><div className="stat-top"><span>Próximos vencimentos</span><span className="stat-icon icon-blue"><CalendarDays size={16} /></span></div><strong>{upcomingCount.toString().padStart(2, '0')}</strong><div className="stat-foot"><span>Nos próximos 7 dias</span><span className="stat-reminder"><i /> atenção</span></div></article></div>
+          <div className="dashboard-grid"><section className="panel recent-panel"><div className="panel-heading"><div><h2>Propostas recentes</h2><p>Acompanhe as conversas que estão em andamento.</p></div><button className="text-action" onClick={() => openNav('propostas')}>Ver todas <ArrowRight size={14} /></button></div><div className="table-scroll"><div className="proposal-table"><div className="table-header"><span>PROPOSTA</span><span>CLIENTE</span><span>CRIADA EM</span><span>VALOR</span><span>STATUS</span><span /></div>{dataLoading ? <div className="dashboard-empty">Carregando propostas do Supabase...</div> : proposals.length ? proposals.slice(0, 5).map((proposal) => <ProposalRow key={proposal.id} proposal={proposal} onOpen={setSelected} />) : <div className="dashboard-empty"><span>Nenhuma proposta cadastrada neste espaço.</span><button className="text-action" onClick={() => setCreateOpen(true)}>Criar proposta <ArrowRight size={14} /></button></div>}</div></div><button className="mobile-see-all" onClick={() => openNav('propostas')}>Ver todas as propostas <ArrowRight size={14} /></button></section>
             <aside className="right-rail"><section className="panel pipeline-panel"><div className="panel-heading"><div><h2>Seu pipeline</h2><p>Valor por etapa das propostas</p></div><button className="small-select" onClick={() => openNav('resultados')}>Carteira <ChevronDown size={12} /></button></div><div className="pipeline-chart"><div className="chart-y"><span>100%</span><span>75%</span><span>50%</span><span>0%</span></div><div className="chart-columns">{pipelineStages.map((bar) => <div className="chart-column" key={bar.label}><div className="chart-track"><span className={'chart-bar ' + bar.bar} style={{ height: (bar.value ? Math.max(8, (bar.value / maxPipeline) * 90) : 0) + '%' }} title={bar.label + ': ' + money(bar.value)} aria-label={bar.label + ': ' + money(bar.value)} /></div><small>{bar.label}</small></div>)}</div></div><div className="pipeline-legend"><span><i className="legend-open" /> Em andamento</span><strong>{money(pendingValue)}</strong></div><div className="pipeline-legend"><span><i className="legend-accepted" /> Aceitas</span><strong>{money(acceptedValue)}</strong></div></section>
-              <section className="nudge-card"><span className="nudge-orb"><Sparkles size={16} /></span><div><small>UM BOM PRÓXIMO PASSO</small><strong>Quem viu sua proposta?</strong><p>Um acompanhamento gentil pode destravar a conversa.</p><button onClick={() => openNav('propostas')}>Acompanhar propostas <ArrowRight size={13} /></button></div><span className="nudge-decoration">✳</span></section>
-              <div className="trust-note"><ShieldCheck size={15} /><span>Seus rascunhos são salvos automaticamente neste navegador.</span></div></aside></div>
+              <section className="nudge-card"><span className="nudge-orb"><Sparkles size={16} /></span><div><small>UM BOM PRÓXIMO PASSO</small><strong>Retome uma conversa com o cliente</strong><p>Um acompanhamento gentil pode destravar a conversa.</p><button onClick={() => openNav('propostas')}>Acompanhar propostas <ArrowRight size={13} /></button></div><span className="nudge-decoration">✳</span></section>
+              <div className="trust-note"><ShieldCheck size={15} /><span>Suas propostas são salvas no espaço de trabalho do Supabase.</span></div></aside></div>
         </>}
 
         {view === 'propostas' && <>
@@ -514,12 +676,12 @@ function App() {
 
         {view === 'clientes' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Clientes</h1><p>Um lugar para retomar o contexto de cada parceria.</p></div><button className="btn-primary" onClick={() => setCreateOpen(true)}><Plus size={17} /> Nova proposta</button></div><div className="client-grid">{Array.from(new Map(proposals.map((proposal) => [proposal.client, proposal])).values()).map((proposal) => <button className="client-card panel" key={proposal.client} onClick={() => { setView('propostas'); setQuery(proposal.client) }}><div className="client-card-top"><Avatar name={proposal.client} mark={proposal.initials} color={proposal.color} /><ArrowUpRight size={15} /></div><strong>{proposal.client}</strong><span>{proposal.email}</span><small>{proposals.filter((item) => item.client === proposal.client).length} proposta{proposals.filter((item) => item.client === proposal.client).length === 1 ? '' : 's'} · última atividade {shortDate(proposal.date)}</small></button>)}</div></section>}
 
-        {view === 'modelos' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Modelos</h1><p>Comece com uma estrutura pronta e personalize para cada cliente.</p></div><button className="btn-primary" onClick={() => setCreateOpen(true)}><Plus size={17} /> Criar proposta</button></div><div className="template-grid">{[{ icon: BriefcaseBusiness, name: 'Projeto de marca', type: 'Branding · 6 seções', hue: 'lilac' }, { icon: FileSignature, name: 'Prestação de serviço', type: 'Consultoria · 5 seções', hue: 'mint' }, { icon: WalletCards, name: 'Pacote mensal', type: 'Recorrência · 4 seções', hue: 'amber' }].map(({ icon: Icon, name, type, hue }) => <article className="template-card panel" key={name}><span className={'template-icon ' + hue}><Icon size={19} /></span><span className="eyebrow">MODELO EDITÁVEL</span><h2>{name}</h2><p>{type}</p><button className="btn-secondary" onClick={() => setCreateOpen(true)}>Usar modelo <ArrowRight size={14} /></button></article>)}</div><div className="feature-note"><Sparkles size={16} /><span>Na versão completa, sua equipe poderá salvar propostas aprovadas como modelos reutilizáveis.</span></div></section>}
+        {view === 'modelos' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Modelos</h1><p>Os modelos salvos para este espaço aparecerão aqui.</p></div></div><div className="empty-state"><span><FileCheck2 size={21} /></span><strong>Nenhum modelo salvo</strong><p>Os modelos de proposta ainda não estão conectados ao banco de dados.</p></div></section>}
 
         {view === 'resultados' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Resultados</h1><p>Uma leitura simples do que está avançando.</p></div><button className="btn-secondary" onClick={printReport}><Download size={15} /> Exportar resumo</button></div><div className="report-grid"><article className="panel report-card"><span>PROPOSTAS CRIADAS</span><strong>{proposals.length.toString().padStart(2, '0')}</strong><small>Em toda a carteira atual</small></article><article className="panel report-card"><span>CONVERSÃO EM ACEITE</span><strong>{acceptanceRate}%</strong><small>{accepted.length} aceitas entre as enviadas ou concluídas</small></article><article className="panel report-card"><span>VALOR EM ABERTO</span><strong>{money(pendingValue)}</strong><small>{openProposals.length} propostas aguardando decisão</small></article></div><section className="panel report-list"><div className="panel-heading"><div><h2>Oportunidades recentes</h2><p>Veja os próximos passos por proposta.</p></div><button className="text-action" onClick={() => openNav('propostas')}>Abrir lista <ArrowRight size={14} /></button></div>{proposals.filter((proposal) => ['Enviada', 'Visualizada', 'Em negociação'].includes(proposal.status)).map((proposal) => <button className="report-row" key={proposal.id} onClick={() => setSelected(proposal)}><Avatar name={proposal.client} mark={proposal.initials} color={proposal.color} small /><span><strong>{proposal.client}</strong><small>{proposal.title}</small></span><Status value={proposal.status} /><b>{money(proposal.amount)}</b><ChevronRight size={15} /></button>)}</section></section>}
 
-        {view === 'configuracoes' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Configurações</h1><p>Preferências deste espaço de trabalho.</p></div></div><section className="settings-card panel"><div className="settings-icon"><BriefcaseBusiness size={18} /></div><div><strong>Estúdio Aurora</strong><p>Seus dados estão sendo salvos localmente neste navegador.</p><span className="local-mode"><i /> Modo de demonstração</span></div><button className="btn-secondary" onClick={() => notify('O cliente Supabase está preparado. Para sincronizar dados ainda é preciso implementar autenticação, tabelas e políticas RLS.')}>Preparar integração <ArrowRight size={14} /></button></section><section className="settings-card panel"><div className="settings-icon settings-user"><Users size={18} /></div><div><strong>Equipe e permissões</strong><p>Convide pessoas e controle quem pode editar ou enviar propostas.</p><span className="coming-soon">Disponível após conectar o espaço de trabalho</span></div><button className="btn-secondary" disabled>Em breve</button></section><section className="settings-card panel"><div className="settings-icon settings-pdf"><FileCheck2 size={18} /></div><div><strong>Assinatura e documentos</strong><p>Configure o provedor de assinatura e a identidade dos documentos.</p><span className="coming-soon">Integração necessária para validade e trilha de auditoria</span></div><button className="btn-secondary" disabled>Em breve</button></section><button className="danger-link" onClick={() => { if (window.confirm('Apagar as propostas salvas neste navegador? Esta ação não pode ser desfeita.')) { setProposals(seed); notify('Dados de demonstração restaurados.') } }}>Restaurar dados de demonstração</button></section>}
-        <footer className="app-footer"><span>FechaProposta <i>·</i> propostas com próximo passo</span><span><ShieldCheck size={13} /> Seus dados de demonstração ficam neste navegador</span></footer>
+        {view === 'configuracoes' && <section className="subpage"><div className="page-title-row"><div><button className="back-link" onClick={() => openNav('inicio')}><ChevronLeft size={14} /> Visão geral</button><h1>Configurações</h1><p>Preferências deste espaço de trabalho.</p></div></div><section className="settings-card panel"><div className="settings-icon"><BriefcaseBusiness size={18} /></div><div><strong>{workspace?.name}</strong><p>Espaço de trabalho conectado à sua conta do Supabase.</p><span className="local-mode"><i /> Sincronizado com Supabase</span></div><button className="btn-secondary" onClick={exitWorkspace}>Sair da conta <ArrowRight size={14} /></button></section><section className="settings-card panel"><div className="settings-icon settings-user"><Users size={18} /></div><div><strong>Equipe e permissões</strong><p>Convide pessoas e controle quem pode editar ou enviar propostas.</p><span className="coming-soon">Convites de equipe serão configurados em uma etapa futura</span></div><button className="btn-secondary" disabled>Em breve</button></section><section className="settings-card panel"><div className="settings-icon settings-pdf"><FileCheck2 size={18} /></div><div><strong>Assinatura e documentos</strong><p>Configure o provedor de assinatura e a identidade dos documentos.</p><span className="coming-soon">Integração necessária para validade e trilha de auditoria</span></div><button className="btn-secondary" disabled>Em breve</button></section></section>}
+        <footer className="app-footer"><span>FechaProposta <i>·</i> propostas com próximo passo</span><span><ShieldCheck size={13} /> Dados da conta sincronizados com Supabase</span></footer>
       </div>
     </main>
     {createOpen && <ProposalForm existing={editing} onClose={() => { setCreateOpen(false); setEditing(null) }} onSave={createProposal} />}
