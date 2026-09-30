@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ArrowRight, CalendarDays, CheckCircle2, LoaderCircle, LockKeyhole, Mail, X } from 'lucide-react'
+import { ArrowRight, CheckCircle2, LoaderCircle, LockKeyhole, X } from 'lucide-react'
 import useDialogAccessibility from '../lib/use-dialog-accessibility'
 import { isSupabaseConfigured, requireSupabase } from '../lib/supabase'
 
@@ -15,8 +15,8 @@ function Dialog({ title, eyebrow, children, onClose, className = '' }) {
   </div>
 }
 
-export function PlatformAccess({ onClose, onAuthenticated }) {
-  const [mode, setMode] = useState('login')
+export function PlatformAccess({ onClose, onAuthenticated, initialMode = 'login' }) {
+  const [mode, setMode] = useState(initialMode)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -55,7 +55,7 @@ export function PlatformAccess({ onClose, onAuthenticated }) {
   }
 
   return <Dialog title={mode === 'login' ? 'Acesse sua plataforma.' : 'Crie sua conta.'} eyebrow="ACESSAR PLATAFORMA" onClose={onClose}>
-    <p className="account-dialog-copy">Entre para ver os dados do seu espaço de trabalho ou crie uma conta para começar.</p>
+    <p className="account-dialog-copy">{mode === 'signup' ? 'Crie sua conta. Seu teste grátis de 3 dias começa quando você criar o primeiro espaço de trabalho.' : 'Entre para ver seus espaços de trabalho ou crie uma conta para começar.'}</p>
     <form className="account-form" onSubmit={submit}>
       {mode === 'signup' && <label className="account-field"><span>Seu nome</span><input name="name" required autoComplete="name" maxLength="120" placeholder="Como podemos chamar você?" /></label>}
       <label className="account-field"><span>E-mail</span><input name="email" type="email" required autoComplete="email" maxLength="254" placeholder="voce@empresa.com.br" /></label>
@@ -65,40 +65,6 @@ export function PlatformAccess({ onClose, onAuthenticated }) {
       <button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <LoaderCircle size={16} className="account-spinner" /> : <LockKeyhole size={15} />}{mode === 'login' ? 'Entrar' : 'Criar conta'} <ArrowRight size={15} /></button>
     </form>
     <button className="account-mode-toggle" onClick={() => { setMode((value) => value === 'login' ? 'signup' : 'login'); setError(''); setNotice('') }}>{mode === 'login' ? 'Ainda não tem uma conta? Criar conta' : 'Já tem uma conta? Entrar'}</button>
-  </Dialog>
-}
-
-export function DemoRequest({ onClose }) {
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-
-  async function submit(event) {
-    event.preventDefault()
-    setBusy(true)
-    setError('')
-    const email = String(new FormData(event.currentTarget).get('email')).trim().toLowerCase()
-    try {
-      const { error: requestError } = await requireSupabase().from('demo_requests').insert({ email })
-      if (requestError) throw requestError
-      setSubmitted(true)
-    } catch (cause) {
-      setError(isSupabaseConfigured ? 'Não foi possível enviar seu pedido agora. Tente novamente em instantes.' : 'A conexão com o Supabase ainda não está configurada para receber pedidos.')
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  return <Dialog title={submitted ? 'Pedido recebido.' : 'Vamos apresentar a plataforma.'} eyebrow="AGENDAR DEMONSTRAÇÃO" onClose={onClose} className="demo-request-dialog">
-    {submitted ? <div className="demo-request-success"><span><CheckCircle2 size={22} /></span><p>Recebemos seu e-mail. Nossa equipe entrará em contato para combinar a demonstração.</p><button className="marketing-button marketing-button-dark account-submit" onClick={onClose}>Concluir <ArrowRight size={15} /></button></div> : <>
-      <p className="account-dialog-copy">Deixe seu e-mail e entraremos em contato para combinar um horário. Este pedido não reserva um horário automaticamente.</p>
-      <form className="account-form" onSubmit={submit}>
-        <label className="account-field"><span>E-mail profissional</span><input name="email" type="email" required autoComplete="email" maxLength="254" placeholder="voce@empresa.com.br" /></label>
-        {error && <p className="account-feedback account-error" role="alert">{error}</p>}
-        <button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <LoaderCircle size={16} className="account-spinner" /> : <CalendarDays size={15} />} Solicitar horário <ArrowRight size={15} /></button>
-      </form>
-    </>}
-    <div className="account-dialog-privacy"><Mail size={14} /> Usaremos seu e-mail apenas para responder a este pedido.</div>
   </Dialog>
 }
 
@@ -133,9 +99,9 @@ export function WorkspaceSetup({ session, onCreated, onSignOut }) {
 
   return <main className="workspace-setup-page"><section className="workspace-setup-card">
     <span className="workspace-setup-icon"><CheckCircle2 size={21} /></span>
-    <span className="marketing-eyebrow">SUA PLATAFORMA</span>
-    <h1>Vamos preparar seu espaço.</h1>
-    <p>Os clientes e as propostas ficam neste espaço e só aparecem para as pessoas autorizadas.</p>
+    <span className="marketing-eyebrow">SEU TESTE GRATUITO</span>
+    <h1>Prepare seu espaço para começar.</h1>
+    <p>Seu teste de 3 dias começa quando você criar este espaço. Seus clientes e propostas ficam protegidos e só aparecem para pessoas autorizadas.</p>
     <form className="account-form" onSubmit={submit}>
       <label className="account-field"><span>Nome do espaço de trabalho</span><input name="workspace" required maxLength="120" autoFocus placeholder="Nome da sua empresa" /></label>
       {error && <p className="account-feedback account-error" role="alert">{error}</p>}

@@ -8,7 +8,8 @@ import {
 } from 'lucide-react'
 import LandingPage from './components/landing-page'
 import useDialogAccessibility from './lib/use-dialog-accessibility'
-import { DemoRequest, PlatformAccess, WorkspaceSetup } from './components/account-flows'
+import ProductTour from './components/product-tour'
+import { PlatformAccess, WorkspaceSetup } from './components/account-flows'
 import { supabase } from './lib/supabase'
 
 const navGroups = [
@@ -303,10 +304,16 @@ function App() {
   const [workspaces, setWorkspaces] = useState([])
   const [workspace, setWorkspace] = useState(null)
   const [workspaceLoading, setWorkspaceLoading] = useState(false)
+  const [workspaceTrial, setWorkspaceTrial] = useState(null)
+  const [trialLoading, setTrialLoading] = useState(false)
+  const [trialError, setTrialError] = useState('')
+  const [trialFetchedAt, setTrialFetchedAt] = useState(0)
+  const [trialClock, setTrialClock] = useState(Date.now())
   const [dataLoading, setDataLoading] = useState(false)
   const [view, setView] = useState('inicio')
   const [accessOpen, setAccessOpen] = useState(false)
-  const [demoOpen, setDemoOpen] = useState(false)
+  const [accessInitialMode, setAccessInitialMode] = useState('login')
+  const [tourOpen, setTourOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('Todas')
   const [createOpen, setCreateOpen] = useState(false)
@@ -341,6 +348,8 @@ function App() {
       if (!nextSession) {
         setWorkspace(null)
         setWorkspaces([])
+        setWorkspaceTrial(null)
+        setTrialError('')
         setProposals([])
       }
     })
@@ -351,6 +360,8 @@ function App() {
     if (!session?.user?.id || !supabase) {
       setWorkspaces([])
       setWorkspace(null)
+      setWorkspaceTrial(null)
+      setTrialError('')
       setWorkspaceLoading(false)
       return undefined
     }
@@ -373,7 +384,44 @@ function App() {
 
   useEffect(() => {
     if (!workspace?.id || !supabase) {
+      setWorkspaceTrial(null)
+      setTrialLoading(false)
+      setTrialError('')
+      return undefined
+    }
+    let active = true
+    setWorkspaceTrial(null)
+    setTrialLoading(true)
+    setTrialError('')
+    supabase.rpc('get_workspace_trial', { target_workspace_id: workspace.id }).then(({ data, error }) => {
+      if (!active) return
+      if (error || !data) {
+        setTrialError(error?.message || 'Não foi possível consultar o período de teste.')
+      } else {
+        setWorkspaceTrial(data)
+        setTrialFetchedAt(Date.now())
+        setTrialClock(Date.now())
+      }
+      setTrialLoading(false)
+    })
+    return () => { active = false }
+  }, [workspace?.id])
+
+  useEffect(() => {
+    if (workspaceTrial?.status !== 'trialing') return undefined
+    const updateTrialClock = () => setTrialClock(Date.now())
+    const timer = window.setInterval(updateTrialClock, 15000)
+    window.addEventListener('focus', updateTrialClock)
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener('focus', updateTrialClock)
+    }
+  }, [workspaceTrial?.status])
+
+  useEffect(() => {
+    if (!workspace?.id || !supabase || trialLoading || workspaceTrial?.workspace_id !== workspace.id || trialError || workspaceTrial?.status === 'expired') {
       setProposals([])
+      setDataLoading(false)
       return undefined
     }
     let active = true
@@ -393,7 +441,7 @@ function App() {
         setDataLoading(false)
       })
     return () => { active = false }
-  }, [workspace?.id])
+  }, [workspace?.id, trialLoading, workspaceTrial?.workspace_id, workspaceTrial?.status, trialError])
 
   useEffect(() => {
     if (!publicId || !supabase) { setPublicLoading(false); return undefined }
@@ -417,6 +465,14 @@ function App() {
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [])
+  useEffect(() => {
+    if (!mobileNav) return undefined
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMobileNav(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [mobileNav])
 
   const currentPublicProposal = publicProposal
   const previewScope = clientPreview ? proposalScope(clientPreview) : null
@@ -450,10 +506,16 @@ function App() {
   ].map((stage) => ({ ...stage, value: proposals.filter((proposal) => stage.statuses.includes(proposal.status)).reduce((sum, proposal) => sum + proposal.amount, 0) }))
   const maxPipeline = Math.max(1, ...pipelineStages.map((stage) => stage.value))
   const userName = session?.user?.user_metadata?.full_name?.trim() || session?.user?.email?.split('@')[0] || 'Minha conta'
+  const trialSecondsRemaining = workspaceTrial?.status === 'trialing'
+    ? Math.max(0, Number(workspaceTrial.seconds_remaining || 0) - Math.floor((trialClock - trialFetchedAt) / 1000))
+    : null
+  const trialExpired = workspaceTrial?.status === 'expired' || (workspaceTrial?.status === 'trialing' && trialSecondsRemaining <= 0)
+  const trialDaysRemaining = trialSecondsRemaining === null ? null : Math.ceil(trialSecondsRemaining / 86400)
 
   function notify(message) { setToast(message) }
 
-  function enterWorkspace() {
+  function enterWorkspace(mode = 'login') {
+    setAccessInitialMode(mode === 'signup' ? 'signup' : 'login')
     setAccessOpen(true)
   }
 
@@ -642,12 +704,15 @@ function App() {
   }
 
   if (authLoading) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">FECHAPROPOSTA</span><h1>Conectando sua conta...</h1></section></main>
-  if (!session) return <><LandingPage onEnter={enterWorkspace} onScheduleDemo={() => setDemoOpen(true)} />{accessOpen && <PlatformAccess onClose={() => setAccessOpen(false)} onAuthenticated={setSession} />}{demoOpen && <DemoRequest onClose={() => setDemoOpen(false)} />}{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
+  if (!session) return <><LandingPage onEnter={() => enterWorkspace('login')} onOpenTour={() => setTourOpen(true)} />{accessOpen && <PlatformAccess initialMode={accessInitialMode} onClose={() => setAccessOpen(false)} onAuthenticated={setSession} />}{tourOpen && <ProductTour onClose={() => setTourOpen(false)} onStartTrial={() => { setTourOpen(false); enterWorkspace('signup') }} />}{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
   if (workspaceLoading) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">FECHAPROPOSTA</span><h1>Carregando seu espaço...</h1></section></main>
   if (!workspace) return <><WorkspaceSetup session={session} onCreated={(created) => { setWorkspaces((current) => [...current, created]); setWorkspace(created) }} onSignOut={exitWorkspace} />{toast && <Toast onClose={() => setToast('')}>{toast}</Toast>}</>
+  if (trialError) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">ACESSO AO ESPAÇO</span><h1>Não foi possível confirmar seu período de teste.</h1><p>Atualize a página para tentar novamente. Se continuar, fale com o suporte.</p><button className="btn-primary" onClick={() => window.location.reload()}>Tentar novamente <ArrowRight size={14} /></button><button className="account-mode-toggle" onClick={exitWorkspace}>Sair da conta</button></section></main>
+  if (trialLoading || workspaceTrial?.workspace_id !== workspace.id) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="marketing-eyebrow">FECHAPROPOSTA</span><h1>Conferindo seu acesso...</h1></section></main>
+  if (trialExpired) return <main className="workspace-setup-page"><section className="workspace-setup-card"><span className="workspace-setup-icon"><Clock3 size={21} /></span><span className="marketing-eyebrow">TESTE GRÁTIS ENCERRADO</span><h1>Seu período de 3 dias terminou.</h1><p>O acesso à área de trabalho foi pausado, mas seus dados e links enviados continuam disponíveis para os clientes. A contratação pelo app ainda não está disponível; fale com a equipe FechaProposta para reativar seu acesso.</p><button className="btn-primary" onClick={exitWorkspace}>Sair da plataforma <ArrowRight size={14} /></button></section></main>
   return <div className="app-shell">
     <aside className={'sidebar' + (mobileNav ? ' sidebar-open' : '')}>
-      <div className="sidebar-top"><Brand /><button className="sidebar-close icon-btn" onClick={() => setMobileNav(false)} aria-label="Fechar navegação"><X size={18} /></button></div>
+      <div className="sidebar-top"><Brand /></div>
       <div className="workspace-switch"><span className="workspace-avatar">{initials(workspace?.name)}</span><span><strong>{workspace?.name}</strong><small>Espaço de trabalho</small></span></div>
       {navGroups.map((group) => <div className="nav-group" key={group.title}><span className="nav-caption">{group.title}</span><nav aria-label={group.title}>{group.items.map(({ id, label, icon: Icon, count }) => <button key={id} onClick={() => openNav(id)} className={'nav-link' + (view === id ? ' nav-active' : '')} aria-current={view === id ? 'page' : undefined}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <small>{proposals.length.toString().padStart(2, '0')}</small>}</button>)}</nav></div>)}
       <div className="sidebar-bottom"><div className="sidebar-help"><span><CircleHelp size={16} /></span><div><strong>Precisa de uma mão?</strong><small>Veja como preparar uma proposta.</small><button onClick={() => notify('Dica: comece com um título claro, descreva o resultado e deixe valores e validade visíveis.')}>Acessar guia <ArrowUpRight size={12} /></button></div></div><button className="nav-link settings-link" onClick={() => openNav('configuracoes')}><Settings2 size={17} /><span>Configurações</span></button><button className="nav-link site-link" onClick={exitWorkspace}><ArrowUpRight size={17} /><span>Sair da plataforma</span></button><div className="profile-row"><Avatar name={userName} color="mint" /><span><strong>{userName}</strong><small>Conta ativa</small></span><button className="icon-btn" aria-label="Abrir menu do perfil" onClick={() => openNav('configuracoes')}><Ellipsis size={18} /></button></div></div>
@@ -655,6 +720,7 @@ function App() {
     {mobileNav && <button className="mobile-scrim" aria-label="Fechar navegação" onClick={() => setMobileNav(false)} />}
     <main className="main-area">
       <header className="topbar">{!mobileNav && <button className="mobile-menu icon-btn" aria-label="Abrir navegação" onClick={() => setMobileNav(true)}><Menu size={20} /></button>}<div className="breadcrumbs"><span>{workspace?.name}</span><ChevronRight size={14} /><strong>{navGroups.flatMap((group) => group.items).find((item) => item.id === view)?.label || (view === 'configuracoes' ? 'Configurações' : 'Resultados')}</strong></div><div className="top-actions"><span className="sync-status"><i /> Sincronizado com Supabase</span><span className="top-divider" /><button className="top-icon icon-btn" aria-label="Notificações" onClick={() => setNotificationsOpen((open) => !open)}><Bell size={17} /></button>{notificationsOpen && <div className="notification-pop"><strong>Propostas em acompanhamento</strong><span><Clock3 size={15} /> {openProposals.length} propostas aguardam retorno.</span><button onClick={() => setNotificationsOpen(false)}>Entendi</button></div>}<button className="top-profile" onClick={() => openNav('configuracoes')}><Avatar name={userName} color="mint" small /><span>{userName}</span><ChevronDown size={14} /></button></div></header>
+      {workspaceTrial.status === 'trialing' && !trialExpired && <div className="trial-status-banner" role="status"><Clock3 size={15} /><span>Teste grátis: restam <strong>{trialDaysRemaining} {trialDaysRemaining === 1 ? 'dia' : 'dias'}</strong>. Seu acesso termina em {new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(workspaceTrial.trial_ends_at))}.</span></div>}
       <div className="page-content">
         {view === 'inicio' && <>
           <div className="welcome-row"><div><span className="eyebrow"><span className="eyebrow-dot" /> {todayLabel}</span><h1>{greeting}, {userName.split(' ')[0]} <span className="wave">✳</span></h1><p>Suas boas conversas podem virar bons projetos. Veja o que está acontecendo.</p></div><button className="btn-primary" onClick={() => setCreateOpen(true)}><Plus size={17} /> Nova proposta</button></div>
