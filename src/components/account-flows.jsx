@@ -112,12 +112,17 @@ export function WorkspaceSetup({ session, onCreated, onSignOut }) {
     setError('')
     const name = String(new FormData(event.currentTarget).get('workspace')).trim()
     try {
-      const { data, error: createError } = await requireSupabase()
-        .from('workspaces')
-        .insert({ name, owner_id: session.user.id })
-        .select('*')
-        .single()
+      if (!session?.user?.id) throw new Error('Sua sessão expirou. Entre novamente para criar o espaço.')
+
+      const client = requireSupabase()
+      const { data: authData, error: authError } = await client.auth.getUser()
+      if (authError || !authData.user || authData.user.id !== session.user.id) {
+        throw new Error('Não consegui validar sua sessão com o Supabase. Saia da conta e entre novamente.')
+      }
+
+      const { data, error: createError } = await client.rpc('create_workspace', { target_name: name })
       if (createError) throw createError
+      if (!data?.id) throw new Error('O Supabase não retornou os dados do espaço criado.')
       onCreated(data)
     } catch (cause) {
       setError(cause.message || 'Não foi possível criar o espaço de trabalho.')

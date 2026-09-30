@@ -15,7 +15,7 @@ Copie `.env.example` para `.env.local` e configure a URL e a publishable key do 
 
 Se ainda não aplicou o banco, abra o **SQL Editor** do Supabase e execute `supabase/schema.sql`. Ele cria autenticação por conta, espaços de trabalho, clientes, propostas e itens, com RLS para restringir os dados aos membros do espaço. Também prepara os pedidos de demonstração e os links públicos de proposta.
 
-Se você já executou a versão inicial do schema, aplique apenas `supabase/migrations/20260929000000_platform_access.sql`. Essa migração acrescenta o formulário de demonstração, as operações de gravação das propostas e as funções protegidas para leitura e aceite por link público.
+Se você já executou a versão inicial do schema, aplique `supabase/migrations/20260929000000_platform_access.sql` e `supabase/migrations/20260929010000_workspace_creation_rpc.sql`. A segunda migração cria o espaço de trabalho por uma função que valida a sessão e define o dono no banco.
 
 Ative e configure o provedor de e-mail em **Authentication** no Supabase. Defina a URL do site e inclua os domínios locais e do Vercel na lista de redirect URLs para que a confirmação de cadastro possa voltar à aplicação.
 
