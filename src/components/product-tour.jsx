@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
+import Button from '@mui/material/Button'
+import MuiDialog from '@mui/material/Dialog'
 import {
   Activity, ArrowLeft, ArrowRight, BadgeCheck, Check, CheckCircle2, Clock3,
   FileCheck2, FileText, LayoutDashboard, Link2, ListChecks, Send, Users, WalletCards, X,
 } from 'lucide-react'
-import useDialogAccessibility from '../lib/use-dialog-accessibility'
 
 const steps = [
   {
@@ -53,7 +54,7 @@ function TourPreview({ step }) {
 
   if (step === 'share') return <div className="tour-preview-screen tour-share-layout">
     <div className="tour-client-paper"><div className="tour-paper-brand">fecha<span>.</span></div><small>PROPOSTA COMERCIAL · FP-2026-014</small><h3>Nova identidade visual</h3><p>Uma identidade para comunicar o jeito único do Ateliê Aurora.</p><div className="tour-paper-row"><span>Entregas</span><strong>4 etapas</strong></div><div className="tour-paper-row"><span>Prazo estimado</span><strong>15 dias úteis</strong></div><div className="tour-paper-total"><span>Investimento</span><strong>R$ 2.400</strong></div></div>
-    <div className="tour-share-card"><span><Link2 size={16} /></span><strong>Link pronto para compartilhar</strong><small>O cliente abre a proposta direto no navegador.</small><div>Link público · token protegido</div><button type="button" tabIndex={-1}>Copiar link <Check size={12} /></button></div>
+    <div className="tour-share-card"><span><Link2 size={16} /></span><strong>Link pronto para compartilhar</strong><small>O cliente abre a proposta direto no navegador.</small><div>Link público · token protegido</div><Button type="button" tabIndex={-1}>Copiar link <Check size={12} /></Button></div>
   </div>
 
   if (step === 'tracking') return <div className="tour-preview-screen">
@@ -71,11 +72,6 @@ function TourPreview({ step }) {
 
 export default function ProductTour({ onClose, onStartTrial }) {
   const [stepIndex, setStepIndex] = useState(0)
-  const dialogRef = useRef(null)
-  const closeRef = useRef(onClose)
-  closeRef.current = onClose
-  const closeDialog = useCallback(() => closeRef.current(), [])
-  useDialogAccessibility(dialogRef, closeDialog)
 
   const step = steps[stepIndex]
   const isLastStep = stepIndex === steps.length - 1
@@ -85,17 +81,15 @@ export default function ProductTour({ onClose, onStartTrial }) {
     setStepIndex(Math.max(0, Math.min(steps.length - 1, index)))
   }
 
-  return <div className="account-dialog-backdrop tour-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
-    <section ref={dialogRef} tabIndex={-1} className="guided-tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-description">
+  return <MuiDialog open onClose={onClose} fullWidth maxWidth={false} aria-labelledby="tour-title" aria-describedby="tour-description" classes={{ root: 'tour-backdrop' }} slotProps={{ paper: { component: 'section', className: 'guided-tour' } }}>
       <header className="tour-heading">
         <div><span className="marketing-eyebrow">PASSEIO GUIADO · TESTE GRÁTIS POR 3 DIAS</span><h2 id="tour-title">Veja a plataforma em 2 minutos.</h2></div>
-        <button className="icon-btn" onClick={onClose} aria-label="Fechar passeio"><X size={18} /></button>
+        <Button className="icon-btn" onClick={onClose} aria-label="Fechar passeio"><X size={18} /></Button>
       </header>
-      <div className="tour-progress-row"><span>Etapa {stepIndex + 1} de {steps.length}</span><div className="tour-progress-track" role="progressbar" aria-label="Progresso do passeio" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={stepIndex + 1}><span style={{ width: progress + '%' }} /></div><button className="tour-skip" onClick={onStartTrial}>Pular passeio</button></div>
+      <div className="tour-progress-row"><span>Etapa {stepIndex + 1} de {steps.length}</span><div className="tour-progress-track" role="progressbar" aria-label="Progresso do passeio" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={stepIndex + 1}><span style={{ width: progress + '%' }} /></div><Button className="tour-skip" onClick={onStartTrial}>Pular passeio</Button></div>
       <div className="tour-copy" aria-live="polite"><span>{step.eyebrow}</span><h3>{step.title}</h3><p id="tour-description">{step.description}</p></div>
       <div className="tour-visual" key={step.id}><TourPreview step={step.id} /></div>
-      <footer className="tour-footer"><button className="tour-back" onClick={() => goToStep(stepIndex - 1)} disabled={stepIndex === 0}><ArrowLeft size={15} /> Voltar</button><div className="tour-step-dots" aria-label="Etapas do passeio">{steps.map((item, index) => <button key={item.id} className={index === stepIndex ? 'tour-step-dot tour-step-dot-active' : 'tour-step-dot'} onClick={() => goToStep(index)} aria-label={'Ir para etapa ' + (index + 1) + ': ' + item.eyebrow.split(' · ')[1]} aria-current={index === stepIndex ? 'step' : undefined} />)}</div><button className="marketing-button marketing-button-dark tour-next" onClick={() => isLastStep ? onStartTrial() : goToStep(stepIndex + 1)}>{isLastStep ? 'Criar conta e começar' : 'Próxima etapa'} <ArrowRight size={15} /></button></footer>
+      <footer className="tour-footer"><Button className="tour-back" onClick={() => goToStep(stepIndex - 1)} disabled={stepIndex === 0}><ArrowLeft size={15} /> Voltar</Button><div className="tour-step-dots" aria-label="Etapas do passeio">{steps.map((item, index) => <Button key={item.id} className={index === stepIndex ? 'tour-step-dot tour-step-dot-active' : 'tour-step-dot'} onClick={() => goToStep(index)} aria-label={'Ir para etapa ' + (index + 1) + ': ' + item.eyebrow.split(' · ')[1]} aria-current={index === stepIndex ? 'step' : undefined} />)}</div><Button className="marketing-button marketing-button-dark tour-next" onClick={() => isLastStep ? onStartTrial() : goToStep(stepIndex + 1)}>{isLastStep ? 'Criar conta e começar' : 'Próxima etapa'} <ArrowRight size={15} /></Button></footer>
       <p className="tour-disclosure">Prévia ilustrativa, sem salvar dados. O período começa após criar seu primeiro espaço de trabalho e dura 3 dias.</p>
-    </section>
-  </div>
+  </MuiDialog>
 }

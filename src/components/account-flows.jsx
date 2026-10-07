@@ -1,18 +1,18 @@
-import { useRef, useState } from 'react'
-import { ArrowRight, CheckCircle2, LoaderCircle, LockKeyhole, X } from 'lucide-react'
-import useDialogAccessibility from '../lib/use-dialog-accessibility'
+import { useState } from 'react'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CircularProgress from '@mui/material/CircularProgress'
+import MuiDialog from '@mui/material/Dialog'
+import TextField from '@mui/material/TextField'
+import { ArrowRight, CheckCircle2, LockKeyhole, X } from 'lucide-react'
 import { isSupabaseConfigured, requireSupabase } from '../lib/supabase'
 
 function Dialog({ title, eyebrow, children, onClose, className = '' }) {
-  const dialogRef = useRef(null)
-  useDialogAccessibility(dialogRef, onClose)
-
-  return <div className="account-dialog-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
-    <section ref={dialogRef} tabIndex={-1} className={'account-dialog ' + className} role="dialog" aria-modal="true" aria-labelledby="account-dialog-title">
-      <div className="account-dialog-heading"><div><span className="marketing-eyebrow">{eyebrow}</span><h2 id="account-dialog-title">{title}</h2></div><button className="icon-btn" onClick={onClose} aria-label="Fechar"><X size={18} /></button></div>
+  return <MuiDialog open onClose={onClose} fullWidth maxWidth="xs" aria-labelledby="account-dialog-title" slotProps={{ paper: { component: 'section', className: 'account-dialog ' + className } }}>
+      <div className="account-dialog-heading"><div><span className="marketing-eyebrow">{eyebrow}</span><h2 id="account-dialog-title">{title}</h2></div><Button className="icon-btn" onClick={onClose} aria-label="Fechar"><X size={18} /></Button></div>
       {children}
-    </section>
-  </div>
+  </MuiDialog>
 }
 
 export function PlatformAccess({ onClose, onAuthenticated, initialMode = 'login' }) {
@@ -57,14 +57,14 @@ export function PlatformAccess({ onClose, onAuthenticated, initialMode = 'login'
   return <Dialog title={mode === 'login' ? 'Acesse sua plataforma.' : 'Crie sua conta.'} eyebrow="ACESSAR PLATAFORMA" onClose={onClose}>
     <p className="account-dialog-copy">{mode === 'signup' ? 'Crie sua conta. Seu teste grátis de 3 dias começa quando você criar o primeiro espaço de trabalho.' : 'Entre para ver seus espaços de trabalho ou crie uma conta para começar.'}</p>
     <form className="account-form" onSubmit={submit}>
-      {mode === 'signup' && <label className="account-field"><span>Seu nome</span><input name="name" required autoComplete="name" maxLength="120" placeholder="Como podemos chamar você?" /></label>}
-      <label className="account-field"><span>E-mail</span><input name="email" type="email" required autoComplete="email" maxLength="254" placeholder="voce@empresa.com.br" /></label>
-      <label className="account-field"><span>Senha</span><input name="password" type="password" required minLength="8" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} placeholder="Pelo menos 8 caracteres" /></label>
-      {error && <p className="account-feedback account-error" role="alert">{error}</p>}
-      {notice && <p className="account-feedback account-success" role="status">{notice}</p>}
-      <button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <LoaderCircle size={16} className="account-spinner" /> : <LockKeyhole size={15} />}{mode === 'login' ? 'Entrar' : 'Criar conta'} <ArrowRight size={15} /></button>
+      {mode === 'signup' && <TextField className="account-field" label="Seu nome" name="name" required autoComplete="name" slotProps={{ htmlInput: { maxLength: 120 } }} placeholder="Como podemos chamar você?" size="small" fullWidth />}
+      <TextField className="account-field" label="E-mail" name="email" type="email" required autoComplete="email" slotProps={{ htmlInput: { maxLength: 254 } }} placeholder="voce@empresa.com.br" size="small" fullWidth />
+      <TextField className="account-field" label="Senha" name="password" type="password" required slotProps={{ htmlInput: { minLength: 8 } }} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} placeholder="Pelo menos 8 caracteres" size="small" fullWidth />
+      {error && <Alert className="account-feedback account-error" severity="error" variant="outlined">{error}</Alert>}
+      {notice && <Alert className="account-feedback account-success" severity="success" variant="outlined">{notice}</Alert>}
+      <Button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <CircularProgress size={16} color="inherit" /> : <LockKeyhole size={15} />}{mode === 'login' ? 'Entrar' : 'Criar conta'} <ArrowRight size={15} /></Button>
     </form>
-    <button className="account-mode-toggle" onClick={() => { setMode((value) => value === 'login' ? 'signup' : 'login'); setError(''); setNotice('') }}>{mode === 'login' ? 'Ainda não tem uma conta? Criar conta' : 'Já tem uma conta? Entrar'}</button>
+    <Button className="account-mode-toggle" onClick={() => { setMode((value) => value === 'login' ? 'signup' : 'login'); setError(''); setNotice('') }}>{mode === 'login' ? 'Ainda não tem uma conta? Criar conta' : 'Já tem uma conta? Entrar'}</Button>
   </Dialog>
 }
 
@@ -97,16 +97,16 @@ export function WorkspaceSetup({ session, onCreated, onSignOut }) {
     }
   }
 
-  return <main className="workspace-setup-page"><section className="workspace-setup-card">
+  return <main className="workspace-setup-page"><Card component="section" className="workspace-setup-card">
     <span className="workspace-setup-icon"><CheckCircle2 size={21} /></span>
     <span className="marketing-eyebrow">SEU TESTE GRATUITO</span>
     <h1>Prepare seu espaço para começar.</h1>
     <p>Seu teste de 3 dias começa quando você criar este espaço. Seus clientes e propostas ficam protegidos e só aparecem para pessoas autorizadas.</p>
     <form className="account-form" onSubmit={submit}>
-      <label className="account-field"><span>Nome do espaço de trabalho</span><input name="workspace" required maxLength="120" autoFocus placeholder="Nome da sua empresa" /></label>
-      {error && <p className="account-feedback account-error" role="alert">{error}</p>}
-      <button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <LoaderCircle size={16} className="account-spinner" /> : null} Criar espaço <ArrowRight size={15} /></button>
+      <TextField className="account-field" label="Nome do espaço de trabalho" name="workspace" required slotProps={{ htmlInput: { maxLength: 120 } }} autoFocus placeholder="Nome da sua empresa" size="small" fullWidth />
+      {error && <Alert className="account-feedback account-error" severity="error" variant="outlined">{error}</Alert>}
+      <Button className="marketing-button marketing-button-dark account-submit" type="submit" disabled={busy}>{busy ? <CircularProgress size={16} color="inherit" /> : null} Criar espaço <ArrowRight size={15} /></Button>
     </form>
-    <button className="account-mode-toggle" onClick={onSignOut}>Sair da conta</button>
-  </section></main>
+    <Button className="account-mode-toggle" onClick={onSignOut}>Sair da conta</Button>
+  </Card></main>
 }
