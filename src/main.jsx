@@ -8,6 +8,7 @@ import './index.css'
 import './landing.css'
 import './flows.css'
 import './theme.css'
+import './design-system.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -9,6 +9,8 @@ const colors = {
   muted: '#a5aca9',
   champagne: '#c6ab7a',
   champagneHover: '#d5bd91',
+  lime: '#b7f94d',
+  limeHover: '#c9ff75',
   emerald: '#58a988',
 }
 
@@ -16,7 +18,7 @@ const muiTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: { main: colors.champagne, light: colors.champagneHover, dark: '#9d8155', contrastText: '#20201d' },
-    secondary: { main: colors.emerald, light: '#7bc3a4', dark: '#397d62', contrastText: '#10231b' },
+    secondary: { main: colors.lime, light: colors.limeHover, dark: '#78a62d', contrastText: '#18200d' },
     success: { main: colors.emerald, light: '#7bc3a4', dark: '#397d62' },
     warning: { main: '#d4b46c' },
     info: { main: '#91b2c1' },
@@ -74,7 +76,7 @@ const muiTheme = createTheme({
       styleOverrides: {
         body: { backgroundColor: colors.canvas },
         '::selection': { backgroundColor: 'rgba(198,171,122,.32)' },
-        '*:focus-visible': { outline: '2px solid #c6ab7a', outlineOffset: 3 },
+        '*:focus-visible': { outline: '2px solid #b7f94d', outlineOffset: 3 },
       },
     },
   },

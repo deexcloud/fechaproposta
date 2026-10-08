@@ -1,0 +1,97 @@
+/* FechaProposta design system: loaded last so every product surface shares one dark language. */
+:root{
+  color-scheme:dark;
+  --fp-canvas:#17191a;
+  --fp-surface:#202426;
+  --fp-surface-raised:#282d2f;
+  --fp-surface-hover:#303638;
+  --fp-text:#eeeae2;
+  --fp-text-muted:#a5aca9;
+  --fp-line:#394043;
+  --fp-primary:#c6ab7a;
+  --fp-primary-hover:#d5bd91;
+  --fp-secondary:#b7f94d;
+  --fp-secondary-hover:#c9ff75;
+  --fp-success:#78d99a;
+  --fp-danger:#e59a8e;
+  --fp-radius:12px;
+  --fp-radius-sm:9px;
+  --fp-shadow:0 18px 48px rgba(0,0,0,.3);
+  --ink:var(--fp-text);
+  --muted:var(--fp-text-muted);
+  --line:var(--fp-line);
+  --canvas:var(--fp-canvas);
+  --panel:var(--fp-surface);
+  --accent:var(--fp-primary);
+  --shadow:var(--fp-shadow);
+}
+
+html{background:var(--fp-canvas)}
+body{min-width:320px;background:var(--fp-canvas);color:var(--fp-text)}
+button,input,textarea,select{font:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--fp-secondary)!important;outline-offset:3px}
+::selection{background:rgba(183,249,77,.28);color:var(--fp-text)}
+
+/* Shared layout: one horizontal rhythm from dashboard to marketing pages. */
+.page-content{width:min(1360px,100%);margin:0 auto;padding:40px clamp(24px,3vw,48px) 32px}
+.marketing-header-inner,.marketing-hero-inner{width:min(1240px,calc(100% - 48px))}
+.marketing-section,.marketing-workflow,.marketing-pricing{padding-left:max(24px,calc((100vw - 1240px)/2));padding-right:max(24px,calc((100vw - 1240px)/2))}
+.client-proposal-layout{width:min(1120px,100%)}
+.panel,.stat-card,.client-card,.template-card,.report-card,.report-list,.list-panel,.marketing-feature-card,.marketing-plan-card{border-color:var(--fp-line)!important;background:var(--fp-surface)!important;border-radius:var(--fp-radius)}
+.topbar,.marketing-header{border-color:var(--fp-line)!important;background:rgba(23,25,26,.92)!important}
+.sidebar{border-color:var(--fp-line)!important;background:#1b1f20!important}
+
+/* Color roles: champagne is brand primary; lime is reserved for commitment and progress. */
+.marketing-button-dark,.marketing-button-lime,.account-submit,.tour-next{background:var(--fp-secondary)!important;color:#18200d!important;border-color:transparent!important;box-shadow:0 8px 24px rgba(183,249,77,.13)!important}
+.marketing-button-dark:hover,.marketing-button-lime:hover,.account-submit:hover,.tour-next:hover{background:var(--fp-secondary-hover)!important;color:#18200d!important}
+.btn-primary{background:var(--fp-primary)!important;color:#20201d!important;border-color:transparent!important}
+.btn-primary:hover{background:var(--fp-primary-hover)!important;color:#20201d!important}
+.btn-secondary,.marketing-button-outline,.marketing-button-card{border-color:var(--fp-line)!important;background:var(--fp-surface-raised)!important;color:var(--fp-text)!important}
+.btn-secondary:hover,.marketing-button-outline:hover,.marketing-button-card:hover{border-color:#576061!important;background:var(--fp-surface-hover)!important}
+.nav-link.nav-active{background:rgba(183,249,77,.10)!important;color:var(--fp-secondary)!important}
+.nav-link.nav-active:before,.rate-track span,.tour-progress-track>span{background:var(--fp-secondary)!important}
+.nav-link.nav-active>svg,.marketing-eyebrow,.text-action,.marketing-text-link,.sidebar-help button,.settings-link{color:var(--fp-secondary)!important}
+.sync-status i,.local-mode i{background:var(--fp-secondary)!important;box-shadow:0 0 0 3px rgba(183,249,77,.12)!important}
+.trial-status-banner{border-color:rgba(183,249,77,.32)!important;background:rgba(183,249,77,.08)!important;color:#d9f7b0!important}
+.trial-status-banner svg,.trial-status-banner strong{color:var(--fp-secondary)!important}
+.status-pill.tone-green,.client-decision-card .accepted-panel{border-color:rgba(120,217,154,.35)!important;background:rgba(120,217,154,.10)!important;color:var(--fp-success)!important}
+
+/* Form, table and dialog foundations. */
+.MuiDialog-paper,.modal-card,.account-dialog,.guided-tour,.workspace-setup-card{border-color:var(--fp-line)!important;background:var(--fp-surface)!important;color:var(--fp-text)!important;box-shadow:var(--fp-shadow)!important}
+.MuiOutlinedInput-root,.field .MuiOutlinedInput-root,.account-dialog .MuiOutlinedInput-root,.workspace-setup-card .MuiOutlinedInput-root{background:#191d1e!important}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline{border-color:var(--fp-secondary)!important}
+.MuiInputLabel-root.Mui-focused{color:var(--fp-secondary)!important}
+.MuiMenu-paper,.MuiPopover-paper{border-color:var(--fp-line)!important;background:var(--fp-surface-raised)!important;color:var(--fp-text)!important}
+.MuiMenuItem-root.Mui-selected,.MuiMenuItem-root:hover{background:rgba(183,249,77,.10)!important;color:var(--fp-secondary)!important}
+.proposal-row:hover,.proposal-table .MuiTableBody-root .MuiTableRow-root:hover{background:var(--fp-surface-raised)!important}
+.search-field,.workspace-switch{border-color:var(--fp-line)!important;background:#191d1e!important}
+.sort-control{white-space:nowrap}
+.modal-heading,.modal-footer{border-color:var(--fp-line)!important;background:var(--fp-surface-raised)!important}
+.field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline{border-color:var(--fp-secondary)!important}
+.consent-check .MuiCheckbox-root.Mui-checked{color:var(--fp-secondary)!important}
+
+/* Product document remains editorial and calm. */
+.client-document,.client-decision-card,.preview-document,.not-found{border-color:var(--fp-line)!important;background:var(--fp-surface)!important}
+.client-objective,.client-conditions,.client-next-step{border-color:var(--fp-line)!important;background:var(--fp-surface-raised)!important}
+.client-section-kicker,.client-next-icon,.client-section-icon,.money-icon,.terms-icon{color:var(--fp-secondary)!important}
+.client-scope li>span{background:rgba(183,249,77,.12)!important;color:var(--fp-secondary)!important}
+.client-summary-card{display:grid!important;align-content:start;gap:8px;text-align:left}
+.client-card-metrics{display:flex;flex-wrap:wrap;gap:8px;margin-top:3px}
+.client-card-metrics span{padding:5px 7px;border:1px solid var(--fp-line);border-radius:7px;background:var(--fp-surface-raised);color:var(--fp-text-muted);font-size:9px}
+.client-card-metrics b{display:block;color:var(--fp-text);font-size:10px}
+.report-empty{display:flex;align-items:center;gap:10px;padding:22px 0;color:var(--fp-text-muted);font-size:10px}
+.report-empty>svg{color:var(--fp-secondary)}
+.report-empty span{display:grid;gap:3px}
+.report-empty strong{color:var(--fp-text);font-size:11px}
+.report-empty small{color:var(--fp-text-muted);font-size:9px}
+.settings-account{border-color:rgba(183,249,77,.24)!important;background:rgba(183,249,77,.08)!important;color:var(--fp-secondary)!important}
+
+@media (max-width:760px){
+  .page-content{padding:24px 16px 24px}
+  .marketing-header-inner,.marketing-hero-inner{width:calc(100% - 32px)}
+  .marketing-section,.marketing-workflow,.marketing-pricing{padding-left:18px;padding-right:18px}
+  .page-title-row,.welcome-row{align-items:flex-start}
+  .page-title-row>.btn-primary,.welcome-row>.btn-primary{flex:0 0 auto}
+  .list-tools{flex-wrap:wrap}
+  .list-tools .search-field{min-width:min(100%,260px);flex:1 1 100%}
+}
