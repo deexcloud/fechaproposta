@@ -4,7 +4,7 @@ import Checkbox from '@mui/material/Checkbox'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiDialog from '@mui/material/Dialog'
 import TextField from '@mui/material/TextField'
-import { ArrowRight, Check, ChevronRight, Clock3, Copy, Download, FileCheck2, Mail, Plus, ShieldCheck, X } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronRight, Clock3, Copy, Download, FileCheck2, Mail, Plus, Send, ShieldCheck, WalletCards, X } from 'lucide-react'
 import { longDate, money, proposalScope, shortDate } from '../lib/proposal-domain'
 import { Avatar, Modal, Status } from './common-ui'
 

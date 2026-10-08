@@ -9,7 +9,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { ChevronRight, FileText, Plus, X } from 'lucide-react'
-import { money, shortDate, statusTone } from '../lib/proposal-domain'
+import { initials, money, shortDate, statusTone } from '../lib/proposal-domain'
 
 export function Brand() {
   return <div className="brand-lockup" aria-label="FechaProposta"><span className="brand-symbol"><i /><i /><i /><i /></span><span>fecha<span className="brand-dot">.</span></span></div>
