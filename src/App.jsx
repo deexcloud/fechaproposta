@@ -6,7 +6,7 @@ import Popover from '@mui/material/Popover'
 import {
   Activity, ArrowRight, ArrowUpRight, Bell, CheckCircle2, ChevronDown, ChevronRight,
   CircleHelp, Clock3, Ellipsis, FileCheck2, FileText, LayoutDashboard, LifeBuoy,
-  Menu, Plus, Settings2, ShieldCheck, Users, WalletCards,
+  Menu, Plus, Settings2, ShieldCheck, Users, WalletCards, X,
 } from 'lucide-react'
 import LandingPage from './components/landing-page'
 import ProductTour from './components/product-tour'
@@ -310,7 +310,7 @@ function App() {
       target_items: data.items.map((item, position) => ({ position, name: item.name, quantity: item.qty, unit_price: item.price })),
     })
     if (error) {
-      notify('Não foi possível salvar a proposta no Supabase: ' + error.message)
+      notify('Não foi possível salvar a proposta: ' + error.message)
       return
     }
     const { data: row, error: loadError } = await supabase.from('proposals')
@@ -328,7 +328,7 @@ function App() {
     setEditing(null)
     setView('propostas')
     if (savedProposal.status === 'Pronta para envio') setSelected(savedProposal)
-    notify(original ? 'Alterações salvas no Supabase.' : 'Proposta salva no Supabase.')
+    notify(original ? 'Alterações salvas.' : 'Proposta salva.')
   }
 
   async function persistProposalChanges(id, changes) {
@@ -346,7 +346,7 @@ function App() {
     }
     const { error } = await supabase.from('proposals').update(patch).eq('workspace_id', workspace.id).eq('id', original.dbId)
     if (error) {
-      notify('Não foi possível salvar esta alteração no Supabase: ' + error.message)
+      notify('Não foi possível salvar esta alteração: ' + error.message)
       return null
     }
     const updated = { ...original, ...changes }
@@ -384,7 +384,7 @@ function App() {
     const updated = await persistProposalChanges(proposal.id, { status: 'Enviada' })
     if (updated) {
       setSelected(null)
-      notify('Status atualizado no Supabase. O envio real depende do seu aplicativo de e-mail.')
+      notify('Status atualizado. O envio real depende do seu aplicativo de e-mail.')
     }
   }
 
@@ -452,7 +452,7 @@ function App() {
     setSigning(null)
     setClientPreview(null)
     setSelected(null)
-    notify('Aceite registrado no Supabase.')
+    notify('Aceite registrado.')
   }
 
   function openNav(id) { setView(id); setMobileNav(false); setQuery(''); setFilter('Todas'); setSort('recentes') }
@@ -479,7 +479,7 @@ function App() {
     </aside>
     {mobileNav && <Button className="mobile-scrim" aria-label="Fechar navegação" onClick={() => setMobileNav(false)} />}
     <main className="main-area">
-      <header className="topbar">{!mobileNav && <Button className="mobile-menu icon-btn" aria-label="Abrir navegação" onClick={() => setMobileNav(true)}><Menu size={20} /></Button>}<div className="breadcrumbs"><span>{workspace?.name}</span><ChevronRight size={14} /><strong>{navGroups.flatMap((group) => group.items).find((item) => item.id === view)?.label || (view === 'configuracoes' ? 'Configurações' : 'Resultados')}</strong></div><div className="top-actions"><span className="sync-status"><i /> Sincronizado com Supabase</span><span className="top-divider" /><Button className="top-icon icon-btn" aria-label="Notificações" onClick={(event) => setNotificationsAnchor(event.currentTarget)}><Bell size={17} /></Button><Popover open={Boolean(notificationsAnchor)} anchorEl={notificationsAnchor} onClose={() => setNotificationsAnchor(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }} slotProps={{ paper: { className: 'notification-pop' } }}><div className="notification-content"><strong>Propostas em acompanhamento</strong><span><Clock3 size={15} /> {openProposals.length} propostas aguardam retorno.</span><Button onClick={() => setNotificationsAnchor(null)}>Entendi</Button></div></Popover><Button className="top-profile" onClick={() => openNav('configuracoes')}><Avatar name={userName} color="mint" small /><span>{userName}</span><ChevronDown size={14} /></Button></div></header>
+      <header className="topbar"><Button className="mobile-menu icon-btn" aria-label={mobileNav ? 'Fechar navegação' : 'Abrir navegação'} aria-expanded={mobileNav} onClick={() => setMobileNav((open) => !open)}>{mobileNav ? <X size={20} /> : <Menu size={20} />}</Button><div className="breadcrumbs"><span>{workspace?.name}</span><ChevronRight size={14} /><strong>{navGroups.flatMap((group) => group.items).find((item) => item.id === view)?.label || (view === 'configuracoes' ? 'Configurações' : 'Resultados')}</strong></div><div className="top-actions"><span className="sync-status"><i /> Dados sincronizados</span><span className="top-divider" /><Button className="top-icon icon-btn" aria-label="Notificações" onClick={(event) => setNotificationsAnchor(event.currentTarget)}><Bell size={17} /></Button><Popover open={Boolean(notificationsAnchor)} anchorEl={notificationsAnchor} onClose={() => setNotificationsAnchor(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }} slotProps={{ paper: { className: 'notification-pop' } }}><div className="notification-content"><strong>Propostas em acompanhamento</strong><span><Clock3 size={15} /> {openProposals.length} propostas aguardam retorno.</span><Button onClick={() => setNotificationsAnchor(null)}>Entendi</Button></div></Popover><Button className="top-profile" onClick={() => openNav('configuracoes')}><Avatar name={userName} color="mint" small /><span>{userName}</span><ChevronDown size={14} /></Button></div></header>
       {workspaceTrial.status === 'trialing' && !trialExpired && <div className="trial-status-banner" role="status"><Clock3 size={15} /><span>Teste grátis: restam <strong>{trialDaysRemaining} {trialDaysRemaining === 1 ? 'dia' : 'dias'}</strong>. Seu acesso termina em {new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(workspaceTrial.trial_ends_at))}.</span></div>}
       <div className="page-content">
         {view === 'inicio' && <DashboardView todayLabel={todayLabel} greeting={greeting} userName={userName} pendingValue={pendingValue} openProposals={openProposals} acceptedValue={acceptedValue} accepted={accepted} acceptanceRate={acceptanceRate} upcomingCount={upcomingCount} dataLoading={dataLoading} proposals={proposals} ProposalTable={ProposalTable} setSelected={setSelected} setCreateOpen={setCreateOpen} openNav={openNav} pipelineStages={pipelineStages} maxPipeline={maxPipeline} notify={notify} />}
@@ -488,7 +488,7 @@ function App() {
         {view === 'modelos' && <ModelsView setCreateOpen={setCreateOpen} />}
         {view === 'resultados' && <ResultsView proposals={proposals} accepted={accepted} acceptanceRate={acceptanceRate} pendingValue={pendingValue} openProposals={openProposals} money={money} printReport={printReport} openNav={openNav} setSelected={setSelected} Avatar={Avatar} Status={Status} />}
         {view === 'configuracoes' && <SettingsView workspace={workspace} email={session?.user?.email} exitWorkspace={exitWorkspace} />}
-        <footer className="app-footer"><span>FechaProposta <i>·</i> propostas com próximo passo</span><span><ShieldCheck size={13} /> Dados da conta sincronizados com Supabase</span></footer>
+        <footer className="app-footer"><span>FechaProposta <i>·</i> propostas com próximo passo</span><span><ShieldCheck size={13} /> Dados da conta protegidos</span></footer>
       </div>
     </main>
     {createOpen && <ProposalForm existing={editing} onClose={() => { setCreateOpen(false); setEditing(null) }} onSave={createProposal} />}
