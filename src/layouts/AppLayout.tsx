@@ -87,7 +87,7 @@ function OrgAvatar({ size = 34 }: { size?: number }) {
       src={logo ?? undefined}
       variant="rounded"
       alt={organization.name}
-      sx={{ width: size, height: size, borderRadius: '9px', bgcolor: organization.brand_color ?? tokens.ink, color: '#fff', fontWeight: 700, fontSize: size * 0.42, '& img': { objectFit: 'contain', bgcolor: '#fff' } }}
+      sx={{ width: size, height: size, borderRadius: '9px', bgcolor: organization.brand_color ?? tokens.primary, color: '#fff', fontWeight: 700, fontSize: size * 0.42, '& img': { objectFit: 'contain', bgcolor: '#fff' } }}
     >
       {organization.name.charAt(0).toUpperCase()}
     </Avatar>
@@ -261,7 +261,7 @@ export function AppLayout() {
           <Stack
             direction="row"
             className="no-print"
-            sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', justifyContent: 'space-between', px: 2, height: 56, position: 'sticky', top: 0, zIndex: 10, bgcolor: 'rgba(246,246,242,.9)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}` }}
+            sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', justifyContent: 'space-between', px: 2, height: 56, position: 'sticky', top: 0, zIndex: 10, bgcolor: 'rgba(248,245,238,.9)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}` }}
           >
             <RouterLink to="/painel" aria-label="Início"><BrandMark size="small" /></RouterLink>
             <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
@@ -296,7 +296,7 @@ export function AppLayout() {
               value="nova"
               aria-label="Nova proposta"
               onClick={() => navigate('/painel/propostas/nova')}
-              icon={<Box sx={{ width: 40, height: 40, mt: -1.25, borderRadius: '12px', bgcolor: tokens.ink, color: tokens.lime, display: 'grid', placeItems: 'center', boxShadow: shadows.md }}><Plus size={22} /></Box>}
+              icon={<Box sx={{ width: 40, height: 40, mt: -1.25, borderRadius: '12px', bgcolor: tokens.primary, color: '#fff', display: 'grid', placeItems: 'center', boxShadow: shadows.md }}><Plus size={22} /></Box>}
             />
             <BottomNavigationAction label="Clientes" value="/painel/clientes" icon={<Users size={20} />} component={RouterLink} to="/painel/clientes" />
             <BottomNavigationAction label="Mais" value="mais" icon={<MenuIcon size={20} />} onClick={() => setMoreOpen(true)} />

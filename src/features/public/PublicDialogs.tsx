@@ -23,12 +23,12 @@ import { friendlyError } from '@/lib/errors';
 import { money } from '@/lib/format';
 import { acceptProposal, declineProposal, requestChanges } from '@/services/publicProposal';
 import { SignaturePad, type SignaturePadHandle } from './SignaturePad';
-import { displayFont, tokens } from '@/theme/tokens';
+import { signatureFont, tokens } from '@/theme/tokens';
 
-interface Brand {
-  bg: string;
-  fg: string;
-}
+import type { Brand } from './Decision';
+
+/** No exemplo da página de vendas, os diálogos funcionam sem gravar nada. */
+const fakeDelay = () => new Promise<void>((r) => setTimeout(r, 600));
 
 function Header({ title, onClose }: { title: string; onClose: () => void }) {
   return (
@@ -55,6 +55,7 @@ export function AcceptDialog({
   orgName,
   brand,
   onDone,
+  demo,
 }: {
   open: boolean;
   onClose: () => void;
@@ -65,7 +66,8 @@ export function AcceptDialog({
   defaultName: string;
   orgName: string;
   brand: Brand;
-  onDone: () => void;
+  onDone: (signerName: string) => void;
+  demo?: boolean;
 }) {
   const fullScreen = useFullScreen();
   const pad = useRef<SignaturePadHandle>(null);
@@ -85,8 +87,9 @@ export function AcceptDialog({
     if (mode === 'drawn' && !signature) return setError('Desenhe sua assinatura.');
     setSaving(true);
     try {
-      await acceptProposal(token, { name: name.trim(), email: email.trim() || null, mode, signature, selectedItems });
-      onDone();
+      if (demo) await fakeDelay();
+      else await acceptProposal(token, { name: name.trim(), email: email.trim() || null, mode, signature, selectedItems });
+      onDone(name.trim());
     } catch (e) {
       setError(friendlyError(e, 'Não foi possível registrar o aceite. Tente novamente.'));
     } finally {
@@ -115,7 +118,7 @@ export function AcceptDialog({
               <SignaturePad ref={pad} onChange={setHasInk} />
             ) : (
               <Box sx={{ borderRadius: '12px', border: `1px dashed ${tokens.borderStrong}`, bgcolor: '#fff', height: 120, display: 'grid', placeItems: 'center', px: 2 }}>
-                <Typography sx={{ fontFamily: displayFont, fontStyle: 'italic', fontSize: 40, color: name.trim() ? tokens.ink : tokens.textTertiary }} noWrap>
+                <Typography sx={{ fontFamily: signatureFont, fontStyle: 'italic', fontSize: 40, color: name.trim() ? tokens.ink : tokens.textTertiary }} noWrap>
                   {name.trim() || 'Seu nome'}
                 </Typography>
               </Box>
@@ -134,7 +137,7 @@ export function AcceptDialog({
             onClick={submit}
             sx={{ bgcolor: brand.bg, color: brand.fg, minHeight: 52, fontSize: 16, '&:hover': { bgcolor: brand.bg, filter: 'brightness(0.92)' } }}
           >
-            Aceitar e assinar
+            Aceitar e assinar · {money(total)}
           </Button>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 0.75, alignItems: 'flex-start' }}>
             <Lock size={13} style={{ marginTop: 2, flexShrink: 0 }} />
@@ -146,7 +149,7 @@ export function AcceptDialog({
   );
 }
 
-export function ChangesDialog({ open, onClose, token, defaultName, orgName, onDone }: { open: boolean; onClose: () => void; token: string; defaultName: string; orgName: string; onDone: () => void }) {
+export function ChangesDialog({ open, onClose, token, defaultName, orgName, onDone, demo }: { open: boolean; onClose: () => void; token: string; defaultName: string; orgName: string; onDone: () => void; demo?: boolean }) {
   const fullScreen = useFullScreen();
   const [name, setName] = useState(defaultName);
   const [message, setMessage] = useState('');
@@ -158,7 +161,8 @@ export function ChangesDialog({ open, onClose, token, defaultName, orgName, onDo
     setSaving(true);
     setError(null);
     try {
-      await requestChanges(token, name.trim(), message.trim());
+      if (demo) await fakeDelay();
+      else await requestChanges(token, name.trim(), message.trim());
       onDone();
     } catch (e) {
       setError(friendlyError(e));
@@ -192,7 +196,7 @@ export function ChangesDialog({ open, onClose, token, defaultName, orgName, onDo
   );
 }
 
-export function DeclineDialog({ open, onClose, token, defaultName, onDone }: { open: boolean; onClose: () => void; token: string; defaultName: string; onDone: () => void }) {
+export function DeclineDialog({ open, onClose, token, defaultName, onDone, demo }: { open: boolean; onClose: () => void; token: string; defaultName: string; onDone: () => void; demo?: boolean }) {
   const fullScreen = useFullScreen();
   const [name, setName] = useState(defaultName);
   const [reason, setReason] = useState('');
@@ -204,7 +208,8 @@ export function DeclineDialog({ open, onClose, token, defaultName, onDone }: { o
     setSaving(true);
     setError(null);
     try {
-      await declineProposal(token, name.trim(), reason.trim() || null);
+      if (demo) await fakeDelay();
+      else await declineProposal(token, name.trim(), reason.trim() || null);
       onDone();
     } catch (e) {
       setError(friendlyError(e));

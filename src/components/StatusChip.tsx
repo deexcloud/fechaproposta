@@ -5,15 +5,15 @@ import { tokens } from '@/theme/tokens';
 
 export const TONE_COLORS: Record<Tone, { fg: string; bg: string; dot: string }> = {
   neutral: { fg: tokens.textSecondary, bg: tokens.muted, dot: tokens.textTertiary },
-  info: { fg: '#1F55C4', bg: tokens.infoSoft, dot: tokens.info },
-  warning: { fg: '#8A5A12', bg: tokens.warningSoft, dot: tokens.warning },
-  violet: { fg: '#5B40B8', bg: tokens.violetSoft, dot: tokens.violet },
-  success: { fg: '#1F6E44', bg: tokens.successSoft, dot: tokens.success },
-  error: { fg: '#9E2F29', bg: tokens.errorSoft, dot: tokens.error },
+  info: { fg: '#1D4ED8', bg: tokens.infoSoft, dot: tokens.info },
+  warning: { fg: '#B45309', bg: tokens.warningSoft, dot: tokens.warning },
+  violet: { fg: tokens.accentText, bg: tokens.accentSoft, dot: tokens.primary },
+  success: { fg: '#15803D', bg: tokens.successSoft, dot: tokens.success },
+  error: { fg: '#B91C1C', bg: tokens.errorSoft, dot: tokens.error },
   muted: { fg: tokens.textTertiary, bg: tokens.muted, dot: tokens.borderStrong },
 };
 
-/** Etiqueta de status com bolinha de cor (cor nunca é a única pista: sempre tem o texto). */
+/** Etiqueta de status: contorno neutro e só a bolinha colorida (cor nunca é a única pista). */
 export function StatusChip({ status, size = 'medium' }: { status: EffectiveStatus; size?: 'small' | 'medium' }) {
   const meta = STATUS_META[status];
   const c = TONE_COLORS[meta.tone];
@@ -27,9 +27,10 @@ export function StatusChip({ status, size = 'medium' }: { status: EffectiveStatu
         gap: 0.75,
         height: size === 'small' ? 22 : 26,
         px: size === 'small' ? 1 : 1.25,
-        borderRadius: '999px',
-        bgcolor: c.bg,
-        color: c.fg,
+        borderRadius: '6px',
+        border: `1px solid ${tokens.border}`,
+        bgcolor: tokens.surface,
+        color: tokens.textPrimary,
         fontSize: size === 'small' ? 11.5 : 12.5,
         fontWeight: 600,
         whiteSpace: 'nowrap',

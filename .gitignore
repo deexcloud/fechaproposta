@@ -12,3 +12,6 @@ coverage
 
 # Arquivos únicos gerados para colar no painel do Supabase
 supabase/.painel/
+
+# Capturas de tela para revisão
+fotos/

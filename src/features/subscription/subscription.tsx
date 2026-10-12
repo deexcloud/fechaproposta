@@ -158,7 +158,7 @@ export function TrialCard() {
   if (!s || !s.inTrial) return null;
   const progress = Math.min(100, Math.max(4, ((TRIAL_DAYS - s.trialDaysLeft) / TRIAL_DAYS) * 100));
   return (
-    <Box sx={{ p: 1.75, borderRadius: '12px', bgcolor: tokens.limeSoft, border: `1px solid ${tokens.border}` }}>
+    <Box sx={{ p: 1.75, borderRadius: '12px', bgcolor: tokens.accentSoft, border: `1px solid ${tokens.border}` }}>
       <Typography sx={{ fontWeight: 650, fontSize: 13 }}>
         Teste grátis: {s.trialDaysLeft} {s.trialDaysLeft === 1 ? 'dia' : 'dias'}
       </Typography>

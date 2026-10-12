@@ -23,7 +23,7 @@ function TemplateCard({ template, onDelete }: { template: ProposalTemplate; onDe
   return (
     <Card sx={{ p: 2.25, display: 'flex', flexDirection: 'column', minHeight: 190 }}>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Box sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: tokens.limeSoft, color: tokens.limeText, display: 'grid', placeItems: 'center' }}>
+        <Box sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: tokens.accentSoft, color: tokens.accentText, display: 'grid', placeItems: 'center' }}>
           <LayoutTemplate size={18} />
         </Box>
         <IconButton size="small" aria-label={`Opções do modelo ${template.name}`} onClick={(e) => setMenu(e.currentTarget)}><MoreHorizontal size={18} /></IconButton>
@@ -115,7 +115,7 @@ export function TemplatesPage() {
           {presets.length > 0 && (
             <>
               <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.5 }}>
-                <Sparkles size={16} color={tokens.limeText} />
+                <Sparkles size={16} color={tokens.accentText} />
                 <Typography variant="h3" component="h2">{templates.data?.length ? 'Mais ideias para começar' : 'Comece com um modelo pronto'}</Typography>
               </Stack>
               <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' } }}>

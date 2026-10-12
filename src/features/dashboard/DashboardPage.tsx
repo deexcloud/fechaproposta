@@ -63,34 +63,34 @@ function GettingStarted({ proposals }: { proposals: ProposalListItem[] }) {
   };
 
   return (
-    <Card sx={{ p: 2.5, mb: 3, bgcolor: tokens.ink, color: '#fff', borderColor: tokens.ink, position: 'relative', overflow: 'hidden' }}>
-      <Box aria-hidden sx={{ position: 'absolute', right: -60, top: -80, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(197,235,79,.25), transparent)' }} />
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative' }}>
+    <Card sx={{ p: 2.5, mb: 3 }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>
           <Typography variant="h3" component="h2">Primeiros passos</Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,.7)', mt: 0.25 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             {doneCount} de {steps.length} feitos. Em poucos minutos você envia a primeira proposta.
           </Typography>
         </Box>
-        <IconButton aria-label="Esconder primeiros passos" onClick={dismiss} size="small" sx={{ color: 'rgba(255,255,255,.6)', '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,.08)' } }}>
+        <IconButton aria-label="Esconder primeiros passos" onClick={dismiss} size="small">
           <X size={16} />
         </IconButton>
       </Stack>
-      <Box sx={{ mt: 2, display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(5, 1fr)' }, position: 'relative' }}>
+      <Bar value={doneCount} max={steps.length} />
+      <Box sx={{ mt: 2, display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(5, 1fr)' } }}>
         {steps.map((s) => (
           <Box
             key={s.label}
             component={s.done || !s.to ? 'div' : RouterLink}
             to={s.to}
             sx={{
-              display: 'flex', alignItems: 'center', gap: 1, p: 1.25, borderRadius: '10px', textDecoration: 'none', color: 'inherit',
-              bgcolor: s.done ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.1)',
-              border: '1px solid rgba(255,255,255,.08)',
-              '&:hover': s.done ? undefined : { bgcolor: 'rgba(255,255,255,.16)' },
+              display: 'flex', alignItems: 'center', gap: 1, p: 1.25, borderRadius: '8px', textDecoration: 'none', color: 'inherit',
+              border: `1px solid ${tokens.border}`,
+              bgcolor: s.done ? tokens.subtle : tokens.surface,
+              '&:hover': s.done ? undefined : { borderColor: tokens.primary },
             }}
           >
-            <Checkbox checked={s.done} disabled tabIndex={-1} size="small" sx={{ p: 0, color: 'rgba(255,255,255,.4) !important', '&.Mui-checked': { color: `${tokens.lime} !important` } }} />
-            <Typography variant="body2" sx={{ fontWeight: 550, textDecoration: s.done ? 'line-through' : 'none', opacity: s.done ? 0.6 : 1 }}>{s.label}</Typography>
+            <Checkbox checked={s.done} disabled tabIndex={-1} size="small" sx={{ p: 0, '&.Mui-checked': { color: `${tokens.primary} !important` } }} />
+            <Typography variant="body2" sx={{ fontWeight: 550, textDecoration: s.done ? 'line-through' : 'none', color: s.done ? tokens.textTertiary : tokens.textPrimary }}>{s.label}</Typography>
           </Box>
         ))}
       </Box>
@@ -206,7 +206,8 @@ export function DashboardPage() {
           <SectionCard title="Funil" description="Valor em cada etapa.">
             <Stack spacing={1.75}>
               {FUNNEL.map((s) => {
-                const tone = TONE_COLORS[STATUS_META[s].tone];
+                // Uma cor só: aceitas em violeta, as demais etapas em cinza.
+                const color = s === 'accepted' ? tokens.primary : tokens.borderStrong;
                 return (
                   <Box key={s} component={RouterLink} to={`/painel/propostas?status=${s}`} sx={{ textDecoration: 'none', color: 'inherit', '&:hover .l': { textDecoration: 'underline' } }}>
                     <Stack direction="row" sx={{ justifyContent: 'space-between', mb: 0.6 }}>
@@ -215,7 +216,7 @@ export function DashboardPage() {
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, fontFeatureSettings: '"tnum"' }}>{moneyShort(stats.byStatus[s].value)}</Typography>
                     </Stack>
-                    <Bar value={stats.byStatus[s].value} max={funnelMax} color={tone.dot} />
+                    <Bar value={stats.byStatus[s].value} max={funnelMax} color={color} />
                   </Box>
                 );
               })}

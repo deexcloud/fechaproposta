@@ -25,7 +25,7 @@ function Section({ n, title, hint, children }: { n: number; title: string; hint?
   return (
     <Card sx={{ p: { xs: 2, sm: 2.5 } }}>
       <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', mb: 2 }}>
-        <Box sx={{ width: 24, height: 24, borderRadius: '7px', bgcolor: tokens.ink, color: tokens.lime, fontSize: 12, fontWeight: 700, display: 'grid', placeItems: 'center' }}>{n}</Box>
+        <Box sx={{ width: 24, height: 24, borderRadius: '7px', bgcolor: tokens.accentSoft, color: tokens.accentText, fontSize: 12, fontWeight: 700, display: 'grid', placeItems: 'center' }}>{n}</Box>
         <Box>
           <Typography variant="h3" component="h2">{title}</Typography>
           {hint && <Typography variant="caption" color="text.secondary">{hint}</Typography>}
@@ -221,7 +221,7 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
           sx={{
             position: 'sticky', top: { xs: 0, md: 0 }, zIndex: 15, alignItems: 'center',
             mx: { xs: -2, sm: -3, lg: -5 }, px: { xs: 1, sm: 3, lg: 5 }, py: 1.25, mb: 2.5, mt: { xs: -2.5, md: -4 },
-            bgcolor: 'rgba(246,246,242,.92)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}`,
+            bgcolor: 'rgba(248,245,238,.92)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}`,
           }}
         >
           <IconButton component={RouterLink} to={back} aria-label="Voltar"><ArrowLeft size={19} /></IconButton>
@@ -258,7 +258,7 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
         <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) minmax(0, 1fr)' }, alignItems: 'start' }}>
           <Stack spacing={2} sx={{ display: { xs: view === 'form' ? 'flex' : 'none', lg: 'flex' } }}>
             {showTemplatePicker && (
-              <Card sx={{ p: 2, bgcolor: tokens.limeSoft, borderColor: 'transparent' }}>
+              <Card sx={{ p: 2, bgcolor: tokens.accentSoft, borderColor: 'transparent' }}>
                 <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1 }}>
                   <LayoutTemplate size={16} />
                   <Typography variant="body2" sx={{ fontWeight: 650 }}>Começar de um modelo</Typography>

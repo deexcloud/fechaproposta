@@ -33,7 +33,7 @@ export function BrandColorPicker({ value, onChange }: { value: string | null; on
           <Box
             component="input"
             type="color"
-            value={/^#[0-9a-f]{6}$/i.test(custom) ? custom : '#121915'}
+            value={/^#[0-9a-f]{6}$/i.test(custom) ? custom : '#0F2A22'}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setCustom(e.target.value.toUpperCase());
               onChange(e.target.value.toUpperCase());
@@ -52,7 +52,7 @@ export function BrandColorPicker({ value, onChange }: { value: string | null; on
           setCustom(v);
           if (/^#[0-9a-f]{6}$/i.test(v)) onChange(v.toUpperCase());
         }}
-        placeholder="#121915"
+        placeholder="#0F2A22"
         sx={{ mt: 1.5, maxWidth: 160 }}
       />
     </Box>

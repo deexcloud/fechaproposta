@@ -18,15 +18,15 @@ export function contrastRatio(a: string, b: string): number {
 }
 
 /** Texto preto ou branco, o que tiver mais contraste sobre a cor. */
-export function textOn(hex: string): '#FFFFFF' | '#121915' {
-  return contrastRatio(hex, '#FFFFFF') >= contrastRatio(hex, '#121915') ? '#FFFFFF' : '#121915';
+export function textOn(hex: string): '#FFFFFF' | '#0F2A22' {
+  return contrastRatio(hex, '#FFFFFF') >= contrastRatio(hex, '#0F2A22') ? '#FFFFFF' : '#0F2A22';
 }
 
 /**
  * Cor de destaque para usar como texto/linha sobre fundo branco.
  * Cores muito claras (amarelo, por exemplo) são escurecidas até ficarem legíveis.
  */
-export function accentOnWhite(hex: string | null | undefined, fallback = '#121915'): string {
+export function accentOnWhite(hex: string | null | undefined, fallback = '#0F2A22'): string {
   if (!hex || !HEX.test(hex)) return fallback;
   let n = parseInt(hex.slice(1), 16);
   let r = (n >> 16) & 255;
@@ -54,4 +54,4 @@ export function tint(hex: string | null | undefined, amount = 0.9, fallback = '#
   return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`.toUpperCase();
 }
 
-export const BRAND_SWATCHES = ['#121915', '#1F4E3D', '#2F6FEB', '#7357D1', '#C2413A', '#E07A1F', '#0E7C86', '#B58A2C'];
+export const BRAND_SWATCHES = ['#6243F0', '#18181B', '#A24B2A', '#2F6FEB', '#C2413A', '#E07A1F', '#0E7C86', '#B58A2C'];

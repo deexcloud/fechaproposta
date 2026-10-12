@@ -22,8 +22,8 @@ const globalCss = {
 export const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: { main: tokens.ink, dark: tokens.inkHover, light: '#3A463F', contrastText: tokens.onInk },
-    secondary: { main: tokens.limeText, contrastText: '#fff' },
+    primary: { main: tokens.primary, dark: tokens.primaryHover, light: '#8B74F5', contrastText: tokens.onPrimary },
+    secondary: { main: tokens.ink, contrastText: tokens.onInk },
     success: { main: tokens.success, contrastText: '#fff' },
     warning: { main: tokens.warning, contrastText: '#fff' },
     error: { main: tokens.error },
@@ -37,7 +37,7 @@ export const theme = createTheme({
   typography: {
     fontFamily,
     fontSize: 14,
-    h1: { fontSize: '1.75rem', fontWeight: 650, letterSpacing: '-0.03em', lineHeight: 1.2 },
+    h1: { fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.2 },
     h2: { fontSize: '1.375rem', fontWeight: 650, letterSpacing: '-0.025em', lineHeight: 1.25 },
     h3: { fontSize: '1.0625rem', fontWeight: 600, letterSpacing: '-0.015em' },
     h4: { fontSize: '0.9375rem', fontWeight: 600 },
@@ -51,7 +51,7 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: { backgroundColor: tokens.background, WebkitFontSmoothing: 'antialiased', fontFeatureSettings: '"ss01"' },
-        '::selection': { background: alpha(tokens.lime, 0.55) },
+        '::selection': { background: alpha(tokens.primary, 0.2) },
         a: { color: 'inherit' },
         ...globalCss,
       },
@@ -83,7 +83,7 @@ export const theme = createTheme({
         text: { '&:hover': { backgroundColor: tokens.hover } },
       },
       variants: [
-        { props: { variant: 'contained', color: 'primary' }, style: { '&:hover': { backgroundColor: tokens.inkHover } } },
+        { props: { variant: 'contained', color: 'primary' }, style: { boxShadow: `0 1px 2px ${alpha(tokens.primary, 0.3)}`, '&:hover': { backgroundColor: tokens.primaryHover } } },
         { props: { variant: 'outlined', color: 'primary' }, style: { color: tokens.textPrimary } },
         { props: { variant: 'outlined', color: 'inherit' }, style: { color: tokens.textPrimary } },
         { props: { variant: 'text', color: 'primary' }, style: { color: tokens.textPrimary } },
@@ -119,14 +119,14 @@ export const theme = createTheme({
           transition: 'box-shadow .15s ease',
           '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: tokens.borderStrong },
           '&.Mui-focused': { boxShadow: `0 0 0 3px ${tokens.ring}` },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: tokens.limeText, borderWidth: 1 },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: tokens.primary, borderWidth: 1 },
         },
         input: { paddingTop: 10.5, paddingBottom: 10.5, '.MuiInputBase-sizeSmall &': { paddingTop: 7.5, paddingBottom: 7.5 } },
         notchedOutline: { borderColor: tokens.border },
       },
     },
     MuiFormHelperText: { styleOverrides: { root: { marginInline: 2, fontSize: '0.75rem' } } },
-    MuiFormLabel: { styleOverrides: { root: { '&.Mui-focused': { color: tokens.limeText } } } },
+    MuiFormLabel: { styleOverrides: { root: { '&.Mui-focused': { color: tokens.primary } } } },
 
     MuiChip: {
       styleOverrides: {
@@ -140,7 +140,7 @@ export const theme = createTheme({
     MuiTabs: {
       styleOverrides: {
         root: { minHeight: 40 },
-        indicator: { backgroundColor: tokens.ink, height: 2, borderRadius: 2 },
+        indicator: { backgroundColor: tokens.textPrimary, height: 2, borderRadius: 2 },
         scrollButtons: { width: 28, '&.Mui-disabled': { opacity: 0.3 } },
       },
     },
@@ -166,7 +166,7 @@ export const theme = createTheme({
         switchBase: {
           padding: 2,
           '&.Mui-checked': { transform: 'translateX(18px)', color: '#fff' },
-          '&.Mui-checked + .MuiSwitch-track': { backgroundColor: tokens.ink, opacity: 1 },
+          '&.Mui-checked + .MuiSwitch-track': { backgroundColor: tokens.primary, opacity: 1 },
           '&.Mui-focusVisible + .MuiSwitch-track': { boxShadow: shadows.ring },
           '&.Mui-disabled + .MuiSwitch-track': { opacity: 0.4 },
         },
@@ -174,8 +174,8 @@ export const theme = createTheme({
         track: { borderRadius: 11, backgroundColor: tokens.borderStrong, opacity: 1 },
       },
     },
-    MuiCheckbox: { styleOverrides: { root: { color: tokens.borderStrong, '&.Mui-checked': { color: tokens.ink } } } },
-    MuiRadio: { styleOverrides: { root: { color: tokens.borderStrong, '&.Mui-checked': { color: tokens.ink } } } },
+    MuiCheckbox: { styleOverrides: { root: { color: tokens.borderStrong, '&.Mui-checked': { color: tokens.primary } } } },
+    MuiRadio: { styleOverrides: { root: { color: tokens.borderStrong, '&.Mui-checked': { color: tokens.primary } } } },
 
     MuiDialog: {
       styleOverrides: {
@@ -224,7 +224,7 @@ export const theme = createTheme({
       ],
     },
     MuiLinearProgress: {
-      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: tokens.ink } },
+      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: tokens.primary } },
     },
     MuiSkeleton: { styleOverrides: { root: { backgroundColor: tokens.muted }, rounded: { borderRadius: tokens.radius } } },
 

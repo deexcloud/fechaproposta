@@ -43,7 +43,7 @@ export function ToneDot({ tone, size = 8 }: { tone: EventTone; size?: number }) 
 }
 
 /** Barra horizontal simples (funil). */
-export function Bar({ value, max, color = tokens.ink }: { value: number; max: number; color?: string }) {
+export function Bar({ value, max, color = tokens.primary }: { value: number; max: number; color?: string }) {
   const pct = max > 0 ? Math.max(value > 0 ? 3 : 0, (value / max) * 100) : 0;
   return (
     <Box sx={{ height: 8, borderRadius: 4, bgcolor: tokens.muted, overflow: 'hidden' }}>

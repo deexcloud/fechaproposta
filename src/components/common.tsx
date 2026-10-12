@@ -3,7 +3,7 @@ import { Alert, Box, Button, Card, Skeleton, Stack, Typography } from '@mui/mate
 import type { SxProps, Theme } from '@mui/material/styles';
 import { tokens } from '@/theme/tokens';
 
-/** Logo "fecha." — tinta escura e o ponto verde-lima da marca. */
+/** Logo "fecha." — quadrado violeta com o check e o ponto na cor de destaque. */
 export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small' | 'medium' | 'large'; inverted?: boolean }) {
   const font = size === 'small' ? 19 : size === 'large' ? 30 : 23;
   const mark = size === 'small' ? 24 : size === 'large' ? 36 : 28;
@@ -16,17 +16,17 @@ export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small
           width: mark,
           height: mark,
           borderRadius: '8px',
-          bgcolor: inverted ? tokens.lime : tokens.ink,
+          bgcolor: inverted ? '#fff' : tokens.primary,
           display: 'grid',
           placeItems: 'center',
         }}
       >
         <Box component="svg" viewBox="0 0 24 24" sx={{ width: '62%', height: '62%' }}>
-          <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke={inverted ? tokens.ink : tokens.lime} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke={inverted ? tokens.primary : '#fff'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </Box>
       </Box>
       <Typography component="span" sx={{ fontWeight: 700, fontSize: font, letterSpacing: '-0.045em', lineHeight: 1, color: inverted ? '#fff' : tokens.textPrimary }}>
-        fecha<Box component="span" sx={{ color: inverted ? tokens.lime : tokens.limeText }}>.</Box>
+        fecha<Box component="span" sx={{ color: inverted ? '#fff' : tokens.primary }}>.</Box>
       </Typography>
     </Stack>
   );
@@ -38,7 +38,7 @@ export function BrandLoader({ label = 'Carregando…' }: { label?: string }) {
     <Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center' }} role="status" aria-label={label} aria-live="polite">
       <Stack spacing={2} sx={{ alignItems: 'center' }}>
         <Box sx={{ position: 'relative' }}>
-          <Box aria-hidden sx={{ position: 'absolute', inset: 0, borderRadius: '8px', bgcolor: tokens.lime, animation: 'fp-pulse 1.4s ease-out infinite' }} />
+          <Box aria-hidden sx={{ position: 'absolute', inset: 0, borderRadius: '8px', bgcolor: tokens.accentSoft, animation: 'fp-pulse 1.4s ease-out infinite' }} />
           <Box sx={{ position: 'relative' }}><BrandMark size="large" /></Box>
         </Box>
         <Typography variant="caption" color="text.secondary">{label}</Typography>
@@ -78,7 +78,7 @@ export function EmptyState({ icon, title, description, action, compact }: { icon
   return (
     <Stack spacing={1.5} sx={{ alignItems: 'center', textAlign: 'center', py: compact ? 4 : 8, px: 2 }}>
       {icon && (
-        <Box sx={{ width: 48, height: 48, borderRadius: '14px', bgcolor: tokens.limeSoft, color: tokens.limeText, display: 'grid', placeItems: 'center', '& svg': { width: 22, height: 22 } }}>
+        <Box sx={{ width: 48, height: 48, borderRadius: '14px', bgcolor: tokens.accentSoft, color: tokens.accentText, display: 'grid', placeItems: 'center', '& svg': { width: 22, height: 22 } }}>
           {icon}
         </Box>
       )}

@@ -3,8 +3,8 @@ import { accentOnWhite, contrastRatio, textOn, tint } from './color';
 
 describe('cor da marca', () => {
   it('escolhe texto legível sobre a cor', () => {
-    expect(textOn('#121915')).toBe('#FFFFFF');
-    expect(textOn('#FACC15')).toBe('#121915');
+    expect(textOn('#0F2A22')).toBe('#FFFFFF');
+    expect(textOn('#FACC15')).toBe('#0F2A22');
   });
 
   it('escurece cores claras até ficarem legíveis no branco', () => {
@@ -14,7 +14,7 @@ describe('cor da marca', () => {
   });
 
   it('cor inválida usa a padrão', () => {
-    expect(accentOnWhite('azul')).toBe('#121915');
+    expect(accentOnWhite('azul')).toBe('#0F2A22');
     expect(tint(null)).toBe('#EFF0EA');
     expect(tint('#000000', 0.5)).toBe('#808080');
   });

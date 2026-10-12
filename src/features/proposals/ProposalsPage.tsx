@@ -63,7 +63,7 @@ function ProposalRow({ p }: { p: ProposalListItem }) {
         color: 'inherit',
         borderTop: `1px solid ${tokens.border}`,
         '&:hover': { bgcolor: tokens.hover },
-        '&:focus-visible': { outline: `2px solid ${tokens.limeText}`, outlineOffset: -2 },
+        '&:focus-visible': { outline: `2px solid ${tokens.accentText}`, outlineOffset: -2 },
       }}
     >
       <Box sx={{ minWidth: 0 }}>

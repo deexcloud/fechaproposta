@@ -84,7 +84,7 @@ export function ClientPicker() {
           renderOption={({ key, ...props }, o) =>
             o.id === '__new__' ? (
               <li key={key} {...props}>
-                <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', color: tokens.limeText, fontWeight: 600 }}>
+                <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', color: tokens.accentText, fontWeight: 600 }}>
                   <UserPlus size={16} />
                   <span>{o.name ? `Cadastrar “${o.name}”` : 'Cadastrar novo cliente'}</span>
                 </Stack>

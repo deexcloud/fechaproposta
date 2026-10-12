@@ -2,17 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Card, Skeleton, Stack, Typography } from '@mui/material';
-import { BadgeCheck, CalendarClock, Download, MessageCircle, MessageSquareText, PartyPopper, ShieldCheck } from 'lucide-react';
+import { BadgeCheck, Download, MessageCircle, ShieldCheck } from 'lucide-react';
 import { BrandMark, Mono } from '@/components/common';
 import { ProposalDocument } from '@/components/ProposalDocument';
 import { textOn } from '@/lib/color';
-import { dateTime, daysUntil, firstName, longDate, money, relativeTime } from '@/lib/format';
+import { dateTime, longDate, money, relativeTime } from '@/lib/format';
 import { computeTotals, whatsappUrl } from '@/lib/proposal';
 import { getPublicMediaUrl } from '@/lib/supabase';
 import { getPublicProposal, registerView } from '@/services/publicProposal';
 import type { PublicProposal } from '@/types';
 import { AcceptDialog, ChangesDialog, DeclineDialog } from './PublicDialogs';
-import { displayFont, tokens } from '@/theme/tokens';
+import { AcceptedCelebration, DecisionPanel, MobileDecisionBar, PublicHeader } from './Decision';
+import { signatureFont, tokens } from '@/theme/tokens';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -71,7 +72,7 @@ function StateBanner({ p, contact }: { p: PublicProposal; contact: string | null
               <Box component="img" src={a.signature_data} alt={`Assinatura de ${a.signer_name}`} sx={{ mt: 1.5, maxHeight: 70, maxWidth: '100%', bgcolor: '#fff', borderRadius: '8px', p: 1 }} />
             )}
             {a.signature_mode === 'typed' && (
-              <Typography sx={{ mt: 1, fontFamily: displayFont, fontStyle: 'italic', fontSize: 30 }}>{a.signer_name}</Typography>
+              <Typography sx={{ mt: 1, fontFamily: signatureFont, fontStyle: 'italic', fontSize: 30 }}>{a.signer_name}</Typography>
             )}
             <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 0.5, alignItems: 'center', mt: 1 }}>
               <ShieldCheck size={12} /> Código de verificação: <Mono>{a.content_hash.slice(0, 20)}</Mono>
@@ -162,11 +163,10 @@ export function PublicProposalPage() {
   if (!p || !totals) return <NotFound />;
 
   const org = p.organization;
-  const brandBg = org.brand_color ?? tokens.ink;
+  const brandBg = org.brand_color ?? tokens.primary;
   const brand = { bg: brandBg, fg: textOn(brandBg) };
   const logo = getPublicMediaUrl(org.logo_path);
   const clientName = p.client?.name ?? '';
-  const left = daysUntil(p.valid_until);
   const contact = org.whatsapp
     ? whatsappUrl(`Olá! Recebi a proposta "${p.title}" (${p.code}) e tenho uma dúvida.`, org.whatsapp)
     : null;
@@ -179,105 +179,58 @@ export function PublicProposalPage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100dvh', bgcolor: tokens.muted, pb: { xs: open ? 16 : 4, md: 6 }, '@media print': { bgcolor: '#fff', pb: 0 } }}>
-      {/* Topo com a marca de quem enviou */}
-      <Box className="no-print" sx={{ bgcolor: '#fff', borderBottom: `1px solid ${tokens.border}`, position: 'sticky', top: 0, zIndex: 10 }}>
-        <Stack direction="row" sx={{ maxWidth: 1180, mx: 'auto', px: { xs: 2, sm: 3 }, height: 60, alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-          <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', minWidth: 0 }}>
-            {logo ? (
-              <Box component="img" src={logo} alt={org.name} sx={{ maxHeight: 34, maxWidth: 140, objectFit: 'contain' }} />
-            ) : (
-              <Box sx={{ width: 32, height: 32, borderRadius: '9px', bgcolor: brand.bg, color: brand.fg, display: 'grid', placeItems: 'center', fontWeight: 700 }}>{org.name.charAt(0).toUpperCase()}</Box>
-            )}
-            {!logo && <Typography noWrap sx={{ fontWeight: 650 }}>{org.name}</Typography>}
-          </Stack>
-          <Stack direction="row" spacing={1}>
-            {contact && (
-              <Button size="small" variant="outlined" startIcon={<MessageCircle />} href={contact} target="_blank" rel="noopener">
-                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Tirar dúvida</Box>
-                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>WhatsApp</Box>
-              </Button>
-            )}
-            <Button size="small" variant="outlined" startIcon={<Download />} onClick={() => window.print()} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>PDF</Button>
-          </Stack>
-        </Stack>
-      </Box>
+    <Box sx={{ minHeight: '100dvh', bgcolor: tokens.background, pb: { xs: open ? 17 : 4, md: 8 }, '@media print': { bgcolor: '#fff', pb: 0 } }}>
+      <PublicHeader orgName={org.name} logo={logo} brand={brand} contactUrl={contact} />
 
-      <Box sx={{ maxWidth: 1180, mx: 'auto', px: { xs: 0, sm: 3 }, pt: { xs: 0, sm: 4 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 320px' }, alignItems: 'start' }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 0, sm: 3 }, pt: { xs: 0, sm: 4 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 340px' }, alignItems: 'start' }}>
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ px: { xs: 2, sm: 0 }, pt: { xs: 2, sm: 0 } }} className="no-print">
-            {celebrate && (
-              <Card className="fp-fade-up" sx={{ p: 2.5, mb: 2, bgcolor: tokens.ink, color: '#fff', borderColor: tokens.ink }}>
-                <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                  <PartyPopper color={tokens.lime} />
-                  <Box>
-                    <Typography sx={{ fontWeight: 700 }}>Tudo certo, {firstName(p.acceptance?.signer_name) || 'obrigado'}!</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,.75)' }}>{org.name} já foi avisado(a). Você pode baixar a proposta assinada em PDF.</Typography>
-                  </Box>
-                </Stack>
-              </Card>
+            {celebrate && p.acceptance && (
+              <AcceptedCelebration name={p.acceptance.signer_name} orgName={org.name} nextStep={p.next_step} brand={brand} />
             )}
-            <StateBanner p={p} contact={contact} />
+            {!celebrate && <StateBanner p={p} contact={contact} />}
           </Box>
           <ProposalDocument data={p} selectable={open} selected={p.acceptance?.selected_items ?? selected} onToggleOptional={toggle} />
         </Box>
 
-        {/* Decisão (computador) */}
-        <Box className="no-print" sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 84 }}>
-          <Card sx={{ p: 2.5 }}>
-            <Typography variant="body2" color="text.secondary">{p.status === 'accepted' ? 'Total aceito' : 'Total'}</Typography>
-            <Typography sx={{ fontWeight: 750, fontSize: 30, letterSpacing: '-0.03em', fontFeatureSettings: '"tnum"' }}>{money(total)}</Typography>
-            {totals.optional > 0 && open && (
-              <Typography variant="caption" color="text.secondary">
-                {selected.length ? `Inclui ${selected.length} opcional${selected.length > 1 ? 'is' : ''}` : 'Opcionais disponíveis abaixo dos valores'}
-              </Typography>
-            )}
-            {open && (
-              <>
-                <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', mt: 1.5, color: left <= 3 ? tokens.error : tokens.textSecondary }}>
-                  <CalendarClock size={15} />
-                  <Typography variant="body2" sx={{ fontWeight: left <= 3 ? 650 : 400 }}>
-                    {left === 0 ? 'Vence hoje' : left === 1 ? 'Vence amanhã' : `Válida por mais ${left} dias`}
-                  </Typography>
-                </Stack>
-                <Stack spacing={1} sx={{ mt: 2.5 }}>
-                  <Button size="large" variant="contained" onClick={() => setDialog('accept')} sx={{ bgcolor: brand.bg, color: brand.fg, minHeight: 50, fontSize: 15.5, '&:hover': { bgcolor: brand.bg, filter: 'brightness(0.92)' } }}>
-                    Aceitar proposta
-                  </Button>
-                  <Button size="large" variant="outlined" startIcon={<MessageSquareText />} onClick={() => setDialog('changes')}>Pedir ajuste</Button>
-                  <Button size="small" color="inherit" onClick={() => setDialog('decline')} sx={{ color: tokens.textTertiary }}>Recusar</Button>
-                </Stack>
-              </>
-            )}
-            {!open && (
+        <Box className="no-print" sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 88 }}>
+          {open ? (
+            <DecisionPanel
+              orgName={org.name}
+              base={totals.total}
+              extras={totals.withSelected - totals.total}
+              extrasCount={selected.length}
+              total={totals.withSelected}
+              validUntil={p.valid_until}
+              brand={brand}
+              contactUrl={contact}
+              onAccept={() => setDialog('accept')}
+              onChanges={() => setDialog('changes')}
+              onDecline={() => setDialog('decline')}
+            />
+          ) : (
+            <Card sx={{ p: 2.5, borderRadius: '20px' }}>
+              <Typography variant="body2" color="text.secondary">{p.status === 'accepted' ? 'Total aceito' : 'Total'}</Typography>
+              <Typography sx={{ fontWeight: 750, fontSize: 30, letterSpacing: '-0.03em', fontFeatureSettings: '"tnum"' }}>{money(total)}</Typography>
               <Button fullWidth sx={{ mt: 2 }} variant="outlined" startIcon={<Download />} onClick={() => window.print()}>Baixar PDF</Button>
-            )}
-          </Card>
+            </Card>
+          )}
           <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2, justifyContent: 'center' }}>
             Proposta enviada com <Box component="a" href="/" target="_blank" sx={{ color: 'inherit', display: 'inline-flex' }}><BrandMark size="small" /></Box>
           </Typography>
         </Box>
       </Box>
 
-      {/* Decisão (celular): barra fixa com o total */}
       {open && (
-        <Box className="no-print" sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20, bgcolor: '#fff', borderTop: `1px solid ${tokens.border}`, boxShadow: '0 -8px 24px -12px rgba(20,26,22,.18)', px: 2, pt: 1.25, pb: 'calc(12px + env(safe-area-inset-bottom))' }}>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2 }}>
-                {left <= 3 ? (left === 0 ? 'Vence hoje' : `Vence em ${left} ${left === 1 ? 'dia' : 'dias'}`) : 'Total'}
-              </Typography>
-              <Typography sx={{ fontWeight: 750, fontSize: 20, letterSpacing: '-0.02em', fontFeatureSettings: '"tnum"' }} noWrap>{money(total)}</Typography>
-            </Box>
-            <Button size="large" variant="contained" onClick={() => setDialog('accept')} sx={{ bgcolor: brand.bg, color: brand.fg, minHeight: 48, px: 3, '&:hover': { bgcolor: brand.bg } }}>
-              Aceitar
-            </Button>
-          </Stack>
-          <Stack direction="row" sx={{ justifyContent: 'center', gap: 2, mt: 0.5 }}>
-            <Button size="small" color="inherit" onClick={() => setDialog('changes')} sx={{ color: tokens.textSecondary }}>Pedir ajuste</Button>
-            <Button size="small" color="inherit" onClick={() => setDialog('decline')} sx={{ color: tokens.textTertiary }}>Recusar</Button>
-          </Stack>
-        </Box>
+        <MobileDecisionBar
+          total={totals.withSelected}
+          extrasCount={selected.length}
+          validUntil={p.valid_until}
+          brand={brand}
+          onAccept={() => setDialog('accept')}
+          onChanges={() => setDialog('changes')}
+          onDecline={() => setDialog('decline')}
+        />
       )}
 
       {dialog === 'accept' && (

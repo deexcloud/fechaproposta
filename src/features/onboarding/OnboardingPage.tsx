@@ -23,7 +23,7 @@ function Steps({ step }: { step: 1 | 2 }) {
   return (
     <Stack direction="row" spacing={1} sx={{ mb: 3 }} aria-label={`Passo ${step} de 2`}>
       {[1, 2].map((s) => (
-        <Box key={s} sx={{ height: 4, flex: 1, borderRadius: 2, bgcolor: s <= step ? tokens.ink : tokens.border }} />
+        <Box key={s} sx={{ height: 4, flex: 1, borderRadius: 2, bgcolor: s <= step ? tokens.primary : tokens.border }} />
       ))}
     </Stack>
   );
@@ -39,7 +39,7 @@ export function OnboardingPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const [whatsapp, setWhatsapp] = useState('');
-  const [color, setColor] = useState<string | null>('#121915');
+  const [color, setColor] = useState<string | null>('#6243F0');
   const [logo, setLogo] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 

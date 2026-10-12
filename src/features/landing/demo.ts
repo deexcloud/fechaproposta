@@ -36,7 +36,7 @@ export function demoProposal(): DocumentData {
       document: null,
       city: 'São Paulo/SP',
       logo_path: null,
-      brand_color: '#1F4E3D',
+      brand_color: '#6243F0',
     },
   };
 }

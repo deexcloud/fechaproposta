@@ -295,7 +295,7 @@ export function ClientsPage() {
                 cursor: 'pointer',
                 borderTop: i ? `1px solid ${tokens.border}` : 'none',
                 '&:hover': { bgcolor: tokens.hover },
-                '&:focus-visible': { outline: `2px solid ${tokens.limeText}`, outlineOffset: -2 },
+                '&:focus-visible': { outline: `2px solid ${tokens.accentText}`, outlineOffset: -2 },
               }}
             >
               <NameAvatar name={client.name} />
