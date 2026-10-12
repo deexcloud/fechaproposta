@@ -1,7 +1,14 @@
-node_modules/
-dist/
+node_modules
+dist
+*.local
 .env
-.env.local
-.env.*.local
-.vercel/
+.env.*
+!.env.example
+.vercel
 .DS_Store
+*.log
+coverage
+.claude/
+
+# Arquivos únicos gerados para colar no painel do Supabase
+supabase/.painel/

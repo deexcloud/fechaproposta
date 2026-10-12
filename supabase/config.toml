@@ -1,0 +1,5 @@
+project_id = "fechaproposta"
+
+# Cobrança (Asaas): o webhook recebe chamadas do Asaas, sem login.
+[functions.billing-webhook]
+verify_jwt = false
