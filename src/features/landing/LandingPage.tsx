@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Link as RouterLink, Navigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, Drawer, IconButton, Stack, Typography } from '@mui/material';
 import {
   ArrowRight,
@@ -21,7 +21,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { BrandLoader, BrandMark } from '@/components/common';
+import { BrandMark } from '@/components/common';
 import { ProposalDocument } from '@/components/ProposalDocument';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
@@ -108,19 +108,18 @@ function HeroVisual() {
 }
 
 export function LandingPage() {
-  const { user, loading } = useAuth();
+  // Logado continua vendo a página de vendas; os botões levam ao painel.
+  const { user } = useAuth();
+  const startTo = user ? '/painel' : '/criar-conta';
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     document.title = 'FechaProposta — propostas que viram sim';
   }, []);
 
-  if (loading) return <BrandLoader />;
-  if (user) return <Navigate to="/painel" replace />;
-
   const cta = (size: 'medium' | 'large' = 'large') => (
-    <Button component={RouterLink} to="/criar-conta" variant="contained" size={size} endIcon={<ArrowRight />}>
-      Testar {TRIAL_DAYS} dias grátis
+    <Button component={RouterLink} to={startTo} variant="contained" size={size} endIcon={<ArrowRight />}>
+      {user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`}
     </Button>
   );
 
@@ -136,7 +135,7 @@ export function LandingPage() {
             ))}
           </Stack>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Button component={RouterLink} to="/entrar" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Entrar</Button>
+            {!user && <Button component={RouterLink} to="/entrar" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Entrar</Button>}
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>{cta('medium')}</Box>
             <IconButton aria-label="Abrir menu" onClick={() => setMenuOpen(true)} sx={{ display: { md: 'none' } }}><MenuIcon size={20} /></IconButton>
           </Stack>
@@ -151,7 +150,7 @@ export function LandingPage() {
           {NAV.map((n) => (
             <Button key={n.href} href={n.href} color="inherit" onClick={() => setMenuOpen(false)} sx={{ justifyContent: 'flex-start' }}>{n.label}</Button>
           ))}
-          <Button component={RouterLink} to="/entrar" variant="outlined">Entrar</Button>
+          {!user && <Button component={RouterLink} to="/entrar" variant="outlined">Entrar</Button>}
           {cta()}
         </Stack>
       </Drawer>
@@ -275,8 +274,8 @@ export function LandingPage() {
                 </Stack>
               ))}
             </Stack>
-            <Button component={RouterLink} to="/criar-conta" variant="contained" size="large" fullWidth endIcon={<ArrowRight />}>
-              Começar teste de {TRIAL_DAYS} dias
+            <Button component={RouterLink} to={startTo} variant="contained" size="large" fullWidth endIcon={<ArrowRight />}>
+              {user ? 'Abrir painel' : `Começar teste de ${TRIAL_DAYS} dias`}
             </Button>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1.5 }}>Sem cartão de crédito para testar.</Typography>
           </Card>
@@ -303,8 +302,8 @@ export function LandingPage() {
             <Typography component="h2" sx={{ fontFamily: displayFont, fontSize: { xs: 40, md: 60 }, lineHeight: 1.02, maxWidth: 640, position: 'relative' }}>
               A próxima proposta pode ser a que <Box component="em" sx={{ color: tokens.lime }}>fecha.</Box>
             </Typography>
-            <Button component={RouterLink} to="/criar-conta" size="large" variant="contained" endIcon={<ArrowRight />} sx={{ mt: 4, bgcolor: tokens.lime, color: tokens.ink, position: 'relative', '&:hover': { bgcolor: '#B4DA3E' } }}>
-              Testar {TRIAL_DAYS} dias grátis
+            <Button component={RouterLink} to={startTo} size="large" variant="contained" endIcon={<ArrowRight />} sx={{ mt: 4, bgcolor: tokens.lime, color: tokens.ink, position: 'relative', '&:hover': { bgcolor: '#B4DA3E' } }}>
+              {user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`}
             </Button>
           </Box>
         </Box>
@@ -316,7 +315,7 @@ export function LandingPage() {
           <Stack direction="row" spacing={2.5}>
             <Typography component={RouterLink} to="/termos" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Termos de uso</Typography>
             <Typography component={RouterLink} to="/privacidade" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Privacidade</Typography>
-            <Typography component={RouterLink} to="/entrar" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Entrar</Typography>
+            <Typography component={RouterLink} to={user ? '/painel' : '/entrar'} variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>{user ? 'Abrir painel' : 'Entrar'}</Typography>
           </Stack>
           <Typography variant="caption" color="text.secondary">© {new Date().getFullYear()} FechaProposta</Typography>
         </Stack>
