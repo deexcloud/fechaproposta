@@ -5,6 +5,28 @@ import { Check } from 'lucide-react';
 import { BrandMark } from '@/components/common';
 import { gradients, tokens } from '@/theme/tokens';
 
+/** Logo que leva ao início: escurece ao passar o mouse, para mostrar que é clicável. */
+function HomeLogo() {
+  return (
+    <Box
+      component={RouterLink}
+      to="/"
+      aria-label="Página inicial"
+      sx={{
+        display: 'inline-flex',
+        alignSelf: 'flex-start',
+        textDecoration: 'none',
+        borderRadius: '10px',
+        transition: 'opacity .15s ease',
+        '&:hover': { opacity: 0.65 },
+        '&:focus-visible': { outline: `2px solid ${tokens.accentText}`, outlineOffset: 4 },
+      }}
+    >
+      <BrandMark />
+    </Box>
+  );
+}
+
 const HIGHLIGHTS = [
   'Proposta com a sua marca, pronta em minutos',
   'Aviso quando o cliente abre o link',
@@ -28,7 +50,7 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
           backgroundSize: '22px 22px, auto',
         }}
       >
-        <RouterLink to="/" aria-label="Página inicial"><BrandMark /></RouterLink>
+        <HomeLogo />
         <Box>
           <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.045em', maxWidth: 460 }}>
             Propostas que o cliente <Box component="span" sx={{ background: gradients.text, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>aprova até pelo celular.</Box>
@@ -52,7 +74,7 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
       <Box sx={{ display: 'flex', alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'center', px: 2, py: { xs: 4, sm: 6 } }}>
         <Stack spacing={3} sx={{ width: '100%', maxWidth: 400 }}>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
-            <RouterLink to="/" aria-label="Página inicial"><BrandMark /></RouterLink>
+            <HomeLogo />
           </Box>
           <Card className="fp-fade-up">
             <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
