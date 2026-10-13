@@ -10,7 +10,7 @@ import { BrandLoader } from '@/components/common';
 import { useNotify } from '@/components/NotifyProvider';
 import { useAuth } from './AuthProvider';
 import { PasswordField } from './PasswordField';
-import { PRICE_MONTHLY, TRIAL_DAYS } from '@/lib/pricing';
+import { PRICE_FROM, TRIAL_DAYS } from '@/lib/pricing';
 import { TERMS_VERSION } from '@/features/legal/legalInfo';
 import {
   forgotPasswordSchema,
@@ -141,7 +141,7 @@ export function SignUpPage() {
   return (
     <AuthLayout
       title="Crie sua conta"
-      subtitle={`Teste tudo por ${TRIAL_DAYS} dias grátis, sem cartão. Depois, R$ ${PRICE_MONTHLY} por mês, sem fidelidade.`}
+      subtitle={`Teste tudo por ${TRIAL_DAYS} dias grátis, sem cartão. Depois, a partir de R$ ${PRICE_FROM} por mês, sem fidelidade.`}
       footer={
         <Typography color="text.secondary">
           Já tem conta? <Link component={RouterLink} to="/entrar" state={origin}>Entrar</Link>

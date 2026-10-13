@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Link, Stack, Typography } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import { BrandMark } from '@/components/common';
-import { PRICE_MONTHLY, TRIAL_DAYS } from '@/lib/pricing';
+import { PLANS, PRICE_MONTHLY, TRIAL_DAYS } from '@/lib/pricing';
 import { LEGAL_INFO } from './legalInfo';
 
 interface Section {
@@ -64,7 +64,7 @@ const TERMS: Section[] = [
       <List
         items={[
           `Toda empresa nova usa todos os recursos por ${TRIAL_DAYS} dias, sem cartão.`,
-          `Depois, o uso continua com a assinatura de R$ ${PRICE_MONTHLY} por mês, paga por Pix ou cartão. Não há fidelidade.`,
+          `Depois, o uso continua com a assinatura, paga por Pix ou cartão: mensal (R$ ${PRICE_MONTHLY}), semestral (R$ ${PLANS[1].total}) ou anual (R$ ${PLANS[2].total}). Não há fidelidade nem renovação automática.`,
           'Se o teste ou a assinatura vencer, a criação e o envio de novas propostas ficam pausados. Os dados continuam guardados e os links já enviados seguem abrindo para os clientes.',
           'Mudanças de preço são avisadas com pelo menos 30 dias de antecedência.',
           'O período já pago não é reembolsado proporcionalmente, salvo quando a lei exigir.',

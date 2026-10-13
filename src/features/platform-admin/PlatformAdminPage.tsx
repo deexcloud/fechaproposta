@@ -99,7 +99,7 @@ export function PlatformAdminPage() {
 
       <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, mb: 3 }}>
         <StatCard label="Empresas" value={counts.all} />
-        <StatCard label="Pagantes" value={counts.paid} hint={`${money(counts.paid * PRICE_MONTHLY)}/mês`} />
+        <StatCard label="Pagantes" value={counts.paid} hint={`até ${money(counts.paid * PRICE_MONTHLY)}/mês`} />
         <StatCard label="Em teste" value={counts.trial} />
         <StatCard label="Vencem em 3 dias" value={counts.soon} />
       </Box>

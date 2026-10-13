@@ -23,7 +23,7 @@ Segue o padrão de stack "SaaS multiempresa com Supabase e Asaas", com o AdegaF�
 - Aceite guardado com nome, assinatura, data, IP, navegador e uma **cópia congelada** do conteúdo com código de verificação (SHA-256). Proposta aceita não pode mais ser alterada nem apagada.
 
 **Plataforma**
-- Teste grátis de 7 dias, depois R$ 59/mês (plano único) por Pix ou cartão no Checkout do Asaas.
+- Teste grátis de 7 dias, depois mensal (R$ 79), semestral (R$ 69/mês) ou anual (R$ 59/mês) por Pix ou cartão no Checkout do Asaas.
 - Bloqueio no banco: com a assinatura vencida, a empresa vê tudo mas não cria, edita nem envia propostas. Os links já enviados continuam funcionando.
 - `/admin` para liberar meses, estender teste ou encerrar acesso.
 
@@ -120,7 +120,7 @@ Ou pelo painel: `npm run functions:painel` → Deploy a new function → Via Edi
 
 O checkout volta para `/painel?assinatura=retorno` (ou `=falhou`) e o painel confere sozinho até o webhook liberar. Só o webhook libera a empresa, depois de reler a cobrança na API do Asaas.
 
-Teste real barato: preço temporário de R$ 5 em `billing_monthly_price()`, pagar com Pix, conferir a liberação e voltar o preço. Ao mudar o preço, atualize também `PRICE_MONTHLY` em `src/lib/pricing.ts`.
+Teste real barato: preço temporário de R$ 5 em `billing_monthly_price()` (vale para o plano mensal), pagar 1 mês com Pix, conferir a liberação e voltar o preço. Os preços ficam em `billing_price()` (migration `20261012120500_pricing.sql`); ao mudar, atualize também `PLANS` em `src/lib/pricing.ts`.
 
 ### Problemas conhecidos
 

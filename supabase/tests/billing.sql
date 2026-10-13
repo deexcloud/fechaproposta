@@ -63,7 +63,7 @@ begin
   end;
 
   -- Pago durante o teste: 1 mês começa no fim do teste (não perde os dias).
-  v_result := public.billing_apply_payment('pay_101', v_org, 1, public.billing_monthly_price(), 'PIX');
+  v_result := public.billing_apply_payment('pay_101', v_org, 1, public.billing_price(1), 'PIX');
   v_until := (v_result ->> 'paid_until')::timestamptz;
   if not (v_result ->> 'applied')::boolean then
     raise exception 'FALHOU: pagamento não aplicado.';
@@ -73,7 +73,7 @@ begin
   end if;
 
   -- O mesmo pagamento avisado de novo (cartão: CONFIRMED e depois RECEIVED) conta uma vez.
-  v_result := public.billing_apply_payment('pay_101', v_org, 1, public.billing_monthly_price(), 'PIX');
+  v_result := public.billing_apply_payment('pay_101', v_org, 1, public.billing_price(1), 'PIX');
   if (v_result ->> 'applied')::boolean then
     raise exception 'FALHOU: pagamento repetido foi aplicado de novo.';
   end if;
@@ -82,9 +82,24 @@ begin
   end if;
 
   -- Outro pagamento soma ao vencimento atual.
-  v_result := public.billing_apply_payment('pay_102', v_org, 1, public.billing_monthly_price(), 'CREDIT_CARD');
+  v_result := public.billing_apply_payment('pay_102', v_org, 1, public.billing_price(1), 'CREDIT_CARD');
   if (v_result ->> 'paid_until')::timestamptz < v_until + interval '27 days' then
     raise exception 'FALHOU: segundo pagamento não somou.';
+  end if;
+
+  -- Anual tem desconto (R$ 59/mês), mas não aceita menos que o preço do pacote.
+  if public.billing_price(12) >= public.billing_price(1) * 12 then
+    raise exception 'FALHOU: anual sem desconto.';
+  end if;
+  begin
+    perform public.billing_apply_payment('pay_103', v_org, 12, public.billing_price(12) - 1, 'PIX');
+    raise exception 'FALHOU: aceitou anual com valor menor.';
+  exception when raise_exception then
+    if sqlerrm like 'FALHOU%' then raise; end if;
+  end;
+  v_result := public.billing_apply_payment('pay_104', v_org, 12, public.billing_price(12), 'PIX');
+  if not (v_result ->> 'applied')::boolean then
+    raise exception 'FALHOU: anual não aplicado.';
   end if;
 end;
 $$;
@@ -94,8 +109,8 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-0000000000c1","role":"authenticated"}', true);
 do $$
 begin
-  if (select count(*) from public.billing_payments) <> 2 then
-    raise exception 'FALHOU: dono deveria ver 2 pagamentos.';
+  if (select count(*) from public.billing_payments) <> 3 then
+    raise exception 'FALHOU: dono deveria ver 3 pagamentos.';
   end if;
 end;
 $$;

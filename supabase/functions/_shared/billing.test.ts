@@ -8,6 +8,7 @@ import {
   parseMethod,
   readAsaasEvent,
   validMonths,
+  validPlanMonths,
   validWebhookToken,
 } from './billing';
 
@@ -32,6 +33,14 @@ describe('cobrança: referência do pagamento', () => {
     expect(validMonths(12)).toBe(true);
     expect(validMonths(0)).toBe(false);
     expect(validMonths('1')).toBe(false);
+  });
+
+  it('só vende os períodos da tabela', () => {
+    expect(validPlanMonths(1)).toBe(true);
+    expect(validPlanMonths(6)).toBe(true);
+    expect(validPlanMonths(12)).toBe(true);
+    expect(validPlanMonths(3)).toBe(false);
+    expect(validPlanMonths(24)).toBe(false);
   });
 });
 

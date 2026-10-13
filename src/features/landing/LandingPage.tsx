@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, Drawer, IconButton, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, Drawer, IconButton, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import {
   ArrowRight,
   BellRing,
@@ -22,7 +22,7 @@ import {
 import { BrandMark } from '@/components/common';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
-import { PLAN_FEATURES, PRICE_MONTHLY, TRIAL_DAYS } from '@/lib/pricing';
+import { ANNUAL_PLAN, MONTHLY_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
 import { BeforeAfter, MobileStickyCta, RoiCalculator } from './sections';
 import { shadows, tokens } from '@/theme/tokens';
 
@@ -41,7 +41,7 @@ const FAQ = [
   { q: 'Como fico sabendo que o cliente abriu?', a: 'Cada abertura do link fica registrada. No painel você vê quantas vezes foi aberta e quando, e o FechaProposta lista o que pede atenção, como quem abriu e ainda não respondeu.' },
   { q: 'O aceite tem validade?', a: 'O aceite fica registrado com nome, assinatura, data, IP e uma cópia do conteúdo aceito que não pode ser alterada. É um registro eletrônico de concordância; não é assinatura com certificado ICP-Brasil.' },
   { q: 'Posso mudar a proposta depois de enviar?', a: 'Sim, enquanto o cliente não responder. Se ele pedir um ajuste, você edita e o link continua o mesmo. Depois do aceite, a proposta trava; para uma nova versão, é só duplicar.' },
-  { q: 'Como funciona o pagamento?', a: `Você testa tudo por ${TRIAL_DAYS} dias, sem cartão. Depois, ${money(PRICE_MONTHLY)} por mês por Pix ou cartão, sem fidelidade. Se a assinatura vencer, os links enviados continuam funcionando para os seus clientes.` },
+  { q: 'Como funciona o pagamento?', a: `Você testa tudo por ${TRIAL_DAYS} dias, sem cartão. Depois, ${money(PRICE_MONTHLY)} por mês, ou ${money(PRICE_FROM)} por mês no plano anual (${money(ANNUAL_PLAN.total)} à vista), por Pix ou cartão, sem fidelidade e sem renovação automática. Se a assinatura vencer, os links enviados continuam funcionando para os seus clientes.` },
   { q: 'Dá para usar com a minha equipe?', a: 'Sim. Convide pessoas por link e escolha o perfil: vendedor cria e envia propostas; gerente também cuida do catálogo e das configurações.' },
 ];
 
@@ -75,26 +75,29 @@ function HeroVisual() {
     { initials: 'RM', title: 'Identidade visual', status: 'Pediu um ajuste no prazo', color: tokens.primary, action: 'Ver' },
     { initials: 'JP', title: 'Landing page', status: 'Vence amanhã', color: tokens.error, action: 'Lembrar' },
   ];
-  // Desenhada num quadro fixo de 560×540 e reduzida por inteiro em telas menores:
-  // as peças nunca se desmontam nem invadem o texto.
+  // Do tablet para cima: quadro fixo de 560×540 reduzido por inteiro, com as peças sobrepostas.
+  // No celular, reduzir esse quadro deixava tudo minúsculo e encavalado; lá as peças
+  // ficam uma embaixo da outra, em tamanho real.
+  const framed = { xs: 'static', sm: 'absolute' } as const;
   return (
     <Box
       aria-hidden
       sx={{
         position: 'relative',
-        width: 560,
-        height: 540,
+        width: { xs: '100%', sm: 560 },
+        height: { xs: 'auto', sm: 540 },
         mx: 'auto',
         flexShrink: 0,
-        zoom: 0.56,
-        '@media (min-width: 400px)': { zoom: 0.62 },
-        '@media (min-width: 480px)': { zoom: 0.74 },
+        display: { xs: 'flex', sm: 'block' },
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 3,
         '@media (min-width: 600px)': { zoom: 0.92 },
         '@media (min-width: 1200px)': { zoom: 0.94 },
       }}
     >
       {/* Painel de quem vende */}
-      <Card sx={{ position: 'absolute', left: 0, top: 120, width: 318, p: 2.25, zIndex: 3, boxShadow: shadows.lg }}>
+      <Card sx={{ position: framed, left: 0, top: 120, width: { xs: '100%', sm: 318 }, maxWidth: 360, boxSizing: 'border-box', p: 2.25, zIndex: 3, boxShadow: shadows.lg }}>
         <Typography sx={{ fontWeight: 700, fontSize: 14 }}>Precisa da sua atenção</Typography>
         <Typography sx={{ fontSize: 12, color: tokens.textSecondary }}>O que fazer agora para fechar mais</Typography>
         {rows.map((r) => (
@@ -121,7 +124,7 @@ function HeroVisual() {
       </Card>
 
       {/* Celular do cliente */}
-      <Box sx={{ position: 'absolute', right: 0, top: 0, width: 262, height: 530, borderRadius: '40px', bgcolor: '#0B0B0D', p: 1.25, zIndex: 2, boxShadow: '0 40px 80px -30px rgba(9,9,11,.45)' }}>
+      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#0B0B0D', p: 1.25, zIndex: 2, boxShadow: '0 40px 80px -30px rgba(9,9,11,.45)' }}>
         <Box sx={{ bgcolor: '#fff', borderRadius: '31px', height: '100%', overflow: 'hidden', position: 'relative' }}>
           <Box sx={{ px: 2.25, pt: 3.5, pb: 2, borderTop: `4px solid ${tokens.primary}`, background: `linear-gradient(180deg, ${tokens.accentSoft}, #fff 80%)` }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -161,7 +164,7 @@ function HeroVisual() {
       </Box>
 
       {/* Aviso de aceite */}
-      <Card sx={{ position: 'absolute', left: 60, top: 476, px: 1.75, py: 1.25, zIndex: 4, display: 'flex', gap: 1.25, alignItems: 'center', boxShadow: shadows.lg }} className="fp-fade-up">
+      <Card sx={{ position: 'absolute', left: 60, top: 476, px: 1.75, py: 1.25, zIndex: 4, display: { xs: 'none', sm: 'flex' }, gap: 1.25, alignItems: 'center', boxShadow: shadows.lg }} className="fp-fade-up">
         <Box sx={{ width: 30, height: 30, borderRadius: '8px', bgcolor: tokens.successSoft, color: tokens.success, display: 'grid', placeItems: 'center' }}><Check size={16} strokeWidth={3} /></Box>
         <Box>
           <Typography sx={{ fontWeight: 700, fontSize: 13 }}>Marina aceitou</Typography>
@@ -178,6 +181,9 @@ export function LandingPage() {
   const startTo = user ? '/painel' : '/criar-conta';
   const ctaLabel = user ? 'Abrir painel' : 'Criar minha primeira proposta';
   const [menuOpen, setMenuOpen] = useState(false);
+  // O anual aparece primeiro: ancora no preço cheio riscado e mostra a economia.
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('annual');
+  const shownPlan = billing === 'annual' ? ANNUAL_PLAN : MONTHLY_PLAN;
 
   useEffect(() => {
     document.title = 'FechaProposta — propostas que o cliente aprova pelo celular';
@@ -336,11 +342,26 @@ export function LandingPage() {
                 <Typography sx={{ fontWeight: 650 }}>FechaProposta</Typography>
                 <Box sx={{ fontSize: 12, fontWeight: 600, px: 1, py: 0.25, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText }}>{TRIAL_DAYS} dias grátis</Box>
               </Stack>
-              <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 1.5 }}>
-                <Typography sx={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.05em' }}>{money(PRICE_MONTHLY).replace(',00', '')}</Typography>
+              <ToggleButtonGroup exclusive fullWidth size="small" value={billing} onChange={(_, v) => v && setBilling(v)} aria-label="Período" sx={{ mt: 2.5 }}>
+                <ToggleButton value="monthly" sx={{ textTransform: 'none', fontWeight: 600 }}>Mensal</ToggleButton>
+                <ToggleButton value="annual" sx={{ textTransform: 'none', fontWeight: 600, gap: 0.75 }}>
+                  Anual
+                  <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.success }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 2 }}>
+                {billing === 'annual' && (
+                  <Typography sx={{ fontSize: 22, fontWeight: 600, color: tokens.textSecondary, textDecoration: 'line-through' }}>{money(PRICE_MONTHLY).replace(',00', '')}</Typography>
+                )}
+                <Typography sx={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.05em' }}>{money(shownPlan.perMonth).replace(',00', '')}</Typography>
                 <Typography color="text.secondary">/ mês</Typography>
               </Stack>
-              <Typography variant="body2" color="text.secondary">Menos de {money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia. Pix ou cartão.</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {billing === 'annual'
+                  ? `${money(ANNUAL_PLAN.total).replace(',00', '')} por ano. Você economiza ${money(planSavings(ANNUAL_PLAN)).replace(',00', '')}.`
+                  : `Menos de ${money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia. Também tem semestral a ${money(PLANS[1].perMonth).replace(',00', '')}/mês.`}{' '}
+                Pix ou cartão.
+              </Typography>
               <Stack spacing={1.25} sx={{ my: 3 }}>
                 {PLAN_FEATURES.map((f) => (
                   <Stack key={f} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
@@ -356,7 +377,7 @@ export function LandingPage() {
             </Card>
             <Stack spacing={2.5}>
               {[
-                ['Sem fidelidade', 'Assine por mês e cancele quando quiser, sem multa.'],
+                ['Sem fidelidade e sem renovação automática', 'Você paga o período que escolher. Nada é cobrado de novo sem você pedir.'],
                 ['Pagar no teste não perde dias', 'Se assinar antes do fim do teste, os dias restantes continuam valendo.'],
                 ['Seus links não quebram', 'Mesmo se a assinatura vencer, os clientes continuam abrindo e aceitando o que você já enviou.'],
                 ['Seus dados são seus', 'Cada empresa fica isolada no banco. Propostas aceitas guardam o comprovante.'],

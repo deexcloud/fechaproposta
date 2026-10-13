@@ -10,7 +10,7 @@
 //   ASAAS_ENV      Opcional: "sandbox" ou "production" (sem ele, a chave define)
 // SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY já existem em toda Edge Function.
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { asaasUrls, buildExternalReference, checkoutLink, parseMethod, UUID, validMonths } from '../_shared/billing.ts';
+import { asaasUrls, buildExternalReference, checkoutLink, parseMethod, UUID, validPlanMonths } from '../_shared/billing.ts';
 
 const APP_URL = (Deno.env.get('APP_URL') ?? '').replace(/\/+$/, '');
 const ASAAS_API_KEY = Deno.env.get('ASAAS_API_KEY') ?? '';
@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
   const orgId = typeof body?.organization_id === 'string' ? body.organization_id.toLowerCase() : '';
   const months = body?.months ?? 1;
   const method = parseMethod(body?.method);
-  if (!UUID.test(orgId) || !validMonths(months) || !method) return json({ error: 'Pedido inválido.' }, 400);
+  if (!UUID.test(orgId) || !validPlanMonths(months) || !method) return json({ error: 'Pedido inválido.' }, 400);
 
   const { data: membership } = await supabase
     .from('organization_members')
@@ -68,12 +68,13 @@ Deno.serve(async (req) => {
   }
 
   const { data: org } = await supabase.from('organizations').select('name').eq('id', orgId).single();
-  const { data: price, error: priceError } = await supabase.rpc('billing_monthly_price');
+  const { data: price, error: priceError } = await supabase.rpc('billing_price', { p_months: months });
   if (!org || priceError || (typeof price !== 'number' && typeof price !== 'string')) {
     return json({ error: 'Não foi possível preparar o pagamento. Tente novamente.' }, 500);
   }
-  const total = Math.round(Number(price) * months * 100) / 100;
-  const back = `${APP_URL}/painel`;
+  const total = Math.round(Number(price) * 100) / 100;
+  // A página de retorno avisa o painel (janelinha) ou volta para /painel (mesma aba).
+  const back = `${APP_URL}/assinatura/retorno`;
 
   const response = await fetch(`${ASAAS.api}/checkouts`, {
     method: 'POST',
@@ -85,9 +86,9 @@ Deno.serve(async (req) => {
       minutesToExpire: 60,
       externalReference: buildExternalReference(orgId, months),
       callback: {
-        successUrl: `${back}?assinatura=retorno`,
-        cancelUrl: `${back}?assinatura=falhou`,
-        expiredUrl: `${back}?assinatura=falhou`,
+        successUrl: `${back}?status=ok`,
+        cancelUrl: `${back}?status=falhou`,
+        expiredUrl: `${back}?status=falhou`,
       },
       items: [
         {

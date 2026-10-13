@@ -28,6 +28,13 @@ export function validMonths(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAX_MONTHS;
 }
 
+/** Períodos à venda (o preço de cada um vem de public.billing_price no banco). */
+export const PLAN_MONTHS = [1, 6, 12];
+
+export function validPlanMonths(value: unknown): value is number {
+  return validMonths(value) && PLAN_MONTHS.includes(value);
+}
+
 /**
  * Endereços do Asaas. O ambiente vem de ASAAS_ENV ("sandbox" ou "production");
  * sem ele, a chave diz: chaves de teste têm "_hmlg_" ($aact_hmlg_...).

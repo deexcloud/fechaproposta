@@ -51,7 +51,8 @@ const TemplatesPage = lazyNamed(() => import('@/features/catalog/TemplatesPage')
 const SettingsPage = lazyNamed(() => import('@/features/settings/SettingsPage'), 'SettingsPage');
 const PublicProposalPage = lazyNamed(() => import('@/features/public/PublicProposalPage'), 'PublicProposalPage');
 const PlatformAdminPage = lazyNamed(() => import('@/features/platform-admin/PlatformAdminPage'), 'PlatformAdminPage');
-const TermsPage = lazyNamed(() => import('@/features/legal/LegalPage'), 'TermsPage');
+const CheckoutReturnPage = lazyNamed(() => import('@/features/subscription/CheckoutReturnPage'), 'CheckoutReturnPage');
+const TermsPage =lazyNamed(() => import('@/features/legal/LegalPage'), 'TermsPage');
 const PrivacyPage = lazyNamed(() => import('@/features/legal/LegalPage'), 'PrivacyPage');
 
 const queryClient = new QueryClient({
@@ -84,6 +85,7 @@ function AppRoutes() {
           <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
           <Route path="/convite/:token" element={<AcceptInvitePage />} />
           <Route path="/p/:token" element={<PublicProposalPage />} />
+          <Route path="/assinatura/retorno" element={<CheckoutReturnPage />} />
           <Route path="/termos" element={<TermsPage />} />
           <Route path="/privacidade" element={<PrivacyPage />} />
 
