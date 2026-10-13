@@ -1,5 +1,7 @@
+import { useState, type ReactNode } from 'react';
 import { Box, Button, Card, Stack, Typography } from '@mui/material';
 import { CalendarClock, Download, FileSignature, Lock, MessageCircle, MessageSquareText, PartyPopper, UserX } from 'lucide-react';
+import { accentOnWhite, tint } from '@/lib/color';
 import { daysUntil, firstName, money } from '@/lib/format';
 import { tokens } from '@/theme/tokens';
 
@@ -20,6 +22,32 @@ export interface DecisionProps {
   onAccept: () => void;
   onChanges: () => void;
   onDecline: () => void;
+}
+
+/** Quantas vezes o valor mudou (0 = nunca), para animar só na mudança e não ao abrir a página. */
+function useChangeCount(value: number): number {
+  const [state, setState] = useState({ value, count: 0 });
+  if (state.value !== value) setState({ value, count: state.count + 1 });
+  return state.count;
+}
+
+/** Valor que dá um pulinho na cor da marca quando muda (ex.: ao marcar um extra). */
+function BumpOnChange({ value, color, origin, children }: { value: number; color: string; origin: 'left' | 'right'; children: ReactNode }) {
+  const changes = useChangeCount(value);
+  return (
+    <Box
+      key={changes}
+      component="span"
+      sx={{
+        display: 'inline-block',
+        transformOrigin: `${origin} center`,
+        '--fp-flash': color,
+        animation: changes ? 'fp-total-bump .55s cubic-bezier(.2,.7,.2,1)' : 'none',
+      }}
+    >
+      {children}
+    </Box>
+  );
 }
 
 function validityText(left: number) {
@@ -56,7 +84,9 @@ export function DecisionPanel({ orgName, base, extras, extrasCount, total, valid
         </Stack>
         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', mt: 1.5, pt: 1.5, borderTop: `1px solid ${tokens.border}` }}>
           <Typography sx={{ fontWeight: 650 }}>Total</Typography>
-          <Typography sx={{ fontWeight: 750, fontSize: 30, letterSpacing: '-0.03em', fontFeatureSettings: '"tnum"' }}>{money(total)}</Typography>
+          <Typography aria-live="polite" sx={{ fontWeight: 750, fontSize: 30, letterSpacing: '-0.03em', fontFeatureSettings: '"tnum"' }}>
+            <BumpOnChange value={total} color={accentOnWhite(brand.bg)} origin="right">{money(total)}</BumpOnChange>
+          </Typography>
         </Stack>
 
         <Stack
@@ -121,7 +151,9 @@ export function MobileDecisionBar({ total, extrasCount, validUntil, brand, onAcc
           <Typography variant="caption" sx={{ display: 'block', lineHeight: 1.2, color: left <= 3 ? tokens.error : tokens.textSecondary, fontWeight: left <= 3 ? 650 : 400 }}>
             {left <= 3 ? validityText(left) : extrasCount ? `Total com ${extrasCount} ${extrasCount === 1 ? 'extra' : 'extras'}` : 'Total'}
           </Typography>
-          <Typography sx={{ fontWeight: 750, fontSize: 21, letterSpacing: '-0.02em', fontFeatureSettings: '"tnum"' }} noWrap>{money(total)}</Typography>
+          <Typography aria-live="polite" sx={{ fontWeight: 750, fontSize: 21, letterSpacing: '-0.02em', fontFeatureSettings: '"tnum"' }} noWrap>
+            <BumpOnChange value={total} color={accentOnWhite(brand.bg)} origin="left">{money(total)}</BumpOnChange>
+          </Typography>
         </Box>
         <Button size="large" variant="contained" onClick={onAccept} sx={{ bgcolor: brand.bg, color: brand.fg, minHeight: 48, px: 3, borderRadius: '8px', fontWeight: 650, '&:hover': { bgcolor: brand.bg } }}>
           Aceitar
@@ -175,18 +207,41 @@ export function PublicHeader({ orgName, logo, brand, contactUrl }: { orgName: st
 /** Logo depois de aceitar: confirma, diz o que acontece agora e oferece o PDF. */
 export function AcceptedCelebration({ name, orgName, nextStep, brand }: { name: string; orgName: string; nextStep: string | null; brand: Brand }) {
   return (
-    <Card className="fp-fade-up" sx={{ p: { xs: 2.5, sm: 3 }, mb: { xs: 2, sm: 3 }, borderRadius: '12px', borderTop: `3px solid ${brand.bg}` }}>
+    <Card className="fp-fade-up" sx={{ p: { xs: 2.5, sm: 3 }, mb: { xs: 2, sm: 3 }, borderRadius: '12px', borderTop: `3px solid ${brand.bg}`, overflow: 'visible' }}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} sx={{ alignItems: { sm: 'center' } }}>
-        <Box sx={{ width: 48, height: 48, borderRadius: '12px', bgcolor: brand.bg, color: brand.fg, display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-          <PartyPopper size={24} />
+        {/* O momento do "fechou": ícone entra com um pulo, halo e faíscas na cor da marca, uma vez só. */}
+        <Box sx={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
+          <Box aria-hidden sx={{ position: 'absolute', inset: 0, borderRadius: '12px', bgcolor: brand.bg, animation: 'fp-pulse 1.1s .25s ease-out 2 both' }} />
+          {Array.from({ length: 10 }, (_, i) => (
+            <Box
+              key={i}
+              aria-hidden
+              sx={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: 7,
+                height: 7,
+                ml: '-3.5px',
+                mt: '-3.5px',
+                borderRadius: '50%',
+                bgcolor: i % 2 ? tint(brand.bg, 0.45) : brand.bg,
+                '--fp-angle': `${i * 36}deg`,
+                animation: 'fp-burst .9s .2s cubic-bezier(.2,.7,.2,1) both',
+              }}
+            />
+          ))}
+          <Box sx={{ position: 'relative', width: 48, height: 48, borderRadius: '12px', bgcolor: brand.bg, color: brand.fg, display: 'grid', placeItems: 'center', animation: 'fp-pop-in .6s cubic-bezier(.2,.7,.2,1.3) both' }}>
+            <PartyPopper size={24} />
+          </Box>
         </Box>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, animation: 'fp-fade-up .5s .25s cubic-bezier(.2,.7,.2,1) both' }}>
           <Typography sx={{ fontWeight: 700, fontSize: { xs: 19, sm: 21 }, letterSpacing: '-0.02em' }}>Proposta aceita! Obrigado, {firstName(name) || 'tudo certo'}.</Typography>
           <Typography sx={{ mt: 0.5, color: tokens.textSecondary }}>
             {orgName} já recebeu o aviso. {nextStep ? `Próximo passo: ${nextStep}` : 'Em breve entram em contato para combinar o início.'}
           </Typography>
         </Box>
-        <Button variant="outlined" startIcon={<Download />} onClick={() => window.print()} sx={{ flexShrink: 0 }}>
+        <Button variant="outlined" startIcon={<Download />} onClick={() => window.print()} sx={{ flexShrink: 0, animation: 'fp-fade-up .5s .45s cubic-bezier(.2,.7,.2,1) both' }}>
           Baixar PDF assinado
         </Button>
       </Stack>

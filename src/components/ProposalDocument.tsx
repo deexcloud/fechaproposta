@@ -81,6 +81,8 @@ function OptionalCard({ item, checked, selectable, accent, onToggle }: { item: P
           bgcolor: checked ? accent : 'transparent',
           color: '#fff',
           transition: 'all .15s ease',
+          // Ao marcar, o círculo dá um pulinho: fica claro que o extra entrou no pedido.
+          animation: checked && selectable ? 'fp-check-pop .35s cubic-bezier(.2,.7,.2,1.3)' : 'none',
         }}
       >
         {checked && <Check size={13} strokeWidth={3.5} />}

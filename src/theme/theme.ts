@@ -8,6 +8,19 @@ const globalCss = {
   '@keyframes fp-fade-up': { from: { opacity: 0, transform: 'translateY(6px)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-pulse': { '0%': { transform: 'scale(1)', opacity: 0.6 }, '100%': { transform: 'scale(2.4)', opacity: 0 } },
   '@keyframes fp-pop': { from: { opacity: 0, transform: 'translateY(10px) scale(.94)' }, to: { opacity: 1, transform: 'none' } },
+  // Página do cliente: total que muda, extra marcado e o aceite.
+  '@keyframes fp-total-bump': {
+    '0%': { transform: 'scale(1)' },
+    '30%': { transform: 'scale(1.07)', color: 'var(--fp-flash, currentColor)' },
+    '100%': { transform: 'scale(1)' },
+  },
+  '@keyframes fp-check-pop': { '0%': { transform: 'scale(.5)' }, '60%': { transform: 'scale(1.18)' }, '100%': { transform: 'scale(1)' } },
+  '@keyframes fp-pop-in': { '0%': { opacity: 0, transform: 'scale(.4)' }, '60%': { opacity: 1, transform: 'scale(1.12)' }, '100%': { transform: 'scale(1)' } },
+  '@keyframes fp-burst': {
+    '0%': { opacity: 0, transform: 'rotate(var(--fp-angle)) translateY(0) scale(.5)' },
+    '25%': { opacity: 1 },
+    '100%': { opacity: 0, transform: 'rotate(var(--fp-angle)) translateY(-52px) scale(1)' },
+  },
   '@keyframes fp-in-left': { from: { opacity: 0, transform: 'translateX(-48px)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-in-right': { from: { opacity: 0, transform: 'translateX(48px)' }, to: { opacity: 1, transform: 'none' } },
   '.fp-fade-up': { animation: 'fp-fade-up .35s cubic-bezier(.2,.7,.2,1) both' },
@@ -140,7 +153,10 @@ function makeTheme(mode: Mode) {
             // No escuro, degradê violeta → índigo. No claro (páginas do cliente) os botões levam
             // a cor da marca de quem vende via bgcolor, e um degradê por cima a esconderia.
             backgroundImage: dark ? gradients.primary : 'none',
-            boxShadow: `inset 0 1px 0 rgba(255,255,255,.18), 0 1px 2px ${alpha(p.primary, 0.35)}, 0 6px 20px -8px ${alpha(p.primary, dark ? 0.7 : 0.4)}`,
+            // No claro a sombra é neutra: o botão leva a cor da marca do vendedor e um brilho roxo aparecia atrás dele.
+            boxShadow: dark
+              ? `inset 0 1px 0 rgba(255,255,255,.18), 0 1px 2px ${alpha(p.primary, 0.35)}, 0 6px 20px -8px ${alpha(p.primary, 0.7)}`
+              : '0 1px 2px rgba(9, 9, 11, 0.12), 0 6px 16px -10px rgba(9, 9, 11, 0.35)',
             '&:hover': { backgroundImage: dark ? gradients.primaryHover : 'none', backgroundColor: p.primaryHover },
             '&.Mui-disabled': { backgroundImage: 'none', backgroundColor: tokens.muted, color: tokens.textTertiary, boxShadow: 'none' },
           },

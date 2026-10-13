@@ -97,7 +97,7 @@ const light: Palette = {
   accent: '#6243F0',
   accentSoft: '#F1EEFE',
   accentText: '#4F33D6',
-  ring: 'rgba(98, 67, 240, 0.28)',
+  ring: 'rgba(9, 9, 11, 0.22)',
 
   success: '#16A34A',
   successSoft: '#F0FDF4',
