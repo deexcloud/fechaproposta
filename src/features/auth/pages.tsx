@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Alert, Button, Link, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Button, Checkbox, FormControlLabel, Link, Stack, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '@/layouts/AuthLayout';
-import { supabase } from '@/lib/supabase';
+import { setRememberSession, supabase } from '@/lib/supabase';
 import { friendlyError } from '@/lib/errors';
 import { BrandLoader } from '@/components/common';
 import { useNotify } from '@/components/NotifyProvider';
@@ -31,6 +31,7 @@ export function SignInPage() {
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? '/painel';
   const [formError, setFormError] = useState<string | null>(null);
+  const [remember, setRemember] = useState(true);
 
   const { register, handleSubmit, formState } = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -42,6 +43,7 @@ export function SignInPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
+    setRememberSession(remember);
     const { error } = await supabase.auth.signInWithPassword(values);
     if (error) return setFormError(friendlyError(error));
     navigate(from, { replace: true });
@@ -76,9 +78,17 @@ export function SignInPage() {
           error={Boolean(formState.errors.password)}
           helperText={formState.errors.password?.message}
         />
-        <Link component={RouterLink} to="/esqueci-senha" sx={{ alignSelf: 'flex-end' }}>
-          Esqueci minha senha
-        </Link>
+        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', rowGap: 0.5, mt: -0.5 }}>
+          <FormControlLabel
+            control={<Checkbox size="small" checked={remember} onChange={(e) => setRemember(e.target.checked)} />}
+            label={<Typography variant="body2">Manter conectado</Typography>}
+            title="Desmarque em computador compartilhado: a sessão termina ao fechar a aba."
+            sx={{ ml: -0.75 }}
+          />
+          <Link component={RouterLink} to="/esqueci-senha">
+            Esqueci minha senha
+          </Link>
+        </Stack>
         <Button type="submit" variant="contained" size="large" loading={formState.isSubmitting}>
           Entrar
         </Button>
@@ -106,6 +116,7 @@ export function SignUpPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
+    setRememberSession(true);
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
