@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Card, Slider, Stack, Typography } from '@mui/material';
 import { ArrowRight, Check, X } from 'lucide-react';
+import { Reveal } from '@/components/Reveal';
 import { money, moneyShort } from '@/lib/format';
 import { PRICE_MONTHLY } from '@/lib/pricing';
 import { gradients, shadows, tokens } from '@/theme/tokens';
@@ -25,30 +26,34 @@ const AFTER = [
 export function BeforeAfter() {
   return (
     <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
-      <Card sx={{ p: { xs: 2.5, sm: 3.5 }, bgcolor: tokens.subtle, boxShadow: 'none' }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.textTertiary }}>Hoje</Typography>
-        <Typography sx={{ fontWeight: 700, fontSize: 20, mt: 0.5, mb: 2.5, letterSpacing: '-0.02em' }}>PDF no WhatsApp e torcida</Typography>
-        <Stack spacing={1.5}>
-          {BEFORE.map((t) => (
-            <Stack key={t} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
-              <Box sx={{ mt: 0.25, color: tokens.textTertiary, display: 'flex' }}><X size={17} strokeWidth={2.5} /></Box>
-              <Typography sx={{ color: tokens.textSecondary }}>{t}</Typography>
-            </Stack>
-          ))}
-        </Stack>
-      </Card>
-      <Card sx={{ p: { xs: 2.5, sm: 3.5 }, boxShadow: shadows.glow, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.accentText }}>Com o FechaProposta</Typography>
-        <Typography sx={{ fontWeight: 700, fontSize: 20, mt: 0.5, mb: 2.5, letterSpacing: '-0.02em' }}>Proposta que conduz até o sim</Typography>
-        <Stack spacing={1.5}>
-          {AFTER.map((t) => (
-            <Stack key={t} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
-              <Box sx={{ mt: 0.25, color: tokens.accentText, display: 'flex' }}><Check size={17} strokeWidth={3} /></Box>
-              <Typography>{t}</Typography>
-            </Stack>
-          ))}
-        </Stack>
-      </Card>
+      <Reveal from="left">
+        <Card sx={{ p: { xs: 2.5, sm: 3.5 }, bgcolor: tokens.subtle, boxShadow: 'none', height: '100%' }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.textTertiary }}>Hoje</Typography>
+          <Typography sx={{ fontWeight: 700, fontSize: 20, mt: 0.5, mb: 2.5, letterSpacing: '-0.02em' }}>PDF no WhatsApp e torcida</Typography>
+          <Stack spacing={1.5}>
+            {BEFORE.map((t) => (
+              <Stack key={t} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+                <Box sx={{ mt: 0.25, color: tokens.textTertiary, display: 'flex' }}><X size={17} strokeWidth={2.5} /></Box>
+                <Typography sx={{ color: tokens.textSecondary }}>{t}</Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </Card>
+      </Reveal>
+      <Reveal from="right" delay={120}>
+        <Card sx={{ height: '100%', p: { xs: 2.5, sm: 3.5 }, boxShadow: shadows.glow, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.accentText }}>Com o FechaProposta</Typography>
+          <Typography sx={{ fontWeight: 700, fontSize: 20, mt: 0.5, mb: 2.5, letterSpacing: '-0.02em' }}>Proposta que conduz até o sim</Typography>
+          <Stack spacing={1.5}>
+            {AFTER.map((t) => (
+              <Stack key={t} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+                <Box sx={{ mt: 0.25, color: tokens.accentText, display: 'flex' }}><Check size={17} strokeWidth={3} /></Box>
+                <Typography>{t}</Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </Card>
+      </Reveal>
     </Box>
   );
 }

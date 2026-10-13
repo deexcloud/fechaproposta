@@ -13,6 +13,7 @@ import { useCurrentOrganization } from '@/features/organizations/OrganizationPro
 import { useSubscription } from '@/features/subscription/subscription';
 import { keys, useClients, useInvalidateProposals, useProposal, useTemplates } from '@/hooks/queries';
 import { friendlyError } from '@/lib/errors';
+import { setLeaveGuard } from '@/lib/leaveGuard';
 import { addDays, longDate, money, parseMoney, todayISO } from '@/lib/format';
 import { canEdit, computeTotals } from '@/lib/proposal';
 import { getTemplate, saveTemplate } from '@/services/catalog';
@@ -162,7 +163,15 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
       setLeaveTo(to);
     };
     document.addEventListener('click', onClick, true);
-    return () => document.removeEventListener('click', onClick, true);
+    const unregister = setLeaveGuard((to) => {
+      if (submitted.current) return false;
+      setLeaveTo(to);
+      return true;
+    });
+    return () => {
+      document.removeEventListener('click', onClick, true);
+      unregister();
+    };
   }, [formState.isDirty]);
 
   const save = (intent: 'draft' | 'send') =>

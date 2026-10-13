@@ -21,11 +21,14 @@ const nameSchema = z.object({ name: z.string().trim().min(2, 'Informe o nome da 
 
 function Steps({ step }: { step: 1 | 2 }) {
   return (
-    <Stack direction="row" spacing={1} sx={{ mb: 3 }} aria-label={`Passo ${step} de 2`}>
-      {[1, 2].map((s) => (
-        <Box key={s} sx={{ height: 4, flex: 1, borderRadius: 2, bgcolor: s <= step ? tokens.primary : tokens.border }} />
-      ))}
-    </Stack>
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>Passo {step} de 2</Typography>
+      <Stack direction="row" spacing={1} sx={{ mt: 0.75 }} aria-hidden>
+        {[1, 2].map((s) => (
+          <Box key={s} sx={{ height: 4, flex: 1, borderRadius: 2, bgcolor: s <= step ? tokens.primary : tokens.border }} />
+        ))}
+      </Stack>
+    </Box>
   );
 }
 
@@ -63,8 +66,12 @@ export function OnboardingPage() {
     }
   });
 
+  // Mesma regra de Configurações: vazio ou DDD + número (10 a 13 dígitos).
+  const phoneDigits = onlyDigits(whatsapp).length;
+  const phoneInvalid = phoneDigits > 0 && (phoneDigits < 10 || phoneDigits > 13);
+
   const finish = async (skip = false) => {
-    if (!created) return;
+    if (!created || (!skip && phoneInvalid)) return;
     setSaving(true);
     try {
       const digits = onlyDigits(whatsapp);
@@ -147,10 +154,11 @@ export function OnboardingPage() {
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
                   slotProps={{ htmlInput: { inputMode: 'tel' } }}
-                  helperText="Opcional. Aparece como botão na proposta."
+                  error={phoneInvalid}
+                  helperText={phoneInvalid ? 'Use DDD + número, ex.: (11) 98888-7777.' : 'Opcional. Aparece como botão na proposta.'}
                 />
                 <Stack direction="row" spacing={1}>
-                  <Button variant="contained" size="large" loading={saving} onClick={() => finish(false)} endIcon={<ArrowRight />} sx={{ flexGrow: 1 }}>
+                  <Button variant="contained" size="large" loading={saving} disabled={phoneInvalid} onClick={() => finish(false)} endIcon={<ArrowRight />} sx={{ flexGrow: 1 }}>
                     Ir para o painel
                   </Button>
                   <Button size="large" color="inherit" disabled={saving} onClick={() => finish(true)}>Pular</Button>

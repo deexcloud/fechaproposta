@@ -4,6 +4,7 @@ import { Box, Dialog, InputBase, List, ListItemButton, ListItemIcon, ListItemTex
 import { FilePlus2, FileText, Search, Settings, User } from 'lucide-react';
 import { useClients, useProposals } from '@/hooks/queries';
 import { effectiveStatus } from '@/lib/proposal';
+import { isNavigationBlocked } from '@/lib/leaveGuard';
 import { money } from '@/lib/format';
 import { StatusChip } from './StatusChip';
 import { tokens } from '@/theme/tokens';
@@ -64,7 +65,8 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   const go = (entry: Entry | undefined) => {
     if (!entry) return;
     onClose();
-    navigate(entry.to);
+    // Editor com alteração não salva pergunta antes de sair.
+    if (!isNavigationBlocked(entry.to)) navigate(entry.to);
   };
 
   return (

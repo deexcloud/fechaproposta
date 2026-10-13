@@ -7,10 +7,8 @@ import {
   BookOpen,
   Check,
   ChevronDown,
-  Eye,
   FileText,
   LayoutTemplate,
-  ListChecks,
   Menu as MenuIcon,
   MessageCircle,
   Palette,
@@ -21,6 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import { BrandMark } from '@/components/common';
+import { Reveal } from '@/components/Reveal';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
 import { ANNUAL_PLAN, MONTHLY_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
@@ -59,11 +58,11 @@ function Section({ id, eyebrow, title, subtitle, children, muted }: { id?: strin
   return (
     <Box component="section" id={id} sx={{ py: { xs: 8, md: 11 }, px: PAGE_PX, bgcolor: muted ? 'rgba(255,255,255,.015)' : 'transparent', borderTop: muted ? `1px solid ${tokens.border}` : 'none', borderBottom: muted ? `1px solid ${tokens.border}` : 'none', scrollMarginTop: 72 }}>
       <Box sx={{ maxWidth: 1120, mx: 'auto' }}>
-        <Box sx={{ maxWidth: 640, mb: { xs: 4, md: 6 } }}>
+        <Reveal sx={{ maxWidth: 640, mb: { xs: 4, md: 6 } }}>
           {eyebrow && <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.accentText }}>{eyebrow}</Typography>}
           <Typography component="h2" sx={{ fontSize: { xs: 30, md: 40 }, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.04em', mt: 0.75 }}>{title}</Typography>
           {subtitle && <Typography sx={{ mt: 1.5, fontSize: 17, color: tokens.textSecondary, lineHeight: 1.6 }}>{subtitle}</Typography>}
-        </Box>
+        </Reveal>
         {children}
       </Box>
     </Box>
@@ -107,7 +106,8 @@ function HeroVisual() {
       }}
     >
       {/* Painel de quem vende */}
-      <Card sx={{ position: framed, left: 0, top: 120, width: { xs: '100%', sm: 318 }, maxWidth: 360, boxSizing: 'border-box', p: 2.25, zIndex: 3, boxShadow: shadows.lg }}>
+      {/* No celular só o celular do cliente: duas maquetes empilhadas passavam de duas telas de rolagem. */}
+      <Card sx={{ position: framed, left: 0, top: 120, width: { xs: '100%', sm: 318 }, maxWidth: 360, boxSizing: 'border-box', p: 2.25, zIndex: 3, boxShadow: shadows.lg, display: { xs: 'none', sm: 'block' }, animation: 'fp-in-left .9s .25s cubic-bezier(.2,.7,.2,1) both' }}>
         <Typography sx={{ fontWeight: 700, fontSize: 14 }}>Precisa da sua atenção</Typography>
         <Typography sx={{ fontSize: 12, color: tokens.textSecondary }}>O que fazer agora para fechar mais</Typography>
         {rows.map((r) => (
@@ -134,7 +134,7 @@ function HeroVisual() {
       </Card>
 
       {/* Celular do cliente */}
-      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#000', border: '1px solid rgba(255,255,255,.12)', p: 1.25, zIndex: 2, boxShadow: '0 40px 90px -30px rgba(0,0,0,.9), 0 0 80px -20px rgba(109,76,245,.45)' }}>
+      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#000', border: '1px solid rgba(255,255,255,.12)', p: 1.25, zIndex: 2, boxShadow: '0 40px 90px -30px rgba(0,0,0,.9), 0 0 80px -20px rgba(109,76,245,.45)', animation: 'fp-in-right .9s .05s cubic-bezier(.2,.7,.2,1) both, fp-float 7s 1.2s ease-in-out infinite' }}>
         <Box className="fp-light" sx={{ bgcolor: '#fff', color: tokens.textPrimary, borderRadius: '31px', height: '100%', overflow: 'hidden', position: 'relative' }}>
           <Box sx={{ px: 2.25, pt: 3.5, pb: 2, borderTop: `4px solid ${tokens.primary}`, background: `linear-gradient(180deg, ${tokens.accentSoft}, #fff 80%)` }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -174,7 +174,7 @@ function HeroVisual() {
       </Box>
 
       {/* Aviso de aceite */}
-      <Card sx={{ position: 'absolute', left: 60, top: 476, px: 1.75, py: 1.25, zIndex: 4, display: { xs: 'none', sm: 'flex' }, gap: 1.25, alignItems: 'center', boxShadow: shadows.lg }} className="fp-fade-up">
+      <Card sx={{ position: 'absolute', left: 60, top: 476, px: 1.75, py: 1.25, zIndex: 4, display: { xs: 'none', sm: 'flex' }, gap: 1.25, alignItems: 'center', boxShadow: shadows.lg, animation: 'fp-pop .6s 1s cubic-bezier(.2,.7,.2,1) both' }}>
         <Box sx={{ width: 30, height: 30, borderRadius: '8px', bgcolor: tokens.successSoft, color: tokens.success, display: 'grid', placeItems: 'center' }}><Check size={16} strokeWidth={3} /></Box>
         <Box>
           <Typography sx={{ fontWeight: 700, fontSize: 13 }}>Marina aceitou</Typography>
@@ -243,7 +243,7 @@ export function LandingPage() {
             <Box className="fp-fade-up" sx={{ maxWidth: { xs: 640, lg: 'none' }, mx: { xs: 'auto', lg: 0 }, width: '100%' }}>
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.5, borderRadius: '999px', border: `1px solid ${tokens.border}`, bgcolor: tokens.accentSoft, fontSize: 13, fontWeight: 600, color: tokens.textSecondary }}>
                 <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: tokens.success }} />
-                Saiba na hora quando o cliente abrir
+                Aceite com assinatura, sem o cliente criar conta
               </Box>
               <Typography component="h1" sx={{ fontSize: { xs: 40, sm: 54, lg: 62 }, fontWeight: 800, lineHeight: 1.04, letterSpacing: '-0.05em', mt: 2.5, textWrap: 'balance' }}>
                 Propostas que o cliente <Box component="span" sx={{ background: gradients.text, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>aprova até pelo celular.</Box>
@@ -279,26 +279,6 @@ export function LandingPage() {
           </Box>
         </Box>
 
-        {/* Benefícios rápidos */}
-        <Box sx={{ borderTop: `1px solid ${tokens.border}`, borderBottom: `1px solid ${tokens.border}`, bgcolor: 'rgba(255,255,255,.015)', px: PAGE_PX, py: 3.5 }}>
-          <Box sx={{ maxWidth: 1120, mx: 'auto', display: 'grid', gap: { xs: 2.5, md: 3 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' } }}>
-            {[
-              [<Eye key="e" />, 'Aviso de abertura', 'Quantas vezes e quando'],
-              [<ListChecks key="l" />, 'Extras opcionais', 'O cliente aumenta o pedido'],
-              [<PenLine key="p" />, 'Assinatura online', 'Aceite com comprovante'],
-              [<MessageCircle key="m" />, 'Lembrete no WhatsApp', 'Mensagem pronta'],
-            ].map(([icon, title, text]) => (
-              <Stack key={title as string} direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                <IconTile>{icon}</IconTile>
-                <Box>
-                  <Typography sx={{ fontWeight: 650, fontSize: 14 }}>{title}</Typography>
-                  <Typography variant="caption" color="text.secondary">{text}</Typography>
-                </Box>
-              </Stack>
-            ))}
-          </Box>
-        </Box>
-
         <Section eyebrow="Por que trocar" title="Pare de mandar PDF e torcer." subtitle="A proposta é o momento em que o cliente decide. Ela precisa explicar o valor, tirar as dúvidas e deixar o sim a um toque.">
           <BeforeAfter />
         </Section>
@@ -309,15 +289,17 @@ export function LandingPage() {
               { n: '1', icon: <FileText />, title: 'Monte em minutos', text: 'Comece de um modelo, puxe os itens do catálogo e veja ao lado exatamente o que o cliente vai receber.' },
               { n: '2', icon: <Send />, title: 'Envie pelo WhatsApp', text: 'Um link com a sua marca e uma mensagem pronta. Abre no computador ou no celular, sem PDF pesado e sem cadastro.' },
               { n: '3', icon: <PenLine />, title: 'Receba o sim', text: 'Veja quem abriu, responda pedidos de ajuste e lembre no momento certo. O aceite chega com assinatura.' },
-            ].map((s) => (
-              <Card key={s.n} sx={{ p: 3 }}>
-                <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                  <IconTile>{s.icon}</IconTile>
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.textTertiary }}>Passo {s.n}</Typography>
-                </Stack>
-                <Typography sx={{ fontWeight: 700, fontSize: 18, mt: 2.5, letterSpacing: '-0.02em' }}>{s.title}</Typography>
-                <Typography color="text.secondary" sx={{ mt: 0.75 }}>{s.text}</Typography>
-              </Card>
+            ].map((s, i) => (
+              <Reveal key={s.n} delay={i * 120}>
+                <Card sx={{ p: 3, height: '100%' }}>
+                  <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                    <IconTile>{s.icon}</IconTile>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.textTertiary }}>Passo {s.n}</Typography>
+                  </Stack>
+                  <Typography sx={{ fontWeight: 700, fontSize: 18, mt: 2.5, letterSpacing: '-0.02em' }}>{s.title}</Typography>
+                  <Typography color="text.secondary" sx={{ mt: 0.75 }}>{s.text}</Typography>
+                </Card>
+              </Reveal>
             ))}
           </Box>
           <Button component={RouterLink} to="/exemplo" variant="outlined" endIcon={<ArrowRight />} sx={{ mt: 4 }}>Abrir a proposta de exemplo</Button>
@@ -332,38 +314,42 @@ export function LandingPage() {
               [<Palette key="p" />, 'Sua marca', 'Logo e cor da sua empresa em cada proposta. O cliente vê você, não a gente.'],
               [<Users key="u" />, 'Equipe', 'Convide vendedores por link, cada um com o acesso certo.'],
               [<FileText key="f" />, 'PDF e histórico', 'Baixe em PDF e veja a linha do tempo e o comprovante de cada aceite.'],
-            ].map(([icon, title, text]) => (
-              <Box key={title as string}>
+            ].map(([icon, title, text], i) => (
+              <Reveal key={title as string} delay={(i % 3) * 110}>
                 <IconTile>{icon}</IconTile>
                 <Typography sx={{ fontWeight: 650, fontSize: 16, mt: 1.5 }}>{title}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{text}</Typography>
-              </Box>
+              </Reveal>
             ))}
           </Box>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 5, alignItems: { sm: 'center' } }}>
-            <Button component={RouterLink} to={startTo} variant="contained" size="large" endIcon={<ArrowRight />}>{ctaLabel}</Button>
-            {!user && <Typography variant="body2" color="text.secondary">{TRIAL_DAYS} dias grátis, sem cartão e sem renovação automática.</Typography>}
-          </Stack>
+          <Reveal>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 5, alignItems: { sm: 'center' } }}>
+              <Button component={RouterLink} to={startTo} variant="contained" size="large" endIcon={<ArrowRight />}>{ctaLabel}</Button>
+              {!user && <Typography variant="body2" color="text.secondary">{TRIAL_DAYS} dias grátis, sem cartão e sem renovação automática.</Typography>}
+            </Stack>
+          </Reveal>
         </Section>
 
         {TESTIMONIALS.length === 0 && (
           <Box sx={{ px: PAGE_PX, pb: { xs: 8, md: 11 } }}>
-            <Box sx={{ maxWidth: 1120, mx: 'auto', p: { xs: 2.5, sm: 3 }, borderRadius: '14px', border: `1px solid ${tokens.border}`, bgcolor: tokens.surface, display: 'grid', gap: { xs: 2, md: 3 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' } }}>
-              {[
-                ['Comprovante de aceite', 'Nome, assinatura, data, IP e cópia do que foi aceito.'],
-                ['Dados isolados', 'Cada empresa vê só o que é dela.'],
-                ['Sem fidelidade', 'Sem renovação automática nem multa.'],
-                ['Suporte humano', 'Dúvida? Fale com a gente pelo WhatsApp.'],
-              ].map(([title, text]) => (
-                <Stack key={title} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
-                  <Box sx={{ color: tokens.accentText, mt: 0.25, display: 'flex' }}><ShieldCheck size={18} /></Box>
-                  <Box>
-                    <Typography sx={{ fontWeight: 650, fontSize: 14 }}>{title}</Typography>
-                    <Typography variant="caption" color="text.secondary">{text}</Typography>
-                  </Box>
-                </Stack>
-              ))}
-            </Box>
+            <Reveal from="scale" sx={{ maxWidth: 1120, mx: 'auto' }}>
+              <Box sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: '14px', border: `1px solid ${tokens.border}`, bgcolor: tokens.surface, display: 'grid', gap: { xs: 2, md: 3 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' } }}>
+                {[
+                  ['Comprovante de aceite', 'Nome, assinatura, data, IP e cópia do que foi aceito.'],
+                  ['Dados isolados', 'Cada empresa vê só o que é dela.'],
+                  ['Sem fidelidade', 'Sem renovação automática nem multa.'],
+                  ['Suporte humano', 'Dúvida? Fale com a gente pelo WhatsApp.'],
+                ].map(([title, text]) => (
+                  <Stack key={title} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+                    <Box sx={{ color: tokens.accentText, mt: 0.25, display: 'flex' }}><ShieldCheck size={18} /></Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: 650, fontSize: 14 }}>{title}</Typography>
+                      <Typography variant="caption" color="text.secondary">{text}</Typography>
+                    </Box>
+                  </Stack>
+                ))}
+              </Box>
+            </Reveal>
           </Box>
         )}
 
@@ -389,81 +375,89 @@ export function LandingPage() {
         )}
 
         <Section muted eyebrow="Vale a pena?" title="Uma proposta a mais por mês já paga tudo." subtitle="Mexa nos valores e veja com os seus números.">
-          <RoiCalculator startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} />
+          <Reveal>
+            <RoiCalculator startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} />
+          </Reveal>
         </Section>
 
         <Section id="preco" eyebrow="Preço" title="Tudo incluído. Você escolhe o período." subtitle="Sem limite de propostas e sem taxa por proposta aceita.">
           <Box sx={{ display: 'grid', gap: { xs: 3, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '460px 1fr' }, alignItems: 'center' }}>
-            <Card sx={{ p: { xs: 3, sm: 4 }, boxShadow: `${shadows.lg}, ${shadows.glow}`, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
-              <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography sx={{ fontWeight: 650 }}>FechaProposta</Typography>
-                <Box sx={{ fontSize: 12, fontWeight: 600, px: 1, py: 0.25, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText }}>{TRIAL_DAYS} dias grátis</Box>
-              </Stack>
-              <ToggleButtonGroup exclusive fullWidth size="small" value={billing} onChange={(_, v) => v && setBilling(v)} aria-label="Período" sx={{ mt: 2.5 }}>
-                <ToggleButton value="monthly" sx={{ textTransform: 'none', fontWeight: 600 }}>Mensal</ToggleButton>
-                <ToggleButton value="annual" sx={{ textTransform: 'none', fontWeight: 600, gap: 0.75 }}>
-                  Anual
-                  <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.successText }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
-                </ToggleButton>
-              </ToggleButtonGroup>
-              <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 2 }}>
-                {billing === 'annual' && (
-                  <Typography sx={{ fontSize: 22, fontWeight: 600, color: tokens.textSecondary, textDecoration: 'line-through' }}>{money(PRICE_MONTHLY).replace(',00', '')}</Typography>
-                )}
-                <Typography sx={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.05em' }}>{money(shownPlan.perMonth).replace(',00', '')}</Typography>
-                <Typography color="text.secondary">/ mês</Typography>
-              </Stack>
-              <Typography variant="body2" color="text.secondary">
-                {billing === 'annual'
-                  ? `${money(ANNUAL_PLAN.total).replace(',00', '')} por ano. Você economiza ${money(planSavings(ANNUAL_PLAN)).replace(',00', '')}.`
-                  : `Menos de ${money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia. Também tem semestral a ${money(PLANS[1].perMonth).replace(',00', '')}/mês.`}{' '}
-                Pix ou cartão.
-              </Typography>
-              <Stack spacing={1.25} sx={{ my: 3 }}>
-                {PLAN_FEATURES.map((f) => (
-                  <Stack key={f} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                    <Check size={16} color={tokens.accentText} strokeWidth={3} />
-                    <Typography variant="body2">{f}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-              <Button component={RouterLink} to={startTo} variant="contained" size="large" fullWidth endIcon={<ArrowRight />}>
-                {user ? 'Abrir painel' : `Começar teste de ${TRIAL_DAYS} dias`}
-              </Button>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1.5 }}>Sem cartão de crédito para testar.</Typography>
-            </Card>
+            <Reveal from="left">
+              <Card sx={{ p: { xs: 3, sm: 4 }, boxShadow: `${shadows.lg}, ${shadows.glow}`, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
+                <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography sx={{ fontWeight: 650 }}>FechaProposta</Typography>
+                  <Box sx={{ fontSize: 12, fontWeight: 600, px: 1, py: 0.25, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText }}>{TRIAL_DAYS} dias grátis</Box>
+                </Stack>
+                <ToggleButtonGroup exclusive fullWidth size="small" value={billing} onChange={(_, v) => v && setBilling(v)} aria-label="Período" sx={{ mt: 2.5 }}>
+                  <ToggleButton value="monthly" sx={{ textTransform: 'none', fontWeight: 600 }}>Mensal</ToggleButton>
+                  <ToggleButton value="annual" sx={{ textTransform: 'none', fontWeight: 600, gap: 0.75 }}>
+                    Anual
+                    <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.successText }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 2 }}>
+                  {billing === 'annual' && (
+                    <Typography sx={{ fontSize: 22, fontWeight: 600, color: tokens.textSecondary, textDecoration: 'line-through' }}>{money(PRICE_MONTHLY).replace(',00', '')}</Typography>
+                  )}
+                  <Typography sx={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.05em' }}>{money(shownPlan.perMonth).replace(',00', '')}</Typography>
+                  <Typography color="text.secondary">/ mês</Typography>
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
+                  {billing === 'annual'
+                    ? `${money(ANNUAL_PLAN.total).replace(',00', '')} por ano. Você economiza ${money(planSavings(ANNUAL_PLAN)).replace(',00', '')}.`
+                    : `Menos de ${money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia. Também tem semestral a ${money(PLANS[1].perMonth).replace(',00', '')}/mês.`}{' '}
+                  Pix ou cartão.
+                </Typography>
+                <Stack spacing={1.25} sx={{ my: 3 }}>
+                  {PLAN_FEATURES.map((f) => (
+                    <Stack key={f} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
+                      <Check size={16} color={tokens.accentText} strokeWidth={3} />
+                      <Typography variant="body2">{f}</Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+                <Button component={RouterLink} to={startTo} variant="contained" size="large" fullWidth endIcon={<ArrowRight />}>
+                  {user ? 'Abrir painel' : `Começar teste de ${TRIAL_DAYS} dias`}
+                </Button>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1.5 }}>Sem cartão de crédito para testar.</Typography>
+              </Card>
+            </Reveal>
             <Stack spacing={2.5}>
               {[
                 ['Sem fidelidade e sem renovação automática', 'Você paga o período que escolher. Nada é cobrado de novo sem você pedir.'],
                 ['Pagar no teste não perde dias', 'Se assinar antes do fim do teste, os dias restantes continuam valendo.'],
                 ['Seus links não quebram', 'Mesmo se a assinatura vencer, os clientes continuam abrindo e aceitando o que você já enviou.'],
                 ['Seus dados são seus', 'Cada empresa fica isolada no banco. Propostas aceitas guardam o comprovante.'],
-              ].map(([title, text]) => (
-                <Stack key={title} direction="row" spacing={1.5}>
-                  <IconTile><Check /></IconTile>
-                  <Box>
-                    <Typography sx={{ fontWeight: 650 }}>{title}</Typography>
-                    <Typography variant="body2" color="text.secondary">{text}</Typography>
-                  </Box>
-                </Stack>
+              ].map(([title, text], i) => (
+                <Reveal key={title} from="right" delay={i * 110}>
+                  <Stack direction="row" spacing={1.5}>
+                    <IconTile><Check /></IconTile>
+                    <Box>
+                      <Typography sx={{ fontWeight: 650 }}>{title}</Typography>
+                      <Typography variant="body2" color="text.secondary">{text}</Typography>
+                    </Box>
+                  </Stack>
+                </Reveal>
               ))}
             </Stack>
           </Box>
         </Section>
 
         <Section id="duvidas" muted eyebrow="Dúvidas" title="Bom saber antes de começar.">
-          <Card sx={{ maxWidth: 760, px: { xs: 2, sm: 3 } }}>
-            {FAQ.map((f, i) => (
-              <Accordion key={f.q} disableGutters elevation={0} sx={{ borderTop: i ? `1px solid ${tokens.border}` : 'none' }}>
-                <AccordionSummary expandIcon={<ChevronDown size={18} />} sx={{ px: 0, '& .MuiAccordionSummary-content': { my: 2 } }}>
-                  <Typography sx={{ fontWeight: 600, fontSize: 15.5 }}>{f.q}</Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ px: 0, pt: 0, pb: 2.5 }}>
-                  <Typography color="text.secondary">{f.a}</Typography>
-                </AccordionDetails>
-              </Accordion>
-            ))}
-          </Card>
+          <Reveal sx={{ maxWidth: 760 }}>
+            <Card sx={{ px: { xs: 2, sm: 3 } }}>
+              {FAQ.map((f, i) => (
+                <Accordion key={f.q} disableGutters elevation={0} sx={{ borderTop: i ? `1px solid ${tokens.border}` : 'none' }}>
+                  <AccordionSummary expandIcon={<ChevronDown size={18} />} sx={{ px: 0, '& .MuiAccordionSummary-content': { my: 2 } }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: 15.5 }}>{f.q}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ px: 0, pt: 0, pb: 2.5 }}>
+                    <Typography color="text.secondary">{f.a}</Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Card>
+          </Reveal>
           {help && (
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3, maxWidth: 760, alignItems: { sm: 'center' } }}>
               <Typography color="text.secondary">Ficou com alguma dúvida?</Typography>
@@ -475,17 +469,19 @@ export function LandingPage() {
         </Section>
 
         <Box component="section" sx={{ px: PAGE_PX, py: { xs: 8, md: 11 } }}>
-          <Box sx={{ maxWidth: 1120, mx: 'auto', borderRadius: '20px', background: gradients.panel, border: '1px solid rgba(164,140,255,.25)', boxShadow: shadows.glow, color: '#fff', p: { xs: 4, md: 7 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, alignItems: 'center' }}>
-            <Box>
-              <Typography component="h2" sx={{ fontSize: { xs: 30, md: 40 }, fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.045em' }}>
-                A próxima proposta pode ser a que fecha.
-              </Typography>
-              <Typography sx={{ mt: 1.5, color: tokens.textSecondary, fontSize: 17 }}>Crie a primeira em 3 minutos. {TRIAL_DAYS} dias grátis, sem cartão.</Typography>
+          <Reveal from="scale" sx={{ maxWidth: 1120, mx: 'auto' }}>
+            <Box sx={{ borderRadius: '20px', background: gradients.panel, border: '1px solid rgba(164,140,255,.25)', boxShadow: shadows.glow, color: '#fff', p: { xs: 4, md: 7 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, alignItems: 'center' }}>
+              <Box>
+                <Typography component="h2" sx={{ fontSize: { xs: 30, md: 40 }, fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.045em' }}>
+                  A próxima proposta pode ser a que fecha.
+                </Typography>
+                <Typography sx={{ mt: 1.5, color: tokens.textSecondary, fontSize: 17 }}>Crie a primeira em 3 minutos. {TRIAL_DAYS} dias grátis, sem cartão.</Typography>
+              </Box>
+              <Button component={RouterLink} to={startTo} size="large" variant="contained" endIcon={<ArrowRight />} sx={{ backgroundImage: 'none', bgcolor: '#fff', color: '#09090B', minHeight: 52, px: 3, '&:hover': { backgroundImage: 'none', bgcolor: '#ECEAF4' } }}>
+                {ctaLabel}
+              </Button>
             </Box>
-            <Button component={RouterLink} to={startTo} size="large" variant="contained" endIcon={<ArrowRight />} sx={{ backgroundImage: 'none', bgcolor: '#fff', color: '#09090B', minHeight: 52, px: 3, '&:hover': { backgroundImage: 'none', bgcolor: '#ECEAF4' } }}>
-              {ctaLabel}
-            </Button>
-          </Box>
+          </Reveal>
         </Box>
       </main>
       <MobileStickyCta startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} hint={user ? undefined : 'Sem cartão · sem renovação automática'} />

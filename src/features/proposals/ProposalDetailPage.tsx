@@ -157,7 +157,7 @@ export function ProposalDetailPage() {
             ]}
             {status !== 'accepted' && (canManage || status === 'draft') && [
               <Divider key="d2" />,
-              <MenuItem key="x" onClick={() => { setMenu(null); setDialog('delete'); }} sx={{ color: tokens.error, '& svg': { color: `${tokens.error} !important` } }}><Trash2 /> Apagar</MenuItem>,
+              <MenuItem key="x" onClick={() => { setMenu(null); setDialog('delete'); }} sx={{ color: tokens.error, '& svg': { color: `${tokens.error} !important` } }}><Trash2 /> Excluir</MenuItem>,
             ]}
           </Menu>
         </Stack>
@@ -288,13 +288,13 @@ export function ProposalDetailPage() {
       {dialog === 'template' && <SaveTemplateDialog open onClose={() => setDialog(null)} proposal={p} />}
       <ConfirmDialog
         open={dialog === 'delete'}
-        title="Apagar esta proposta?"
-        message={status === 'draft' ? 'O rascunho será apagado.' : 'A proposta e o histórico dela serão apagados, e o link deixará de abrir para o cliente.'}
-        confirmLabel="Apagar"
+        title="Excluir esta proposta?"
+        message={status === 'draft' ? 'O rascunho será excluído.' : 'A proposta e o histórico dela serão excluídos, e o link deixará de abrir para o cliente.'}
+        confirmLabel="Excluir"
         danger
         loading={busy}
         onClose={() => setDialog(null)}
-        onConfirm={() => run(() => deleteProposal(p.id), 'Proposta apagada.', () => navigate('/painel/propostas', { replace: true }))}
+        onConfirm={() => run(() => deleteProposal(p.id), 'Proposta excluída.', () => navigate('/painel/propostas', { replace: true }))}
       />
     </>
   );

@@ -80,6 +80,12 @@ export function AcceptDialog({
   const [error, setError] = useState<string | null>(null);
   const nameOk = name.trim().length >= 3;
   const ready = nameOk && agree && (mode === 'typed' || hasInk);
+  // Diz o que falta em vez de só deixar o botão cinza.
+  const missing = [
+    !nameOk && 'escrever seu nome completo',
+    mode === 'drawn' && !hasInk && 'desenhar a assinatura',
+    !agree && 'marcar que concorda',
+  ].filter(Boolean) as string[];
 
   const submit = async () => {
     setError(null);
@@ -107,7 +113,14 @@ export function AcceptDialog({
         </Box>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Stack spacing={2}>
-          <TextField label="Seu nome completo" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" error={name.length > 0 && !nameOk} />
+          <TextField
+            label="Seu nome completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            error={name.length > 0 && !nameOk}
+            helperText={name.length > 0 && !nameOk ? 'Escreva nome e sobrenome (pelo menos 3 letras).' : undefined}
+          />
           <TextField label="Seu e-mail (opcional)" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" helperText="Para receber o comprovante de quem enviou." />
           <Box>
             <Tabs value={mode} onChange={(_, v) => setMode(v)} sx={{ mb: 1.5, minHeight: 36 }}>
@@ -139,6 +152,11 @@ export function AcceptDialog({
           >
             Aceitar e assinar · {money(total)}
           </Button>
+          {missing.length > 0 && (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mt: -1 }} aria-live="polite">
+              Para aceitar, falta {missing.length > 1 ? `${missing.slice(0, -1).join(', ')} e ${missing[missing.length - 1]}` : missing[0]}.
+            </Typography>
+          )}
           <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 0.75, alignItems: 'flex-start' }}>
             <Lock size={13} style={{ marginTop: 2, flexShrink: 0 }} />
             Guardamos seu nome, a assinatura, a data, o IP e uma cópia do conteúdo aceito como comprovante. Não é assinatura com certificado digital.

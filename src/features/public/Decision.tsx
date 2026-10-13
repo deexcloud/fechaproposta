@@ -114,7 +114,7 @@ export function MobileDecisionBar({ total, extrasCount, validUntil, brand, onAcc
   return (
     <Box
       className="no-print"
-      sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20, bgcolor: '#fff', borderTop: `1px solid ${tokens.border}`, boxShadow: '0 -10px 30px -12px rgba(15,42,34,.22)', px: 2, pt: 1.25, pb: 'calc(10px + env(safe-area-inset-bottom))' }}
+      sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20, bgcolor: '#fff', borderTop: `1px solid ${tokens.border}`, boxShadow: '0 -10px 30px -12px rgba(15,42,34,.22)', px: 2, pt: 1.25, pb: 'calc(4px + env(safe-area-inset-bottom))' }}
     >
       <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
@@ -128,8 +128,9 @@ export function MobileDecisionBar({ total, extrasCount, validUntil, brand, onAcc
         </Button>
       </Stack>
       <Stack direction="row" sx={{ justifyContent: 'center', gap: 2, mt: 0.25 }}>
-        <Button size="small" color="inherit" onClick={onChanges} sx={{ color: tokens.textSecondary }}>Pedir ajuste</Button>
-        <Button size="small" color="inherit" onClick={onDecline} sx={{ color: tokens.textTertiary }}>Não tenho interesse</Button>
+        {/* 44px de altura: alvo de toque confortável no celular. */}
+        <Button size="small" color="inherit" onClick={onChanges} sx={{ color: tokens.textSecondary, minHeight: 44 }}>Pedir ajuste</Button>
+        <Button size="small" color="inherit" onClick={onDecline} sx={{ color: tokens.textTertiary, minHeight: 44 }}>Não tenho interesse</Button>
       </Stack>
     </Box>
   );

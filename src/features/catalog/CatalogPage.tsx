@@ -79,7 +79,8 @@ function ServiceDialog({ service, onClose }: { service: Service | null; onClose:
   });
 
   return (
-    <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
+    // Clique fora não descarta o que já foi digitado; Esc e "Cancelar" continuam fechando.
+    <Dialog open onClose={(_, reason) => (reason === 'backdropClick' && formState.isDirty ? undefined : onClose())} maxWidth="xs" fullWidth>
       <DialogTitle>{service ? 'Editar serviço' : 'Novo serviço'}</DialogTitle>
       <DialogContent>
         <Stack component="form" spacing={2} sx={{ pt: 1 }} onSubmit={submit} noValidate>
@@ -94,7 +95,7 @@ function ServiceDialog({ service, onClose }: { service: Service | null; onClose:
               helperText={formState.errors.unit_price?.message}
               slotProps={{ input: { startAdornment: <InputAdornment position="start">R$</InputAdornment> }, htmlInput: { inputMode: 'decimal' } }}
             />
-            <Autocomplete freeSolo options={UNITS} value={watch('unit')} onInputChange={(_, v) => setValue('unit', v)} renderInput={(params) => <TextField {...params} label="Por" error={Boolean(formState.errors.unit)} />} />
+            <Autocomplete freeSolo options={UNITS} value={watch('unit')} onInputChange={(_, v) => setValue('unit', v, { shouldDirty: true })} renderInput={(params) => <TextField {...params} label="Por" error={Boolean(formState.errors.unit)} helperText={formState.errors.unit?.message} />} />
           </Box>
           <FormControlLabel control={<Switch checked={watch('is_active')} onChange={(e) => setValue('is_active', e.target.checked)} />} label="Disponível nas propostas" />
           <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end', pt: 1 }}>
@@ -129,7 +130,7 @@ export function CatalogPage() {
     try {
       await deleteService(removing.id);
       qc.invalidateQueries({ queryKey: keys.services(org.id) });
-      notify.success('Serviço removido.');
+      notify.success('Serviço excluído.');
       setRemoving(null);
     } catch (e) {
       notify.error(friendlyError(e));
@@ -188,7 +189,7 @@ export function CatalogPage() {
               {canManage && (
                 <Stack direction="row">
                   <Tooltip title="Editar"><IconButton size="small" aria-label={`Editar ${s.name}`} onClick={() => setEditing(s)}><PenLine size={16} /></IconButton></Tooltip>
-                  <Tooltip title="Remover"><IconButton size="small" aria-label={`Remover ${s.name}`} onClick={() => setRemoving(s)}><Trash2 size={16} /></IconButton></Tooltip>
+                  <Tooltip title="Excluir"><IconButton size="small" aria-label={`Excluir ${s.name}`} onClick={() => setRemoving(s)}><Trash2 size={16} /></IconButton></Tooltip>
                 </Stack>
               )}
             </Stack>
@@ -199,9 +200,9 @@ export function CatalogPage() {
       {editing && <ServiceDialog service={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />}
       <ConfirmDialog
         open={Boolean(removing)}
-        title={`Remover ${removing?.name ?? ''}?`}
+        title={`Excluir ${removing?.name ?? ''}?`}
         message="As propostas que já usam este serviço não mudam."
-        confirmLabel="Remover"
+        confirmLabel="Excluir"
         danger
         loading={busy}
         onClose={() => setRemoving(null)}

@@ -30,7 +30,7 @@ function TemplateCard({ template, onDelete }: { template: ProposalTemplate; onDe
         <Menu anchorEl={menu} open={Boolean(menu)} onClose={() => setMenu(null)}>
           <MenuItem component={RouterLink} to={`/painel/modelos/${template.id}`}><PenLine /> Editar modelo</MenuItem>
           {onDelete && (
-            <MenuItem onClick={() => { setMenu(null); onDelete(); }} sx={{ color: tokens.error, '& svg': { color: `${tokens.error} !important` } }}><Trash2 /> Apagar</MenuItem>
+            <MenuItem onClick={() => { setMenu(null); onDelete(); }} sx={{ color: tokens.error, '& svg': { color: `${tokens.error} !important` } }}><Trash2 /> Excluir</MenuItem>
           )}
         </Menu>
       </Stack>
@@ -78,7 +78,7 @@ export function TemplatesPage() {
     try {
       await deleteTemplate(removing.id);
       qc.invalidateQueries({ queryKey: keys.templates(org.id) });
-      notify.success('Modelo apagado.');
+      notify.success('Modelo excluído.');
       setRemoving(null);
     } catch (e) {
       notify.error(friendlyError(e));
@@ -139,9 +139,9 @@ export function TemplatesPage() {
 
       <ConfirmDialog
         open={Boolean(removing)}
-        title={`Apagar o modelo ${removing?.name ?? ''}?`}
+        title={`Excluir o modelo ${removing?.name ?? ''}?`}
         message="As propostas criadas com ele não mudam."
-        confirmLabel="Apagar"
+        confirmLabel="Excluir"
         danger
         loading={busy === 'remove'}
         onClose={() => setRemoving(null)}

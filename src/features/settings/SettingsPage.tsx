@@ -231,10 +231,11 @@ export function SettingsPage() {
       {!canManage && tab !== 'equipe' && tab !== 'assinatura' && (
         <Alert severity="info" sx={{ mb: 2 }}>Só o dono ou o gerente alteram estas configurações.</Alert>
       )}
+      {/* Os formulários ficam montados e só se escondem: trocar de aba não perde o que foi digitado. */}
       <Box sx={{ maxWidth: tab === 'marca' ? 'none' : 820 }}>
-        {tab === 'empresa' && <CompanyTab readOnly={!canManage} />}
-        {tab === 'marca' && <BrandTab readOnly={!canManage} />}
-        {tab === 'propostas' && <DefaultsTab readOnly={!canManage} />}
+        <Box hidden={tab !== 'empresa'}><CompanyTab readOnly={!canManage} /></Box>
+        <Box hidden={tab !== 'marca'}><BrandTab readOnly={!canManage} /></Box>
+        <Box hidden={tab !== 'propostas'}><DefaultsTab readOnly={!canManage} /></Box>
         {tab === 'equipe' && <Card sx={{ p: 2.5 }}><TeamPanel /></Card>}
         {tab === 'assinatura' && <SubscriptionPanel />}
       </Box>

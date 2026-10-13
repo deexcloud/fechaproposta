@@ -7,9 +7,25 @@ const focusRing = { outline: 'none', boxShadow: shadows.ring };
 const globalCss = {
   '@keyframes fp-fade-up': { from: { opacity: 0, transform: 'translateY(6px)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-pulse': { '0%': { transform: 'scale(1)', opacity: 0.6 }, '100%': { transform: 'scale(2.4)', opacity: 0 } },
+  '@keyframes fp-float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+  '@keyframes fp-pop': { from: { opacity: 0, transform: 'translateY(10px) scale(.94)' }, to: { opacity: 1, transform: 'none' } },
+  '@keyframes fp-in-left': { from: { opacity: 0, transform: 'translateX(-48px)' }, to: { opacity: 1, transform: 'none' } },
+  '@keyframes fp-in-right': { from: { opacity: 0, transform: 'translateX(48px)' }, to: { opacity: 1, transform: 'none' } },
   '.fp-fade-up': { animation: 'fp-fade-up .35s cubic-bezier(.2,.7,.2,1) both' },
+  // Revelar ao rolar (componente Reveal): só opacidade e transform, que o navegador anima sem custo.
+  '[data-reveal]': {
+    opacity: 0,
+    transition: 'opacity .7s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)',
+    transitionDelay: 'var(--fp-reveal-delay, 0ms)',
+  },
+  '[data-reveal="up"]': { transform: 'translateY(28px)' },
+  '[data-reveal="left"]': { transform: 'translateX(-40px)' },
+  '[data-reveal="right"]': { transform: 'translateX(40px)' },
+  '[data-reveal="scale"]': { transform: 'scale(.96)' },
+  '[data-reveal][data-visible]': { opacity: 1, transform: 'none' },
   '@media (prefers-reduced-motion: reduce)': {
-    '*, *::before, *::after': { animationDuration: '0.01ms !important', transitionDuration: '0.01ms !important' },
+    '*, *::before, *::after': { animationDuration: '0.01ms !important', animationIterationCount: '1 !important', transitionDuration: '0.01ms !important' },
+    '[data-reveal]': { opacity: 1, transform: 'none' },
   },
   '@media print': {
     body: { backgroundColor: '#fff !important', backgroundImage: 'none !important', color: '#09090B' },
@@ -87,7 +103,7 @@ function makeTheme(mode: Mode) {
         },
         '::selection': { background: alpha(p.primary, dark ? 0.45 : 0.2) },
         // Barra de rolagem discreta.
-        '*': { scrollbarColor: `${p.borderStrong} transparent` },
+        '*': { scrollbarColor: `${tokens.borderStrong} transparent` },
         a: { color: 'inherit' },
         ...globalCss,
       },
@@ -188,7 +204,7 @@ function makeTheme(mode: Mode) {
     MuiTabs: {
       styleOverrides: {
         root: { minHeight: 40 },
-        indicator: { backgroundColor: tokens.primary, backgroundImage: gradients.primary, height: 2, borderRadius: 2 },
+        indicator: { backgroundColor: dark ? tokens.primary : tokens.textPrimary, backgroundImage: dark ? gradients.primary : 'none', height: 2, borderRadius: 2 },
         scrollButtons: { width: 28, '&.Mui-disabled': { opacity: 0.3 } },
       },
     },
@@ -274,7 +290,7 @@ function makeTheme(mode: Mode) {
       ],
     },
     MuiLinearProgress: {
-      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: tokens.primary, backgroundImage: gradients.primary } },
+      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: dark ? tokens.primary : tokens.textPrimary, backgroundImage: dark ? gradients.primary : 'none' } },
     },
     MuiSkeleton: { styleOverrides: { root: { backgroundColor: tokens.muted }, rounded: { borderRadius: tokens.radius } } },
 

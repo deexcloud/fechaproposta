@@ -70,9 +70,28 @@ O sistema já trata bem a maioria das heurísticas: estados de carregando/vazio/
 ### Ainda em aberto (baixo impacto)
 | Heurística | Problema | Sev. | Sugestão |
 |---|---|---|---|
-| H3 Controle | A confirmação de saída do editor cobre links; atalhos que navegam por código (paleta Ctrl+K) ainda só contam com o aviso do navegador | 1 | Migrar para `createBrowserRouter` e usar `useBlocker`, que cobre tudo. |
 | H1 Status | Abrir "Enviar" num rascunho já ativa o link, mesmo que a pessoa feche sem mandar | 1 | Decisão de produto: hoje o diálogo avisa ("O link está ativo"). |
 
-## 4. Como continuar
+## 4. Terceira rodada (plano aprovado, prompt auditoria-ux-planejada.md)
+
+| # | Área | Problema | Sev. | Correção |
+|---|---|---|---|---|
+| 1 | Cliente | Botão de aceitar bloqueado sem dizer o que falta | 3 | Frase "Para aceitar, falta …" e ajuda no campo de nome. |
+| 2 | Cliente | "Pedir ajuste" / "Não tenho interesse" com 32px no celular | 2 | 44px de altura. |
+| 3 | Cliente | Abas da assinatura em roxo do FechaProposta, não neutras | 2 | No tema claro, abas e progresso neutros. |
+| 4 | Editor | Ctrl+K saía sem perguntar | 2 | Trava de saída também para navegação por código (`src/lib/leaveGuard.ts`). |
+| 5 | Configurações | Trocar de aba perdia o que foi digitado | 2 | Abas ficam montadas, só escondidas. |
+| 6 | Catálogo | Clique fora perdia o formulário; "Por" vermelho sem mensagem | 2 | Clique fora não fecha com texto digitado; mensagem de erro. |
+| 7 | Cadastro inicial | WhatsApp inválido era aceito | 2 | Mesma validação de Configurações. |
+| 8 | Cadastro inicial | Passos só com barrinhas | 1 | "Passo 1 de 2". |
+| 9 | Painel | "Remover" e "Apagar" para a mesma ação | 1 | "Excluir" em todo lugar. |
+| 10 | Landing | Duas maquetes empilhadas no celular | 2 | Só o celular do cliente: topo de 1.715px para 1.368px. |
+| 11 | Landing | Selo repetia o subtítulo | 1 | "Aceite com assinatura, sem o cliente criar conta". |
+| 12 | Landing | Faixa de benefícios repetia os recursos | 1 | Removida. |
+| 13 | Cliente | Barra de rolagem escura na janela branca | 1 | Cor da barra segue o tema da área. |
+
+**Animações da landing:** seções e cards aparecem ao rolar (subindo, pelos lados ou crescendo, em cascata), e no topo o painel entra pela esquerda, o celular pela direita e fica flutuando. Feito sem biblioteca (`src/components/Reveal.tsx` + CSS), animando só opacidade e posição, que o navegador processa sem travar. Respeita "reduzir movimento" do sistema. Peso: cerca de +0,4 KB comprimido no total desta rodada.
+
+## 5. Como continuar
 
 Use o prompt em [`docs/prompts/heuristicas-nielsen.md`](prompts/heuristicas-nielsen.md), uma área por vez (painel, editor, página pública, landing), para aprofundar e corrigir o que sobrar.

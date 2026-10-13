@@ -114,7 +114,7 @@ function ClientDrawer({ client, proposals, onClose }: { client: Client; proposal
       await deleteClient(client.id);
       qc.invalidateQueries({ queryKey: keys.clients(org.id) });
       qc.invalidateQueries({ queryKey: keys.proposals(org.id) });
-      notify.success('Cliente removido.');
+      notify.success('Cliente excluído.');
       onClose();
     } catch (e) {
       notify.error(friendlyError(e));
@@ -183,16 +183,16 @@ function ClientDrawer({ client, proposals, onClose }: { client: Client; proposal
             )}
 
             {canManage && (
-              <Button color="error" size="small" startIcon={<Trash2 />} sx={{ mt: 4 }} onClick={() => setConfirm(true)}>Remover cliente</Button>
+              <Button color="error" size="small" startIcon={<Trash2 />} sx={{ mt: 4 }} onClick={() => setConfirm(true)}>Excluir cliente</Button>
             )}
           </>
         )}
       </Box>
       <ConfirmDialog
         open={confirm}
-        title={`Remover ${client.name}?`}
+        title={`Excluir ${client.name}?`}
         message="As propostas deste cliente continuam guardadas, mas ficam sem cliente vinculado."
-        confirmLabel="Remover"
+        confirmLabel="Excluir"
         danger
         loading={deleting}
         onClose={() => setConfirm(false)}
