@@ -23,6 +23,7 @@ import { BrandMark } from '@/components/common';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
 import { ANNUAL_PLAN, MONTHLY_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
+import { supportUrl } from '@/lib/support';
 import { BeforeAfter, MobileStickyCta, RoiCalculator } from './sections';
 import { shadows, tokens } from '@/theme/tokens';
 
@@ -45,6 +46,13 @@ const FAQ = [
   { q: 'Como funciona o pagamento?', a: `Você testa tudo por ${TRIAL_DAYS} dias, sem cartão. Depois, ${money(PRICE_MONTHLY)} por mês, ou ${money(PRICE_FROM)} por mês no plano anual (${money(ANNUAL_PLAN.total)} à vista), por Pix ou cartão, sem fidelidade e sem renovação automática. Se a assinatura vencer, os links enviados continuam funcionando para os seus clientes.` },
   { q: 'Dá para usar com a minha equipe?', a: 'Sim. Convide pessoas por link e escolha o perfil: vendedor cria e envia propostas; gerente também cuida do catálogo e das configurações.' },
 ];
+
+/**
+ * Depoimentos reais de quem usa. A seção só aparece quando houver pelo menos um.
+ * Use só falas verdadeiras, com autorização da pessoa. Exemplo:
+ *   { quote: 'Mandei a proposta às 10h e às 11h já estava aceita.', name: 'Ana Souza', role: 'Designer, Estúdio Lume' },
+ */
+const TESTIMONIALS: { quote: string; name: string; role: string }[] = [];
 
 function Section({ id, eyebrow, title, subtitle, children, muted }: { id?: string; eyebrow?: string; title: ReactNode; subtitle?: ReactNode; children: ReactNode; muted?: boolean }) {
   return (
@@ -185,6 +193,7 @@ export function LandingPage() {
   // O anual aparece primeiro: ancora no preço cheio riscado e mostra a economia.
   const [billing, setBilling] = useState<'monthly' | 'annual'>('annual');
   const shownPlan = billing === 'annual' ? ANNUAL_PLAN : MONTHLY_PLAN;
+  const help = supportUrl();
 
   useEffect(() => {
     document.title = 'FechaProposta — propostas que o cliente aprova no computador ou no celular';
@@ -332,11 +341,32 @@ export function LandingPage() {
           </Box>
         </Section>
 
+        {TESTIMONIALS.length > 0 && (
+          <Section eyebrow="Quem já usa" title="Menos proposta parada, mais sim.">
+            <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: `repeat(${Math.min(TESTIMONIALS.length, 3)}, 1fr)` } }}>
+              {TESTIMONIALS.map((t) => (
+                <Card key={t.name} component="figure" sx={{ m: 0, p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                  <Typography component="blockquote" sx={{ m: 0, fontSize: 16, lineHeight: 1.6, flexGrow: 1 }}>“{t.quote}”</Typography>
+                  <Stack component="figcaption" direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                    <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: tokens.accentSoft, color: tokens.accentText, display: 'grid', placeItems: 'center', fontSize: 13, fontWeight: 700 }}>
+                      {t.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: 650, fontSize: 14 }}>{t.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">{t.role}</Typography>
+                    </Box>
+                  </Stack>
+                </Card>
+              ))}
+            </Box>
+          </Section>
+        )}
+
         <Section muted eyebrow="Vale a pena?" title="Uma proposta a mais por mês já paga tudo." subtitle="Mexa nos valores e veja com os seus números.">
           <RoiCalculator startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} />
         </Section>
 
-        <Section id="preco" eyebrow="Preço" title="Um plano. Tudo incluído." subtitle="Sem limite de propostas e sem taxa por proposta aceita.">
+        <Section id="preco" eyebrow="Preço" title="Tudo incluído. Você escolhe o período." subtitle="Sem limite de propostas e sem taxa por proposta aceita.">
           <Box sx={{ display: 'grid', gap: { xs: 3, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '460px 1fr' }, alignItems: 'center' }}>
             <Card sx={{ p: { xs: 3, sm: 4 }, boxShadow: shadows.md, borderColor: tokens.primary, borderWidth: 1.5 }}>
               <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -408,6 +438,14 @@ export function LandingPage() {
               </Accordion>
             ))}
           </Card>
+          {help && (
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3, maxWidth: 760, alignItems: { sm: 'center' } }}>
+              <Typography color="text.secondary">Ficou com alguma dúvida?</Typography>
+              <Button component="a" href={help} target="_blank" rel="noopener" variant="outlined" startIcon={<MessageCircle size={18} />} sx={{ alignSelf: 'flex-start' }}>
+                Fale com a gente no WhatsApp
+              </Button>
+            </Stack>
+          )}
         </Section>
 
         <Box component="section" sx={{ px: PAGE_PX, py: { xs: 8, md: 11 } }}>
@@ -424,12 +462,15 @@ export function LandingPage() {
           </Box>
         </Box>
       </main>
-      <MobileStickyCta startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} hint={user ? undefined : 'Sem cartão · cancele quando quiser'} />
+      <MobileStickyCta startTo={startTo} ctaLabel={user ? 'Abrir painel' : `Testar ${TRIAL_DAYS} dias grátis`} hint={user ? undefined : 'Sem cartão · sem renovação automática'} />
 
       <Box component="footer" sx={{ borderTop: `1px solid ${tokens.border}`, px: PAGE_PX, py: 4 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ maxWidth: 1120, mx: 'auto', justifyContent: 'space-between', alignItems: { sm: 'center' } }}>
           <BrandMark size="small" />
           <Stack direction="row" spacing={2.5}>
+            {help && (
+              <Typography component="a" href={help} target="_blank" rel="noopener" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Suporte</Typography>
+            )}
             <Typography component={RouterLink} to="/termos" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Termos de uso</Typography>
             <Typography component={RouterLink} to="/privacidade" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Privacidade</Typography>
             <Typography component={RouterLink} to={user ? '/painel' : '/entrar'} variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>{user ? 'Abrir painel' : 'Entrar'}</Typography>

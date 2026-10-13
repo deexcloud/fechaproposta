@@ -23,6 +23,7 @@ import { friendlyError } from '@/lib/errors';
 import { dateTime, money, shortDate } from '@/lib/format';
 import { PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
 import { subscriptionState, type SubscriptionState } from '@/lib/subscription';
+import { supportUrl } from '@/lib/support';
 import { listBillingPayments, PAYMENT_METHOD_NAMES, startCheckout } from '@/services/billing';
 import { ListSkeleton, SectionCard } from '@/components/common';
 import { CHECKOUT_MESSAGE } from './CheckoutReturnPage';
@@ -79,6 +80,7 @@ export function PaymentDialog({ open, onClose }: { open: boolean; onClose: () =>
   const paidUntil = organization?.paid_until ?? null;
   const baseline = useRef<string | null>(paidUntil);
   const orgId = organization?.id;
+  const help = supportUrl('Oi! Tenho uma dúvida sobre o pagamento da assinatura do FechaProposta.');
 
   const refresh = useCallback(() => {
     qc.invalidateQueries({ queryKey: membershipsKey(user?.id) });
@@ -267,6 +269,11 @@ export function PaymentDialog({ open, onClose }: { open: boolean; onClose: () =>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 0.75, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
               <Lock size={13} /> Abre uma janela segura do Asaas por cima desta página · liberação automática
             </Typography>
+            {help && (
+              <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
+                Dúvida sobre o pagamento? <a href={help} target="_blank" rel="noopener" style={{ color: tokens.accentText, fontWeight: 600 }}>Fale com a gente</a>
+              </Typography>
+            )}
           </Stack>
         )}
         </>

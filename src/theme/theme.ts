@@ -48,6 +48,20 @@ export const theme = createTheme({
     button: { textTransform: 'none', fontWeight: 550, fontSize: '0.875rem' },
   },
   components: {
+    // Opção escolhida em violeta: fica óbvio qual está ativa (período, Pix/cartão…).
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          color: tokens.textSecondary,
+          '&.Mui-selected, &.Mui-selected:hover': {
+            color: tokens.accentText,
+            backgroundColor: tokens.accentSoft,
+            boxShadow: `inset 0 0 0 1.5px ${tokens.primary}`,
+            zIndex: 1,
+          },
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: { backgroundColor: tokens.background, WebkitFontSmoothing: 'antialiased', fontFeatureSettings: '"ss01"' },

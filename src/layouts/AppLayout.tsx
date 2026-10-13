@@ -36,6 +36,7 @@ import {
   Settings,
   Shield,
   Users,
+  MessageCircle,
 } from 'lucide-react';
 import { BrandMark } from '@/components/common';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -45,6 +46,7 @@ import { PaymentReturnNotice, SubscriptionBanner, TrialCard } from '@/features/s
 import { useProposals } from '@/hooks/queries';
 import { getPublicMediaUrl } from '@/lib/supabase';
 import { effectiveStatus } from '@/lib/proposal';
+import { supportUrl } from '@/lib/support';
 import { isPlatformAdmin } from '@/services/platform';
 import { ROLE_LABELS } from '@/services/team';
 import { shadows, tokens } from '@/theme/tokens';
@@ -142,6 +144,7 @@ function UserRow() {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const admin = useQuery({ queryKey: ['is-platform-admin', user?.id], queryFn: isPlatformAdmin, enabled: Boolean(user), staleTime: Infinity });
   const name = (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? '';
+  const help = supportUrl();
   return (
     <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', px: 1 }}>
       <Avatar sx={{ width: 32, height: 32, bgcolor: tokens.muted, color: tokens.textPrimary, fontSize: 13, fontWeight: 650 }}>{name.charAt(0).toUpperCase()}</Avatar>
@@ -156,6 +159,11 @@ function UserRow() {
         {admin.data && (
           <MenuItem component={RouterLink} to="/admin" onClick={() => setAnchor(null)}>
             <Shield /> Administração
+          </MenuItem>
+        )}
+        {help && (
+          <MenuItem component="a" href={help} target="_blank" rel="noopener" onClick={() => setAnchor(null)}>
+            <MessageCircle /> Ajuda pelo WhatsApp
           </MenuItem>
         )}
         <MenuItem onClick={() => signOut()}>
