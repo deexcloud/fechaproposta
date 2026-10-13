@@ -198,7 +198,7 @@ export function ProposalsPage() {
             <EmptyState
               icon={<FileText />}
               title="Sua primeira proposta começa aqui"
-              description="Monte escopo, valores e opcionais, veja a prévia ao lado e envie por WhatsApp. O cliente aprova pelo celular."
+              description="Monte escopo, valores e opcionais, veja a prévia ao lado e envie por WhatsApp. O cliente aprova no computador ou no celular."
               action={<Button component={RouterLink} to="/painel/propostas/nova" variant="contained" startIcon={<Plus />}>Criar proposta</Button>}
             />
           ) : (

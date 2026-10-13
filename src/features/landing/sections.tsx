@@ -14,7 +14,7 @@ const BEFORE = [
   'Proposta refeita do zero a cada cliente',
 ];
 const AFTER = [
-  'Link com a sua marca, que abre em qualquer celular',
+  'Link com a sua marca, que abre no computador ou no celular',
   'Aviso de quando o cliente abriu, e quantas vezes',
   'Escopo, prazo e extras explicados: o valor fica claro',
   'Aceite com assinatura, data e comprovante',

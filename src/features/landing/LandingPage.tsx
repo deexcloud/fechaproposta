@@ -37,6 +37,7 @@ const NAV = [
 ];
 
 const FAQ = [
+  { q: 'Funciona no computador ou só no celular?', a: 'Nos dois. Você monta e acompanha as propostas pelo navegador do computador, do tablet ou do celular, sem instalar nada. O cliente abre o link em qualquer tela e a proposta se ajusta sozinha ao tamanho dela.' },
   { q: 'Meu cliente precisa criar conta?', a: 'Não. Ele abre o link no celular ou no computador, lê, escolhe os extras e aceita com assinatura. Sem cadastro e sem baixar nada.' },
   { q: 'Como fico sabendo que o cliente abriu?', a: 'Cada abertura do link fica registrada. No painel você vê quantas vezes foi aberta e quando, e o FechaProposta lista o que pede atenção, como quem abriu e ainda não respondeu.' },
   { q: 'O aceite tem validade?', a: 'O aceite fica registrado com nome, assinatura, data, IP e uma cópia do conteúdo aceito que não pode ser alterada. É um registro eletrônico de concordância; não é assinatura com certificado ICP-Brasil.' },
@@ -186,7 +187,7 @@ export function LandingPage() {
   const shownPlan = billing === 'annual' ? ANNUAL_PLAN : MONTHLY_PLAN;
 
   useEffect(() => {
-    document.title = 'FechaProposta — propostas que o cliente aprova pelo celular';
+    document.title = 'FechaProposta — propostas que o cliente aprova no computador ou no celular';
   }, []);
 
   const navLink = (n: (typeof NAV)[number], onClick?: () => void) =>
@@ -235,10 +236,10 @@ export function LandingPage() {
                 Saiba na hora quando o cliente abrir
               </Box>
               <Typography component="h1" sx={{ fontSize: { xs: 40, sm: 54, lg: 62 }, fontWeight: 800, lineHeight: 1.04, letterSpacing: '-0.05em', mt: 2.5, textWrap: 'balance' }}>
-                Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova pelo celular.</Box>
+                Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova até pelo celular.</Box>
               </Typography>
               <Typography sx={{ mt: 2.5, fontSize: { xs: 17, md: 19 }, color: tokens.textSecondary, maxWidth: 540, lineHeight: 1.6, textWrap: 'pretty' }}>
-                Monte em minutos com a sua marca, envie pelo WhatsApp e acompanhe cada passo. O cliente escolhe os extras e aceita com assinatura, sem criar conta.
+                Monte em minutos com a sua marca, envie pelo WhatsApp e acompanhe cada passo. O cliente escolhe os extras e aceita com assinatura, sem criar conta. Funciona no computador, no tablet e no celular, para você e para ele.
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4 }}>
                 <Button component={RouterLink} to={startTo} variant="contained" size="large" endIcon={<ArrowRight />} sx={{ minHeight: 52, px: 3, fontSize: 16 }}>{ctaLabel}</Button>
@@ -296,7 +297,7 @@ export function LandingPage() {
           <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' } }}>
             {[
               { n: '1', icon: <FileText />, title: 'Monte em minutos', text: 'Comece de um modelo, puxe os itens do catálogo e veja ao lado exatamente o que o cliente vai receber.' },
-              { n: '2', icon: <Send />, title: 'Envie pelo WhatsApp', text: 'Um link com a sua marca e uma mensagem pronta. Abre no celular, sem PDF pesado e sem cadastro.' },
+              { n: '2', icon: <Send />, title: 'Envie pelo WhatsApp', text: 'Um link com a sua marca e uma mensagem pronta. Abre no computador ou no celular, sem PDF pesado e sem cadastro.' },
               { n: '3', icon: <PenLine />, title: 'Receba o sim', text: 'Veja quem abriu, responda pedidos de ajuste e lembre no momento certo. O aceite chega com assinatura.' },
             ].map((s) => (
               <Card key={s.n} sx={{ p: 3 }}>

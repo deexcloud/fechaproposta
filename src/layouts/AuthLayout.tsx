@@ -8,7 +8,7 @@ import { tokens } from '@/theme/tokens';
 const HIGHLIGHTS = [
   'Proposta com a sua marca, pronta em minutos',
   'Aviso quando o cliente abre o link',
-  'Aceite com assinatura, direto no celular do cliente',
+  'Aceite com assinatura, no computador ou no celular do cliente',
 ];
 
 /** Telas de acesso: painel lateral neutro + formulário limpo (estilo shadcn). */
@@ -30,7 +30,7 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
         <RouterLink to="/" aria-label="Página inicial"><BrandMark /></RouterLink>
         <Box>
           <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.045em', maxWidth: 460 }}>
-            Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova pelo celular.</Box>
+            Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova até pelo celular.</Box>
           </Typography>
           <Stack spacing={1.5} sx={{ mt: 4 }}>
             {HIGHLIGHTS.map((h) => (
