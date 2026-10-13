@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, Button, Checkbox, FormControlLabel, Link, Stack, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '@/layouts/AuthLayout';
-import { setRememberSession, supabase } from '@/lib/supabase';
+import { setRememberSession, supabase, wantsRememberSession } from '@/lib/supabase';
 import { friendlyError } from '@/lib/errors';
 import { BrandLoader } from '@/components/common';
 import { useNotify } from '@/components/NotifyProvider';
@@ -31,7 +31,7 @@ export function SignInPage() {
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? '/painel';
   const [formError, setFormError] = useState<string | null>(null);
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(wantsRememberSession);
 
   const { register, handleSubmit, formState } = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),

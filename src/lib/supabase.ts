@@ -19,7 +19,16 @@ function rememberSession(): boolean {
   }
 }
 
-/** Chamar antes de entrar. Padrão: lembrar (como sempre foi). */
+/** A caixa do login começa desmarcada; só vem marcada se a pessoa marcou da última vez. */
+export function wantsRememberSession(): boolean {
+  try {
+    return localStorage.getItem(REMEMBER_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Chamar antes de entrar. Sem escolha salva, a sessão é lembrada (não desconecta quem já estava logado). */
 export function setRememberSession(remember: boolean): void {
   try {
     localStorage.setItem(REMEMBER_KEY, remember ? '1' : '0');
