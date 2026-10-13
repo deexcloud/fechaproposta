@@ -49,7 +49,7 @@ import { effectiveStatus } from '@/lib/proposal';
 import { supportUrl } from '@/lib/support';
 import { isPlatformAdmin } from '@/services/platform';
 import { ROLE_LABELS } from '@/services/team';
-import { shadows, tokens } from '@/theme/tokens';
+import { gradients, shadows, tokens } from '@/theme/tokens';
 
 const DRAWER_WIDTH = 256;
 
@@ -232,7 +232,7 @@ export function AppLayout() {
       <Drawer
         variant="permanent"
         className="no-print"
-        sx={{ display: { xs: 'none', md: 'block' }, width: DRAWER_WIDTH, flexShrink: 0, '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box', bgcolor: tokens.surface } }}
+        sx={{ display: { xs: 'none', md: 'block' }, width: DRAWER_WIDTH, flexShrink: 0, '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box', bgcolor: tokens.subtle, backgroundImage: 'radial-gradient(420px 260px at 0% 0%, rgba(109,76,245,.12), transparent 70%)' } }}
       >
         <Stack sx={{ height: '100%', p: 1.5 }}>
           <Box sx={{ px: 1, pt: 0.75, pb: 2 }}>
@@ -269,7 +269,7 @@ export function AppLayout() {
           <Stack
             direction="row"
             className="no-print"
-            sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', justifyContent: 'space-between', px: 2, height: 56, position: 'sticky', top: 0, zIndex: 10, bgcolor: 'rgba(248,245,238,.9)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}` }}
+            sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', justifyContent: 'space-between', px: 2, height: 56, position: 'sticky', top: 0, zIndex: 10, bgcolor: tokens.glass, backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.border}` }}
           >
             <RouterLink to="/painel" aria-label="Início"><BrandMark size="small" /></RouterLink>
             <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
@@ -294,7 +294,7 @@ export function AppLayout() {
       {!immersive && (
         <Paper
           className="no-print"
-          sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', left: 0, right: 0, bottom: 0, borderTop: `1px solid ${tokens.border}`, pb: 'env(safe-area-inset-bottom)', zIndex: 20, bgcolor: 'rgba(255,255,255,.94)', backdropFilter: 'blur(10px)' }}
+          sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', left: 0, right: 0, bottom: 0, borderTop: `1px solid ${tokens.border}`, pb: 'env(safe-area-inset-bottom)', zIndex: 20, bgcolor: tokens.glassStrong, backdropFilter: 'blur(12px)' }}
         >
           <BottomNavigation showLabels value={active ?? 'mais'} sx={{ bgcolor: 'transparent', height: 62 }}>
             <BottomNavigationAction label="Início" value="/painel" icon={<Home size={20} />} component={RouterLink} to="/painel" />
@@ -304,7 +304,7 @@ export function AppLayout() {
               value="nova"
               aria-label="Nova proposta"
               onClick={() => navigate('/painel/propostas/nova')}
-              icon={<Box sx={{ width: 40, height: 40, mt: -1.25, borderRadius: '12px', bgcolor: tokens.primary, color: '#fff', display: 'grid', placeItems: 'center', boxShadow: shadows.md }}><Plus size={22} /></Box>}
+              icon={<Box sx={{ width: 40, height: 40, mt: -1.25, borderRadius: '12px', backgroundImage: gradients.primary, color: '#fff', display: 'grid', placeItems: 'center', boxShadow: shadows.glow }}><Plus size={22} /></Box>}
             />
             <BottomNavigationAction label="Clientes" value="/painel/clientes" icon={<Users size={20} />} component={RouterLink} to="/painel/clientes" />
             <BottomNavigationAction label="Mais" value="mais" icon={<MenuIcon size={20} />} onClick={() => setMoreOpen(true)} />

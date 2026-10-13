@@ -17,6 +17,7 @@ import {
   Typography,
 } from '@mui/material';
 import { ArrowDown, ArrowUp, BookOpen, GripVertical, Plus, Text, Trash2 } from 'lucide-react';
+import { useNotify } from '@/components/NotifyProvider';
 import { useServices } from '@/hooks/queries';
 import { money, parseMoney } from '@/lib/format';
 import { computeTotals, itemTotal } from '@/lib/proposal';
@@ -27,9 +28,16 @@ const UNITS = ['un', 'h', 'dia', 'mês', 'projeto', 'página', 'm²', 'pacote'];
 
 /** Entregas: uma por linha. Enter cria a próxima, Backspace numa linha vazia apaga. */
 export function DeliverablesEditor() {
-  const { control, register, formState } = useFormContext<EditorValues>();
+  const { control, register, formState, getValues } = useFormContext<EditorValues>();
   const { fields, append, remove, insert } = useFieldArray({ control, name: 'deliverables' });
+  const notify = useNotify();
   const refs = useRef<(HTMLInputElement | null)[]>([]);
+  // Remover pela lixeira avisa e deixa desfazer; linha vazia some sem aviso.
+  const removeWithUndo = (i: number) => {
+    const value = getValues(`deliverables.${i}.value`);
+    remove(i);
+    if (value.trim()) notify.info('Entrega removida.', { label: 'Desfazer', onClick: () => insert(i, { value }) });
+  };
   const focus = (i: number) => setTimeout(() => refs.current[i]?.focus(), 0);
 
   return (
@@ -64,7 +72,7 @@ export function DeliverablesEditor() {
                 }
               }}
             />
-            <IconButton size="small" aria-label={`Remover entrega ${i + 1}`} onClick={() => remove(i)} disabled={fields.length === 1}>
+            <IconButton size="small" aria-label={`Remover entrega ${i + 1}`} onClick={() => removeWithUndo(i)} disabled={fields.length === 1}>
               <Trash2 size={15} />
             </IconButton>
           </Stack>
@@ -132,6 +140,7 @@ function ItemCard({ index, count, onMove, onRemove }: { index: number; count: nu
               label="Qtd."
               {...register(`items.${index}.quantity`)}
               error={Boolean(err?.quantity)}
+              helperText={err?.quantity?.message}
               slotProps={{ htmlInput: { inputMode: 'decimal' } }}
             />
             <Autocomplete
@@ -140,7 +149,7 @@ function ItemCard({ index, count, onMove, onRemove }: { index: number; count: nu
               options={UNITS}
               value={item.unit}
               onInputChange={(_, v) => setValue(`items.${index}.unit`, v, { shouldDirty: true })}
-              renderInput={(params) => <TextField {...params} label="Unidade" error={Boolean(err?.unit)} />}
+              renderInput={(params) => <TextField {...params} label="Unidade" error={Boolean(err?.unit)} helperText={err?.unit?.message} />}
             />
             <TextField
               size="small"
@@ -182,8 +191,16 @@ function ItemCard({ index, count, onMove, onRemove }: { index: number; count: nu
 
 /** Itens com valores, opcionais, catálogo e desconto. */
 export function ItemsEditor() {
-  const { control, register, formState } = useFormContext<EditorValues>();
-  const { fields, append, remove, move } = useFieldArray({ control, name: 'items' });
+  const { control, register, formState, getValues } = useFormContext<EditorValues>();
+  const { fields, append, remove, move, insert } = useFieldArray({ control, name: 'items' });
+  const notify = useNotify();
+  const removeItem = (i: number) => {
+    const item = getValues(`items.${i}`);
+    remove(i);
+    if (item.name.trim() || item.unit_price.trim()) {
+      notify.info(`“${item.name.trim() || 'Item'}” removido.`, { label: 'Desfazer', onClick: () => insert(i, item) });
+    }
+  };
   const items = useWatch({ control, name: 'items' });
   const discount = useWatch({ control, name: 'discount' });
   const services = useServices();
@@ -195,7 +212,7 @@ export function ItemsEditor() {
   return (
     <Stack spacing={1.5}>
       {fields.map((field, i) => (
-        <ItemCard key={field.id} index={i} count={fields.length} onMove={(to) => move(i, to)} onRemove={() => remove(i)} />
+        <ItemCard key={field.id} index={i} count={fields.length} onMove={(to) => move(i, to)} onRemove={() => removeItem(i)} />
       ))}
       {rootError && <Typography variant="body2" color="error">{rootError}</Typography>}
 

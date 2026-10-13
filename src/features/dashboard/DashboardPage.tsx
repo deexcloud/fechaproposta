@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Card, Checkbox, IconButton, Stack, Tooltip, Typography } from '@mui/material';
-import { ArrowRight, CalendarClock, CheckCircle2, FileText, Gauge, MessageCircle, Plus, TrendingUp, Wallet, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2, FileText, Gauge, MessageCircle, Plus, Receipt, TrendingUp, Wallet, X } from 'lucide-react';
 import { EmptyState, ErrorState, ListSkeleton, PageHeader, SectionCard } from '@/components/common';
 import { StatusChip } from '@/components/StatusChip';
 import { Bar, NameAvatar, StatCard, ToneDot } from '@/components/visual';
@@ -120,11 +120,17 @@ function AttentionRow({ item, orgName }: { item: AttentionItem<ProposalListItem>
         </Stack>
       </Box>
       {remind && p.client?.whatsapp ? (
-        <Tooltip title="Abrir o WhatsApp com um lembrete pronto">
-          <Button size="small" variant="outlined" startIcon={<MessageCircle />} href={whatsappUrl(message, p.client.whatsapp)} target="_blank" rel="noopener" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
-            Lembrar
-          </Button>
-        </Tooltip>
+        <>
+          <Tooltip title="Abrir o WhatsApp com um lembrete pronto">
+            <Button size="small" variant="outlined" startIcon={<MessageCircle />} href={whatsappUrl(message, p.client.whatsapp)} target="_blank" rel="noopener" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+              Lembrar
+            </Button>
+          </Tooltip>
+          {/* No celular, só o ícone: a ação continua a um toque. */}
+          <IconButton aria-label={`Lembrar ${p.client.name} pelo WhatsApp`} href={whatsappUrl(message, p.client.whatsapp)} target="_blank" rel="noopener" sx={{ display: { xs: 'inline-flex', sm: 'none' }, border: `1px solid ${tokens.border}`, width: 44, height: 44 }}>
+            <MessageCircle size={18} />
+          </IconButton>
+        </>
       ) : (
         <Button size="small" variant="outlined" component={RouterLink} to={item.reason === 'stale_draft' ? `/painel/propostas/${p.id}/editar` : `/painel/propostas/${p.id}`} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
           {item.reason === 'change_requested' ? 'Ver pedido' : item.reason === 'stale_draft' ? 'Continuar' : 'Abrir'}
@@ -171,7 +177,7 @@ export function DashboardPage() {
         <StatCard
           loading={proposals.isPending}
           label="Ticket médio"
-          icon={<CalendarClock />}
+          icon={<Receipt />}
           value={stats.averageTicket === null ? '—' : moneyShort(stats.averageTicket)}
           hint={stats.averageDaysToClose === null ? 'nas propostas aceitas' : `fecha em ${stats.averageDaysToClose.toLocaleString('pt-BR')} dias, em média`}
         />

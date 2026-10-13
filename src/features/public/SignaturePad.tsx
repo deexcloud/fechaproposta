@@ -1,7 +1,7 @@
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { Eraser } from 'lucide-react';
-import { tokens } from '@/theme/tokens';
+import { palettes, tokens } from '@/theme/tokens';
 
 export interface SignaturePadHandle {
   /** PNG da assinatura, ou null se estiver vazia. */
@@ -29,7 +29,7 @@ export function SignaturePad({ ref, onChange }: { ref?: Ref<SignaturePadHandle>;
       ctx.scale(ratio, ratio);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = tokens.ink;
+      ctx.strokeStyle = palettes.light.ink;
       ctx.lineWidth = 2.4;
     }
   }, []);

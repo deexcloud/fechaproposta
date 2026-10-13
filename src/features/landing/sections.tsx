@@ -4,7 +4,7 @@ import { Box, Button, Card, Slider, Stack, Typography } from '@mui/material';
 import { ArrowRight, Check, X } from 'lucide-react';
 import { money, moneyShort } from '@/lib/format';
 import { PRICE_MONTHLY } from '@/lib/pricing';
-import { shadows, tokens } from '@/theme/tokens';
+import { gradients, shadows, tokens } from '@/theme/tokens';
 
 const BEFORE = [
   'PDF perdido no meio da conversa do WhatsApp',
@@ -37,13 +37,13 @@ export function BeforeAfter() {
           ))}
         </Stack>
       </Card>
-      <Card sx={{ p: { xs: 2.5, sm: 3.5 }, borderColor: tokens.primary, borderWidth: 1.5, boxShadow: shadows.md }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.primary }}>Com o FechaProposta</Typography>
+      <Card sx={{ p: { xs: 2.5, sm: 3.5 }, boxShadow: shadows.glow, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: tokens.accentText }}>Com o FechaProposta</Typography>
         <Typography sx={{ fontWeight: 700, fontSize: 20, mt: 0.5, mb: 2.5, letterSpacing: '-0.02em' }}>Proposta que conduz até o sim</Typography>
         <Stack spacing={1.5}>
           {AFTER.map((t) => (
             <Stack key={t} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
-              <Box sx={{ mt: 0.25, color: tokens.primary, display: 'flex' }}><Check size={17} strokeWidth={3} /></Box>
+              <Box sx={{ mt: 0.25, color: tokens.accentText, display: 'flex' }}><Check size={17} strokeWidth={3} /></Box>
               <Typography>{t}</Typography>
             </Stack>
           ))}
@@ -82,7 +82,7 @@ export function RoiCalculator({ startTo, ctaLabel }: { startTo: string; ctaLabel
         </Stack>
         <Box sx={{ p: { xs: 2.5, sm: 3.5 }, borderRadius: '12px', border: `1px solid ${tokens.border}`, bgcolor: tokens.subtle }}>
           <Typography color="text.secondary">A mais no seu caixa, por mês</Typography>
-          <Typography sx={{ fontSize: { xs: 44, sm: 54 }, fontWeight: 800, letterSpacing: '-0.05em', lineHeight: 1.05, mt: 0.5, color: tokens.primary, fontFeatureSettings: '"tnum"' }}>
+          <Typography sx={{ fontSize: { xs: 44, sm: 54 }, fontWeight: 800, letterSpacing: '-0.05em', lineHeight: 1.05, mt: 0.5, background: gradients.text, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontFeatureSettings: '"tnum"' }}>
             {moneyShort(gain)}
           </Typography>
           <Typography sx={{ mt: 1.5, color: tokens.textSecondary }}>
@@ -121,7 +121,7 @@ export function MobileStickyCta({ startTo, ctaLabel, hint }: { startTo: string; 
         zIndex: 30,
         p: 1,
         borderRadius: '14px',
-        bgcolor: 'rgba(255,255,255,.92)',
+        bgcolor: tokens.glassStrong,
         backdropFilter: 'blur(10px)',
         border: `1px solid ${tokens.border}`,
         boxShadow: shadows.lg,

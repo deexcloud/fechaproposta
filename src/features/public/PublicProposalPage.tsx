@@ -13,7 +13,7 @@ import { getPublicProposal, registerView } from '@/services/publicProposal';
 import type { PublicProposal } from '@/types';
 import { AcceptDialog, ChangesDialog, DeclineDialog } from './PublicDialogs';
 import { AcceptedCelebration, DecisionPanel, MobileDecisionBar, PublicHeader } from './Decision';
-import { signatureFont, tokens } from '@/theme/tokens';
+import { palettes, signatureFont, tokens } from '@/theme/tokens';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -163,7 +163,7 @@ export function PublicProposalPage() {
   if (!p || !totals) return <NotFound />;
 
   const org = p.organization;
-  const brandBg = org.brand_color ?? tokens.primary;
+  const brandBg = org.brand_color ?? palettes.light.primary;
   const brand = { bg: brandBg, fg: textOn(brandBg) };
   const logo = getPublicMediaUrl(org.logo_path);
   const clientName = p.client?.name ?? '';

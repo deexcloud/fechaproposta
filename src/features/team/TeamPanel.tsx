@@ -258,7 +258,9 @@ export function TeamPanel() {
                     </Typography>
                   </Box>
                   {!expired && <InviteLinkActions invitation={inv} orgName={organization.name} />}
-                  <Button size="small" color="inherit" onClick={() => revoke.mutate(inv.id)}>Cancelar</Button>
+                  <Button size="small" color="inherit" aria-label={`Cancelar o convite de ${inv.email}`} loading={revoke.isPending && revoke.variables === inv.id} onClick={() => revoke.mutate(inv.id)}>
+                    Cancelar convite
+                  </Button>
                 </Stack>
               );
             })}

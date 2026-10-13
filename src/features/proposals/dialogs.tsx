@@ -117,7 +117,7 @@ export function ShareDialog({ open, onClose, proposal, followUp = false }: { ope
         <TextField label="Mensagem" multiline minRows={5} value={message} onChange={(e) => setMessage(e.target.value)} sx={{ mt: 2 }} />
 
         <Box sx={{ mt: 2, display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
-          <Button variant="contained" size="large" startIcon={<MessageCircle />} disabled={!ready} href={whatsappUrl(message, phone)} target="_blank" rel="noopener" sx={{ bgcolor: '#1F8F4E', '&:hover': { bgcolor: '#187A42' } }}>
+          <Button variant="contained" size="large" startIcon={<MessageCircle />} disabled={!ready} href={whatsappUrl(message, phone)} target="_blank" rel="noopener" sx={{ bgcolor: '#1F8F4E', backgroundImage: 'none', '&:hover': { bgcolor: '#187A42', backgroundImage: 'none' } }}>
             WhatsApp{phone ? ` · ${formatPhone(phone)}` : ''}
           </Button>
           <Button variant="outlined" size="large" startIcon={<Mail />} disabled={!ready} href={mailtoUrl(email, `Proposta: ${proposal.title}`, message)}>
@@ -173,7 +173,14 @@ export function ManualAcceptDialog({ open, onClose, proposal }: { open: boolean;
         </Typography>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Stack spacing={2}>
-          <TextField label="Quem aprovou" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+          <TextField
+            label="Quem aprovou"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            error={name.length > 0 && name.trim().length < 3}
+            helperText={name.length > 0 && name.trim().length < 3 ? 'Escreva o nome completo (pelo menos 3 letras).' : 'Nome de quem deu o ok.'}
+          />
           {optional.length > 0 && (
             <Box>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>Opcionais incluídos</Typography>
@@ -189,6 +196,7 @@ export function ManualAcceptDialog({ open, onClose, proposal }: { open: boolean;
           )}
           <TextField label="Observação (opcional)" placeholder="Ex.: Aprovou por WhatsApp em 12/10" value={note} onChange={(e) => setNote(e.target.value)} multiline minRows={2} />
           <Typography variant="body2">Total fechado: <strong>{money(total)}</strong></Typography>
+          <Alert severity="info" sx={{ py: 0 }}>Depois do aceite a proposta trava para edição. Para mudar algo, você duplica.</Alert>
         </Stack>
       </DialogContent>
       <DialogActions>

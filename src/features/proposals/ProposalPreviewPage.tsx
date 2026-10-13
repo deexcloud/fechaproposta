@@ -41,7 +41,7 @@ export function ProposalPreviewPage() {
       <Stack
         direction="row"
         className="no-print"
-        sx={{ position: 'sticky', top: 0, zIndex: 5, alignItems: 'center', gap: 1, px: { xs: 1, sm: 3 }, py: 1.25, bgcolor: 'rgba(255,255,255,.92)', backdropFilter: 'blur(8px)', borderBottom: `1px solid ${tokens.border}` }}
+        sx={{ position: 'sticky', top: 0, zIndex: 5, alignItems: 'center', gap: 1, px: { xs: 1, sm: 3 }, py: 1.25, bgcolor: tokens.glassStrong, backdropFilter: 'blur(8px)', borderBottom: `1px solid ${tokens.border}` }}
       >
         <Button component={RouterLink} to={`/painel/propostas/${p.id}`} startIcon={<ArrowLeft />} color="inherit">Voltar</Button>
         <Typography variant="body2" color="text.secondary" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>

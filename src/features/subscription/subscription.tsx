@@ -332,7 +332,7 @@ export function TrialCard() {
       <Typography sx={{ fontWeight: 650, fontSize: 13 }}>
         Teste grátis: {s.trialDaysLeft} {s.trialDaysLeft === 1 ? 'dia' : 'dias'}
       </Typography>
-      <LinearProgress variant="determinate" value={progress} sx={{ my: 1, bgcolor: '#fff' }} aria-label="Dias de teste usados" />
+      <LinearProgress variant="determinate" value={progress} sx={{ my: 1, bgcolor: tokens.muted }} aria-label="Dias de teste usados" />
       <Button size="small" variant="contained" fullWidth onClick={() => setOpen(true)}>Assinar · a partir de {money(PRICE_FROM).replace(',00', '')}/mês</Button>
       <PaymentDialog open={open} onClose={() => setOpen(false)} />
     </Box>

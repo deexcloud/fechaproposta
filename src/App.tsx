@@ -8,8 +8,9 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { isStaleBuildError, reloadForNewVersion } from '@/lib/staleBuild';
 import { BrandLoader, ConfigMissingScreen } from '@/components/common';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { LightScope } from '@/components/LightScope';
 import { NotifyProvider } from '@/components/NotifyProvider';
-import { AuthProvider } from '@/features/auth/AuthProvider';
+import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { OrganizationProvider } from '@/features/organizations/OrganizationProvider';
 import { RequireAuth, RequireOrganization } from '@/routes/guards';
 
@@ -30,7 +31,10 @@ window.addEventListener('vite:preloadError', (event) => {
   if (reloadForNewVersion()) event.preventDefault();
 });
 
-const LandingPage = lazyNamed(() => import('@/features/landing/LandingPage'), 'LandingPage');
+const loadLanding = () => import('@/features/landing/LandingPage');
+// A landing é a porta de entrada: começa a baixar junto com o app, sem esperar o React montar a rota.
+if (window.location.pathname === '/') loadLanding().catch(() => undefined);
+const LandingPage = lazyNamed(loadLanding, 'LandingPage');
 const DemoProposalPage = lazyNamed(() => import('@/features/landing/DemoProposalPage'), 'DemoProposalPage');
 const SignInPage = lazyNamed(() => import('@/features/auth/pages'), 'SignInPage');
 const SignUpPage = lazyNamed(() => import('@/features/auth/pages'), 'SignUpPage');
@@ -52,7 +56,7 @@ const SettingsPage = lazyNamed(() => import('@/features/settings/SettingsPage'),
 const PublicProposalPage = lazyNamed(() => import('@/features/public/PublicProposalPage'), 'PublicProposalPage');
 const PlatformAdminPage = lazyNamed(() => import('@/features/platform-admin/PlatformAdminPage'), 'PlatformAdminPage');
 const CheckoutReturnPage = lazyNamed(() => import('@/features/subscription/CheckoutReturnPage'), 'CheckoutReturnPage');
-const TermsPage =lazyNamed(() => import('@/features/legal/LegalPage'), 'TermsPage');
+const TermsPage = lazyNamed(() => import('@/features/legal/LegalPage'), 'TermsPage');
 const PrivacyPage = lazyNamed(() => import('@/features/legal/LegalPage'), 'PrivacyPage');
 
 const queryClient = new QueryClient({
@@ -62,11 +66,12 @@ const queryClient = new QueryClient({
 });
 
 function NotFoundPage() {
+  const { user } = useAuth();
   return (
     <Stack spacing={2} sx={{ minHeight: '100dvh', alignItems: 'center', justifyContent: 'center', p: 3, textAlign: 'center' }}>
       <Typography variant="h1">Página não encontrada</Typography>
       <Typography color="text.secondary">O endereço pode estar errado ou a página foi removida.</Typography>
-      <Button component={RouterLink} to="/painel" variant="contained">Ir para o painel</Button>
+      <Button component={RouterLink} to={user ? '/painel' : '/'} variant="contained">{user ? 'Ir para o painel' : 'Ir para o início'}</Button>
     </Stack>
   );
 }
@@ -78,13 +83,14 @@ function AppRoutes() {
       <Suspense fallback={<BrandLoader />}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/exemplo" element={<DemoProposalPage />} />
+          <Route path="/exemplo" element={<LightScope page><DemoProposalPage /></LightScope>} />
           <Route path="/entrar" element={<SignInPage />} />
           <Route path="/criar-conta" element={<SignUpPage />} />
           <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
           <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
           <Route path="/convite/:token" element={<AcceptInvitePage />} />
-          <Route path="/p/:token" element={<PublicProposalPage />} />
+          {/* O que o cliente final vê fica claro: é o documento com a marca de quem vende. */}
+          <Route path="/p/:token" element={<LightScope page><PublicProposalPage /></LightScope>} />
           <Route path="/assinatura/retorno" element={<CheckoutReturnPage />} />
           <Route path="/termos" element={<TermsPage />} />
           <Route path="/privacidade" element={<PrivacyPage />} />
@@ -93,7 +99,7 @@ function AppRoutes() {
             <Route path="/painel/configurar" element={<OnboardingPage />} />
             <Route path="/admin" element={<PlatformAdminPage />} />
             <Route element={<RequireOrganization />}>
-              <Route path="/painel/propostas/:id/visualizar" element={<ProposalPreviewPage />} />
+              <Route path="/painel/propostas/:id/visualizar" element={<LightScope page><ProposalPreviewPage /></LightScope>} />
               <Route path="/painel" element={<AppLayout />}>
                 <Route index element={<DashboardPage />} />
                 <Route path="propostas" element={<ProposalsPage />} />

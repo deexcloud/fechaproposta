@@ -15,7 +15,7 @@ const amount = (message: string, positive = false) =>
 const itemSchema = z.object({
   name: z.string().trim().min(1, 'Descreva o item.').max(160, 'Até 160 letras.'),
   description: z.string().max(600, 'Até 600 letras.'),
-  unit: z.string().trim().min(1, 'Unidade').max(20, 'Até 20 letras.'),
+  unit: z.string().trim().min(1, 'Informe a unidade.').max(20, 'Até 20 letras.'),
   quantity: amount('Qtd. inválida', true),
   unit_price: amount('Informe o valor'),
   is_optional: z.boolean(),

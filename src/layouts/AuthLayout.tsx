@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { Check } from 'lucide-react';
 import { BrandMark } from '@/components/common';
-import { tokens } from '@/theme/tokens';
+import { gradients, tokens } from '@/theme/tokens';
 
 const HIGHLIGHTS = [
   'Proposta com a sua marca, pronta em minutos',
@@ -23,19 +23,20 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
           p: 5,
           bgcolor: tokens.subtle,
           borderRight: `1px solid ${tokens.border}`,
-          backgroundImage: `radial-gradient(${tokens.border} 1px, transparent 1px)`,
-          backgroundSize: '22px 22px',
+          // Grade de pontos sobre o brilho violeta: profundidade sem distrair do formulário.
+          backgroundImage: `radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px), ${gradients.panel}`,
+          backgroundSize: '22px 22px, auto',
         }}
       >
         <RouterLink to="/" aria-label="Página inicial"><BrandMark /></RouterLink>
         <Box>
           <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.045em', maxWidth: 460 }}>
-            Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova até pelo celular.</Box>
+            Propostas que o cliente <Box component="span" sx={{ background: gradients.text, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>aprova até pelo celular.</Box>
           </Typography>
           <Stack spacing={1.5} sx={{ mt: 4 }}>
             {HIGHLIGHTS.map((h) => (
               <Stack key={h} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                <Box sx={{ width: 22, height: 22, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.primary, display: 'grid', placeItems: 'center' }}>
+                <Box sx={{ width: 22, height: 22, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText, display: 'grid', placeItems: 'center' }}>
                   <Check size={14} strokeWidth={3} />
                 </Box>
                 <Typography variant="body2" color="text.secondary">{h}</Typography>

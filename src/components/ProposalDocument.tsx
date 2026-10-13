@@ -6,7 +6,8 @@ import { accentOnWhite, textOn, tint } from '@/lib/color';
 import { firstName, formatDocument, formatPhone, longDate, money } from '@/lib/format';
 import { getPublicMediaUrl } from '@/lib/supabase';
 import type { Organization, ProposalItem } from '@/types';
-import { displayFont, tokens } from '@/theme/tokens';
+import { displayFont, palettes, tokens } from '@/theme/tokens';
+import { LightScope } from './LightScope';
 
 export interface DocumentData {
   code: string;
@@ -120,12 +121,23 @@ function OptionalCard({ item, checked, selectable, accent, onToggle }: { item: P
   );
 }
 
-/** A proposta como o cliente vê. Mesma peça na prévia, no link público, no exemplo e no PDF. */
-export function ProposalDocument({ data, selectable, selected = [], onToggleOptional, compact, footer }: ProposalDocumentProps) {
+/**
+ * A proposta como o cliente vê. Mesma peça na prévia, no link público, no exemplo e no PDF.
+ * É sempre clara, mesmo dentro do painel escuro: é o papel que o cliente recebe.
+ */
+export function ProposalDocument(props: ProposalDocumentProps) {
+  return (
+    <LightScope>
+      <DocumentBody {...props} />
+    </LightScope>
+  );
+}
+
+function DocumentBody({ data, selectable, selected = [], onToggleOptional, compact, footer }: ProposalDocumentProps) {
   const org = data.organization;
-  const brand = org.brand_color ?? tokens.primary;
+  const brand = org.brand_color ?? palettes.light.primary;
   const onBrand = textOn(brand);
-  const accent = accentOnWhite(org.brand_color, tokens.primary);
+  const accent = accentOnWhite(org.brand_color, palettes.light.primary);
   const logo = getPublicMediaUrl(org.logo_path);
   const fixed = data.items.filter((i) => !i.is_optional);
   const optional = data.items.filter((i) => i.is_optional);

@@ -1,5 +1,5 @@
 import { alpha, createTheme } from '@mui/material/styles';
-import { fontFamily, shadows, tokens } from './tokens';
+import { cssVariables, fontFamily, gradients, palettes, shadows, tokens } from './tokens';
 
 const focusRing = { outline: 'none', boxShadow: shadows.ring };
 
@@ -12,26 +12,37 @@ const globalCss = {
     '*, *::before, *::after': { animationDuration: '0.01ms !important', transitionDuration: '0.01ms !important' },
   },
   '@media print': {
-    body: { backgroundColor: '#fff !important' },
+    body: { backgroundColor: '#fff !important', backgroundImage: 'none !important', color: '#09090B' },
     '.no-print': { display: 'none !important' },
     '.print-plain': { boxShadow: 'none !important', border: 'none !important', margin: '0 !important', padding: '0 !important', maxWidth: 'none !important' },
     '@page': { margin: '14mm' },
   },
 };
 
-export const theme = createTheme({
+type Mode = 'dark' | 'light';
+
+/**
+ * O mesmo tema nas duas versões. Os estilos usam `tokens` (variáveis CSS), então mudam
+ * sozinhos dentro de `.fp-light`; a paleta do MUI precisa de valores reais, por isso `p`.
+ */
+function makeTheme(mode: Mode) {
+  const p = palettes[mode];
+  const dark = mode === 'dark';
+  // Portais (diálogos, menus) saem da árvore: no tema claro levam o escopo junto.
+  const lightScope = dark ? {} : { className: 'fp-light' };
+  return createTheme({
   palette: {
-    mode: 'light',
-    primary: { main: tokens.primary, dark: tokens.primaryHover, light: '#8B74F5', contrastText: tokens.onPrimary },
-    secondary: { main: tokens.ink, contrastText: tokens.onInk },
-    success: { main: tokens.success, contrastText: '#fff' },
-    warning: { main: tokens.warning, contrastText: '#fff' },
-    error: { main: tokens.error },
-    info: { main: tokens.info },
-    background: { default: tokens.background, paper: tokens.surface },
-    text: { primary: tokens.textPrimary, secondary: tokens.textSecondary, disabled: tokens.textTertiary },
-    divider: tokens.border,
-    action: { hover: tokens.hover, selected: tokens.muted },
+    mode,
+    primary: { main: p.primary, dark: p.primaryHover, light: p.accent, contrastText: p.onPrimary },
+    secondary: { main: p.ink, contrastText: p.onInk },
+    success: { main: p.success, contrastText: '#fff' },
+    warning: { main: p.warning, contrastText: '#fff' },
+    error: { main: p.error },
+    info: { main: p.info },
+    background: { default: p.background, paper: p.surface },
+    text: { primary: p.textPrimary, secondary: p.textSecondary, disabled: p.textTertiary },
+    divider: p.border,
+    action: { hover: p.hover, selected: p.muted },
   },
   shape: { borderRadius: tokens.radius },
   typography: {
@@ -64,8 +75,19 @@ export const theme = createTheme({
     },
     MuiCssBaseline: {
       styleOverrides: {
-        body: { backgroundColor: tokens.background, WebkitFontSmoothing: 'antialiased', fontFeatureSettings: '"ss01"' },
-        '::selection': { background: alpha(tokens.primary, 0.2) },
+        ...cssVariables,
+        body: {
+          backgroundColor: tokens.background,
+          // Preto com brilho violeta/índigo nos cantos: o degradê do sistema, sem cansar a vista.
+          backgroundImage: dark ? gradients.page : 'none',
+          backgroundAttachment: 'fixed',
+          color: tokens.textPrimary,
+          WebkitFontSmoothing: 'antialiased',
+          fontFeatureSettings: '"ss01"',
+        },
+        '::selection': { background: alpha(p.primary, dark ? 0.45 : 0.2) },
+        // Barra de rolagem discreta.
+        '*': { scrollbarColor: `${p.borderStrong} transparent` },
         a: { color: 'inherit' },
         ...globalCss,
       },
@@ -97,7 +119,17 @@ export const theme = createTheme({
         text: { '&:hover': { backgroundColor: tokens.hover } },
       },
       variants: [
-        { props: { variant: 'contained', color: 'primary' }, style: { boxShadow: `0 1px 2px ${alpha(tokens.primary, 0.3)}`, '&:hover': { backgroundColor: tokens.primaryHover } } },
+        {
+          props: { variant: 'contained', color: 'primary' },
+          style: {
+            // No escuro, degradê violeta → índigo. No claro (páginas do cliente) os botões levam
+            // a cor da marca de quem vende via bgcolor, e um degradê por cima a esconderia.
+            backgroundImage: dark ? gradients.primary : 'none',
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,.18), 0 1px 2px ${alpha(p.primary, 0.35)}, 0 6px 20px -8px ${alpha(p.primary, dark ? 0.7 : 0.4)}`,
+            '&:hover': { backgroundImage: dark ? gradients.primaryHover : 'none', backgroundColor: p.primaryHover },
+            '&.Mui-disabled': { backgroundImage: 'none', backgroundColor: tokens.muted, color: tokens.textTertiary, boxShadow: 'none' },
+          },
+        },
         { props: { variant: 'outlined', color: 'primary' }, style: { color: tokens.textPrimary } },
         { props: { variant: 'outlined', color: 'inherit' }, style: { color: tokens.textPrimary } },
         { props: { variant: 'text', color: 'primary' }, style: { color: tokens.textPrimary } },
@@ -116,7 +148,7 @@ export const theme = createTheme({
     MuiCard: {
       defaultProps: { variant: 'outlined' },
       styleOverrides: {
-        root: { backgroundColor: tokens.surface, borderColor: tokens.border, borderRadius: tokens.radiusLg, boxShadow: shadows.xs },
+        root: { backgroundColor: tokens.surface, backgroundImage: dark ? gradients.surface : 'none', borderColor: tokens.border, borderRadius: tokens.radiusLg, boxShadow: shadows.xs },
       },
     },
     MuiCardContent: { styleOverrides: { root: { padding: 20, '&:last-child': { paddingBottom: 20 } } } },
@@ -140,7 +172,9 @@ export const theme = createTheme({
       },
     },
     MuiFormHelperText: { styleOverrides: { root: { marginInline: 2, fontSize: '0.75rem' } } },
-    MuiFormLabel: { styleOverrides: { root: { '&.Mui-focused': { color: tokens.primary } } } },
+    MuiFormLabel: { styleOverrides: { root: { '&.Mui-focused': { color: tokens.accentText } } } },
+    // Link em violeta claro: o violeta da marca puro não tem contraste AA sobre preto.
+    MuiLink: { styleOverrides: { root: { color: tokens.accentText, textDecorationColor: 'currentColor', textUnderlineOffset: 3 } } },
 
     MuiChip: {
       styleOverrides: {
@@ -154,7 +188,7 @@ export const theme = createTheme({
     MuiTabs: {
       styleOverrides: {
         root: { minHeight: 40 },
-        indicator: { backgroundColor: tokens.textPrimary, height: 2, borderRadius: 2 },
+        indicator: { backgroundColor: tokens.primary, backgroundImage: gradients.primary, height: 2, borderRadius: 2 },
         scrollButtons: { width: 28, '&.Mui-disabled': { opacity: 0.3 } },
       },
     },
@@ -192,17 +226,19 @@ export const theme = createTheme({
     MuiRadio: { styleOverrides: { root: { color: tokens.borderStrong, '&.Mui-checked': { color: tokens.primary } } } },
 
     MuiDialog: {
+      defaultProps: lightScope,
       styleOverrides: {
-        paper: { borderRadius: tokens.radiusLg, boxShadow: shadows.xl, border: `1px solid ${tokens.border}` },
+        paper: { borderRadius: tokens.radiusLg, boxShadow: shadows.xl, border: `1px solid ${tokens.border}`, backgroundColor: tokens.surfaceElevated },
       },
     },
     MuiDialogTitle: { styleOverrides: { root: { fontSize: '1.125rem', fontWeight: 650, letterSpacing: '-0.02em', paddingBottom: 8 } } },
     MuiDialogActions: { styleOverrides: { root: { padding: '12px 24px 20px', gap: 8 } } },
-    MuiBackdrop: { styleOverrides: { root: { backgroundColor: 'rgba(18, 25, 21, 0.45)', backdropFilter: 'blur(2px)' } } },
-    MuiDrawer: { styleOverrides: { paper: { borderColor: tokens.border } } },
+    MuiBackdrop: { styleOverrides: { root: { backgroundColor: tokens.backdrop, backdropFilter: 'blur(4px)' } } },
+    MuiDrawer: { defaultProps: lightScope, styleOverrides: { paper: { borderColor: tokens.border, backgroundColor: tokens.surface } } },
     MuiMenu: {
+      defaultProps: lightScope,
       styleOverrides: {
-        paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg, marginTop: 4 },
+        paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg, marginTop: 4, backgroundColor: tokens.surfaceElevated },
         list: { padding: 4 },
       },
     },
@@ -211,17 +247,17 @@ export const theme = createTheme({
         root: { borderRadius: 6, fontSize: '0.875rem', minHeight: 36, gap: 10, '&:hover': { backgroundColor: tokens.hover }, '& svg': { width: 16, height: 16, color: tokens.textSecondary } },
       },
     },
-    MuiPopover: { styleOverrides: { paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg } } },
+    MuiPopover: { defaultProps: lightScope, styleOverrides: { paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg, backgroundColor: tokens.surfaceElevated } } },
     MuiAutocomplete: {
       styleOverrides: {
-        paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg, marginTop: 4 },
+        paper: { border: `1px solid ${tokens.border}`, borderRadius: tokens.radius, boxShadow: shadows.lg, marginTop: 4, backgroundColor: tokens.surfaceElevated },
         option: { fontSize: '0.875rem', borderRadius: 6, margin: '0 4px' },
       },
     },
     MuiTooltip: {
       defaultProps: { arrow: false },
       styleOverrides: {
-        tooltip: { backgroundColor: tokens.ink, color: '#fff', fontSize: '0.75rem', fontWeight: 500, borderRadius: 6, padding: '6px 10px' },
+        tooltip: { backgroundColor: tokens.ink, color: tokens.onInk, fontSize: '0.75rem', fontWeight: 500, borderRadius: 6, padding: '6px 10px' },
       },
     },
 
@@ -230,15 +266,15 @@ export const theme = createTheme({
         root: { borderRadius: tokens.radius, border: '1px solid', alignItems: 'flex-start', fontSize: '0.875rem' },
       },
       variants: [
-        { props: { variant: 'standard', severity: 'error' }, style: { borderColor: alpha(tokens.error, 0.25), backgroundColor: tokens.errorSoft } },
-        { props: { variant: 'standard', severity: 'warning' }, style: { borderColor: alpha(tokens.warning, 0.3), backgroundColor: tokens.warningSoft } },
+        { props: { variant: 'standard', severity: 'error' }, style: { borderColor: alpha(p.error, 0.3), backgroundColor: tokens.errorSoft } },
+        { props: { variant: 'standard', severity: 'warning' }, style: { borderColor: alpha(p.warning, 0.3), backgroundColor: tokens.warningSoft } },
         { props: { variant: 'standard', severity: 'info' }, style: { borderColor: tokens.border, backgroundColor: tokens.muted, color: tokens.textPrimary } },
-        { props: { variant: 'standard', severity: 'success' }, style: { borderColor: alpha(tokens.success, 0.25), backgroundColor: tokens.successSoft } },
+        { props: { variant: 'standard', severity: 'success' }, style: { borderColor: alpha(p.success, 0.3), backgroundColor: tokens.successSoft } },
         { props: { variant: 'filled' }, style: { border: 'none' } },
       ],
     },
     MuiLinearProgress: {
-      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: tokens.primary } },
+      styleOverrides: { root: { height: 6, borderRadius: 6, backgroundColor: tokens.muted }, bar: { borderRadius: 6, backgroundColor: tokens.primary, backgroundImage: gradients.primary } },
     },
     MuiSkeleton: { styleOverrides: { root: { backgroundColor: tokens.muted }, rounded: { borderRadius: tokens.radius } } },
 
@@ -249,7 +285,7 @@ export const theme = createTheme({
           minHeight: 38,
           paddingBlock: 6,
           '&:hover': { backgroundColor: tokens.hover },
-          '&.Mui-selected': { backgroundColor: tokens.muted, '&:hover': { backgroundColor: tokens.muted } },
+          '&.Mui-selected': { backgroundColor: tokens.accentSoft, color: tokens.textPrimary, boxShadow: `inset 2px 0 0 ${tokens.primary}`, '& .MuiListItemIcon-root': { color: tokens.accentText }, '&:hover': { backgroundColor: tokens.accentSoft } },
           '&.Mui-focusVisible': focusRing,
         },
       },
@@ -258,7 +294,13 @@ export const theme = createTheme({
     MuiListItemText: { styleOverrides: { primary: { fontSize: '0.875rem' }, secondary: { fontSize: '0.8125rem' } } },
     MuiAccordion: { styleOverrides: { root: { backgroundColor: 'transparent', '&:before': { display: 'none' } } } },
     MuiBottomNavigationAction: {
-      styleOverrides: { root: { color: tokens.textTertiary, '&.Mui-selected': { color: tokens.textPrimary } }, label: { fontSize: '0.6875rem', '&.Mui-selected': { fontSize: '0.6875rem', fontWeight: 600 } } },
+      styleOverrides: { root: { color: tokens.textTertiary, '&.Mui-selected': { color: tokens.accentText } }, label: { fontSize: '0.6875rem', '&.Mui-selected': { fontSize: '0.6875rem', fontWeight: 600 } } },
     },
   },
 });
+}
+
+/** Tema do sistema (escuro). */
+export const theme = makeTheme('dark');
+/** Tema do documento da proposta e das páginas do cliente final (claro). */
+export const lightTheme = makeTheme('light');

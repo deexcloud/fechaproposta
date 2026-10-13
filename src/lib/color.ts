@@ -55,3 +55,15 @@ export function tint(hex: string | null | undefined, amount = 0.9, fallback = '#
 }
 
 export const BRAND_SWATCHES = ['#6243F0', '#18181B', '#A24B2A', '#2F6FEB', '#C2413A', '#E07A1F', '#0E7C86', '#B58A2C'];
+
+/** Nome de cada cor sugerida, para leitores de tela ("Cor #A24B2A" não diz nada). */
+export const SWATCH_NAMES: Record<string, string> = {
+  '#6243F0': 'Violeta',
+  '#18181B': 'Preto',
+  '#A24B2A': 'Terracota',
+  '#2F6FEB': 'Azul',
+  '#C2413A': 'Vermelho',
+  '#E07A1F': 'Laranja',
+  '#0E7C86': 'Verde-petróleo',
+  '#B58A2C': 'Dourado',
+};

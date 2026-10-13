@@ -25,13 +25,14 @@ export function StatCard({ label, value, hint, icon, loading }: { label: string;
   );
 }
 
-const AVATAR_COLORS = ['#E6EEFD', '#EEEAFB', '#FBF1DE', '#E5F4EB', '#FBE7E5', '#EEF8D2'];
+// Tons translúcidos: funcionam no fundo escuro e mantêm o texto claro legível.
+const AVATAR_COLORS = ['rgba(96,165,250,.18)', 'rgba(139,114,255,.2)', 'rgba(245,158,11,.17)', 'rgba(34,197,94,.16)', 'rgba(240,82,82,.16)', 'rgba(45,212,191,.16)'];
 
 /** Avatar com iniciais e cor estável por nome. */
 export function NameAvatar({ name, size = 36 }: { name: string; size?: number }) {
   const hash = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
   return (
-    <Avatar sx={{ width: size, height: size, bgcolor: AVATAR_COLORS[hash % AVATAR_COLORS.length], color: tokens.textPrimary, fontSize: size * 0.36, fontWeight: 650 }}>
+    <Avatar sx={{ width: size, height: size, bgcolor: AVATAR_COLORS[hash % AVATAR_COLORS.length], color: tokens.textPrimary, border: `1px solid ${tokens.border}`, fontSize: size * 0.36, fontWeight: 650 }}>
       {initials(name)}
     </Avatar>
   );

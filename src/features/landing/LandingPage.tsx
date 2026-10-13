@@ -16,6 +16,7 @@ import {
   Palette,
   PenLine,
   Send,
+  ShieldCheck,
   Users,
   X,
 } from 'lucide-react';
@@ -25,7 +26,7 @@ import { money } from '@/lib/format';
 import { ANNUAL_PLAN, MONTHLY_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
 import { supportUrl } from '@/lib/support';
 import { BeforeAfter, MobileStickyCta, RoiCalculator } from './sections';
-import { shadows, tokens } from '@/theme/tokens';
+import { gradients, shadows, tokens } from '@/theme/tokens';
 
 /** Margem lateral da página: cresce com a tela para o texto respirar. */
 const PAGE_PX = { xs: 2.5, sm: 4, md: 5 };
@@ -56,10 +57,10 @@ const TESTIMONIALS: { quote: string; name: string; role: string }[] = [];
 
 function Section({ id, eyebrow, title, subtitle, children, muted }: { id?: string; eyebrow?: string; title: ReactNode; subtitle?: ReactNode; children: ReactNode; muted?: boolean }) {
   return (
-    <Box component="section" id={id} sx={{ py: { xs: 8, md: 11 }, px: PAGE_PX, bgcolor: muted ? tokens.subtle : 'transparent', borderTop: muted ? `1px solid ${tokens.border}` : 'none', borderBottom: muted ? `1px solid ${tokens.border}` : 'none', scrollMarginTop: 72 }}>
+    <Box component="section" id={id} sx={{ py: { xs: 8, md: 11 }, px: PAGE_PX, bgcolor: muted ? 'rgba(255,255,255,.015)' : 'transparent', borderTop: muted ? `1px solid ${tokens.border}` : 'none', borderBottom: muted ? `1px solid ${tokens.border}` : 'none', scrollMarginTop: 72 }}>
       <Box sx={{ maxWidth: 1120, mx: 'auto' }}>
         <Box sx={{ maxWidth: 640, mb: { xs: 4, md: 6 } }}>
-          {eyebrow && <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.primary }}>{eyebrow}</Typography>}
+          {eyebrow && <Typography sx={{ fontSize: 14, fontWeight: 600, color: tokens.accentText }}>{eyebrow}</Typography>}
           <Typography component="h2" sx={{ fontSize: { xs: 30, md: 40 }, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.04em', mt: 0.75 }}>{title}</Typography>
           {subtitle && <Typography sx={{ mt: 1.5, fontSize: 17, color: tokens.textSecondary, lineHeight: 1.6 }}>{subtitle}</Typography>}
         </Box>
@@ -71,7 +72,7 @@ function Section({ id, eyebrow, title, subtitle, children, muted }: { id?: strin
 
 function IconTile({ children }: { children: ReactNode }) {
   return (
-    <Box sx={{ width: 36, height: 36, borderRadius: '8px', border: `1px solid ${tokens.border}`, bgcolor: '#fff', color: tokens.textPrimary, display: 'grid', placeItems: 'center', '& svg': { width: 18, height: 18 } }}>
+    <Box sx={{ width: 36, height: 36, borderRadius: '8px', border: `1px solid ${tokens.border}`, bgcolor: tokens.surfaceElevated, backgroundImage: 'linear-gradient(180deg, rgba(139,114,255,.16), rgba(139,114,255,0))', color: tokens.accentText, display: 'grid', placeItems: 'center', '& svg': { width: 18, height: 18 } }}>
       {children}
     </Box>
   );
@@ -133,8 +134,8 @@ function HeroVisual() {
       </Card>
 
       {/* Celular do cliente */}
-      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#0B0B0D', p: 1.25, zIndex: 2, boxShadow: '0 40px 80px -30px rgba(9,9,11,.45)' }}>
-        <Box sx={{ bgcolor: '#fff', borderRadius: '31px', height: '100%', overflow: 'hidden', position: 'relative' }}>
+      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#000', border: '1px solid rgba(255,255,255,.12)', p: 1.25, zIndex: 2, boxShadow: '0 40px 90px -30px rgba(0,0,0,.9), 0 0 80px -20px rgba(109,76,245,.45)' }}>
+        <Box className="fp-light" sx={{ bgcolor: '#fff', color: tokens.textPrimary, borderRadius: '31px', height: '100%', overflow: 'hidden', position: 'relative' }}>
           <Box sx={{ px: 2.25, pt: 3.5, pb: 2, borderTop: `4px solid ${tokens.primary}`, background: `linear-gradient(180deg, ${tokens.accentSoft}, #fff 80%)` }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Box sx={{ width: 24, height: 24, borderRadius: '7px', bgcolor: tokens.primary, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 800 }}>E</Box>
@@ -209,7 +210,7 @@ export function LandingPage() {
   return (
     <Box sx={{ overflowX: 'clip' }}>
       {/* Topo */}
-      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 20, bgcolor: 'rgba(255,255,255,.85)', backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.border}` }}>
+      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 20, bgcolor: tokens.glass, backdropFilter: 'blur(14px)', borderBottom: `1px solid ${tokens.border}` }}>
         <Stack direction="row" sx={{ maxWidth: 1120, mx: 'auto', px: PAGE_PX, height: 64, alignItems: 'center', justifyContent: 'space-between' }}>
           <RouterLink to="/" aria-label="FechaProposta, início"><BrandMark /></RouterLink>
           <Stack component="nav" direction="row" spacing={3.5} sx={{ display: { xs: 'none', md: 'flex' } }} aria-label="Seções">
@@ -236,19 +237,19 @@ export function LandingPage() {
 
       <main>
         {/* Abertura */}
-        <Box component="section" sx={{ px: PAGE_PX, pt: { xs: 6, md: 9 }, pb: { xs: 6, md: 10 } }}>
+        <Box component="section" sx={{ px: PAGE_PX, pt: { xs: 6, md: 9 }, pb: { xs: 6, md: 10 }, background: 'radial-gradient(700px 420px at 75% 30%, rgba(109,76,245,.22), transparent 70%), radial-gradient(600px 360px at 10% 0%, rgba(79,70,229,.14), transparent 70%)' }}>
           {/* Lado a lado só em tela grande; abaixo disso, texto primeiro e a ilustração centralizada. */}
           <Box sx={{ maxWidth: 1120, mx: 'auto', display: 'grid', gap: { xs: 5, lg: 6 }, gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 530px' }, alignItems: 'center' }}>
             <Box className="fp-fade-up" sx={{ maxWidth: { xs: 640, lg: 'none' }, mx: { xs: 'auto', lg: 0 }, width: '100%' }}>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.5, borderRadius: '999px', border: `1px solid ${tokens.border}`, fontSize: 13, fontWeight: 600, color: tokens.textSecondary }}>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.5, borderRadius: '999px', border: `1px solid ${tokens.border}`, bgcolor: tokens.accentSoft, fontSize: 13, fontWeight: 600, color: tokens.textSecondary }}>
                 <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: tokens.success }} />
                 Saiba na hora quando o cliente abrir
               </Box>
               <Typography component="h1" sx={{ fontSize: { xs: 40, sm: 54, lg: 62 }, fontWeight: 800, lineHeight: 1.04, letterSpacing: '-0.05em', mt: 2.5, textWrap: 'balance' }}>
-                Propostas que o cliente <Box component="span" sx={{ color: tokens.primary }}>aprova até pelo celular.</Box>
+                Propostas que o cliente <Box component="span" sx={{ background: gradients.text, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>aprova até pelo celular.</Box>
               </Typography>
               <Typography sx={{ mt: 2.5, fontSize: { xs: 17, md: 19 }, color: tokens.textSecondary, maxWidth: 540, lineHeight: 1.6, textWrap: 'pretty' }}>
-                Monte em minutos com a sua marca, envie pelo WhatsApp e acompanhe cada passo. O cliente escolhe os extras e aceita com assinatura, sem criar conta. Funciona no computador, no tablet e no celular, para você e para ele.
+                Monte em minutos com a sua marca, envie pelo WhatsApp e saiba quando o cliente abrir. Ele escolhe os extras e aceita com assinatura, sem criar conta, no computador ou no celular.
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4 }}>
                 <Button component={RouterLink} to={startTo} variant="contained" size="large" endIcon={<ArrowRight />} sx={{ minHeight: 52, px: 3, fontSize: 16 }}>{ctaLabel}</Button>
@@ -279,7 +280,7 @@ export function LandingPage() {
         </Box>
 
         {/* Benefícios rápidos */}
-        <Box sx={{ borderTop: `1px solid ${tokens.border}`, borderBottom: `1px solid ${tokens.border}`, bgcolor: tokens.subtle, px: PAGE_PX, py: 3.5 }}>
+        <Box sx={{ borderTop: `1px solid ${tokens.border}`, borderBottom: `1px solid ${tokens.border}`, bgcolor: 'rgba(255,255,255,.015)', px: PAGE_PX, py: 3.5 }}>
           <Box sx={{ maxWidth: 1120, mx: 'auto', display: 'grid', gap: { xs: 2.5, md: 3 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' } }}>
             {[
               [<Eye key="e" />, 'Aviso de abertura', 'Quantas vezes e quando'],
@@ -339,7 +340,32 @@ export function LandingPage() {
               </Box>
             ))}
           </Box>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 5, alignItems: { sm: 'center' } }}>
+            <Button component={RouterLink} to={startTo} variant="contained" size="large" endIcon={<ArrowRight />}>{ctaLabel}</Button>
+            {!user && <Typography variant="body2" color="text.secondary">{TRIAL_DAYS} dias grátis, sem cartão e sem renovação automática.</Typography>}
+          </Stack>
         </Section>
+
+        {TESTIMONIALS.length === 0 && (
+          <Box sx={{ px: PAGE_PX, pb: { xs: 8, md: 11 } }}>
+            <Box sx={{ maxWidth: 1120, mx: 'auto', p: { xs: 2.5, sm: 3 }, borderRadius: '14px', border: `1px solid ${tokens.border}`, bgcolor: tokens.surface, display: 'grid', gap: { xs: 2, md: 3 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' } }}>
+              {[
+                ['Comprovante de aceite', 'Nome, assinatura, data, IP e cópia do que foi aceito.'],
+                ['Dados isolados', 'Cada empresa vê só o que é dela.'],
+                ['Sem fidelidade', 'Sem renovação automática nem multa.'],
+                ['Suporte humano', 'Dúvida? Fale com a gente pelo WhatsApp.'],
+              ].map(([title, text]) => (
+                <Stack key={title} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+                  <Box sx={{ color: tokens.accentText, mt: 0.25, display: 'flex' }}><ShieldCheck size={18} /></Box>
+                  <Box>
+                    <Typography sx={{ fontWeight: 650, fontSize: 14 }}>{title}</Typography>
+                    <Typography variant="caption" color="text.secondary">{text}</Typography>
+                  </Box>
+                </Stack>
+              ))}
+            </Box>
+          </Box>
+        )}
 
         {TESTIMONIALS.length > 0 && (
           <Section eyebrow="Quem já usa" title="Menos proposta parada, mais sim.">
@@ -368,7 +394,7 @@ export function LandingPage() {
 
         <Section id="preco" eyebrow="Preço" title="Tudo incluído. Você escolhe o período." subtitle="Sem limite de propostas e sem taxa por proposta aceita.">
           <Box sx={{ display: 'grid', gap: { xs: 3, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '460px 1fr' }, alignItems: 'center' }}>
-            <Card sx={{ p: { xs: 3, sm: 4 }, boxShadow: shadows.md, borderColor: tokens.primary, borderWidth: 1.5 }}>
+            <Card sx={{ p: { xs: 3, sm: 4 }, boxShadow: `${shadows.lg}, ${shadows.glow}`, border: '1px solid transparent', background: `linear-gradient(${tokens.surfaceElevated}, ${tokens.surfaceElevated}) padding-box, ${gradients.border} border-box` }}>
               <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography sx={{ fontWeight: 650 }}>FechaProposta</Typography>
                 <Box sx={{ fontSize: 12, fontWeight: 600, px: 1, py: 0.25, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText }}>{TRIAL_DAYS} dias grátis</Box>
@@ -377,7 +403,7 @@ export function LandingPage() {
                 <ToggleButton value="monthly" sx={{ textTransform: 'none', fontWeight: 600 }}>Mensal</ToggleButton>
                 <ToggleButton value="annual" sx={{ textTransform: 'none', fontWeight: 600, gap: 0.75 }}>
                   Anual
-                  <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.success }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
+                  <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.successText }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
                 </ToggleButton>
               </ToggleButtonGroup>
               <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 2 }}>
@@ -396,7 +422,7 @@ export function LandingPage() {
               <Stack spacing={1.25} sx={{ my: 3 }}>
                 {PLAN_FEATURES.map((f) => (
                   <Stack key={f} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                    <Check size={16} color={tokens.primary} strokeWidth={3} />
+                    <Check size={16} color={tokens.accentText} strokeWidth={3} />
                     <Typography variant="body2">{f}</Typography>
                   </Stack>
                 ))}
@@ -449,14 +475,14 @@ export function LandingPage() {
         </Section>
 
         <Box component="section" sx={{ px: PAGE_PX, py: { xs: 8, md: 11 } }}>
-          <Box sx={{ maxWidth: 1120, mx: 'auto', borderRadius: '16px', bgcolor: tokens.primary, color: '#fff', p: { xs: 4, md: 7 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, alignItems: 'center' }}>
+          <Box sx={{ maxWidth: 1120, mx: 'auto', borderRadius: '20px', background: gradients.panel, border: '1px solid rgba(164,140,255,.25)', boxShadow: shadows.glow, color: '#fff', p: { xs: 4, md: 7 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, alignItems: 'center' }}>
             <Box>
               <Typography component="h2" sx={{ fontSize: { xs: 30, md: 40 }, fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.045em' }}>
                 A próxima proposta pode ser a que fecha.
               </Typography>
-              <Typography sx={{ mt: 1.5, color: 'rgba(255,255,255,.8)', fontSize: 17 }}>Crie a primeira em 3 minutos. {TRIAL_DAYS} dias grátis, sem cartão.</Typography>
+              <Typography sx={{ mt: 1.5, color: tokens.textSecondary, fontSize: 17 }}>Crie a primeira em 3 minutos. {TRIAL_DAYS} dias grátis, sem cartão.</Typography>
             </Box>
-            <Button component={RouterLink} to={startTo} size="large" variant="contained" endIcon={<ArrowRight />} sx={{ bgcolor: '#fff', color: tokens.textPrimary, minHeight: 52, px: 3, '&:hover': { bgcolor: '#F4F4F5' } }}>
+            <Button component={RouterLink} to={startTo} size="large" variant="contained" endIcon={<ArrowRight />} sx={{ backgroundImage: 'none', bgcolor: '#fff', color: '#09090B', minHeight: 52, px: 3, '&:hover': { backgroundImage: 'none', bgcolor: '#ECEAF4' } }}>
               {ctaLabel}
             </Button>
           </Box>

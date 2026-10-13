@@ -138,7 +138,7 @@ export function MobileDecisionBar({ total, extrasCount, validUntil, brand, onAcc
 /** Topo da página do cliente: a marca de quem enviou e os atalhos de contato e PDF. */
 export function PublicHeader({ orgName, logo, brand, contactUrl }: { orgName: string; logo: string | null; brand: Brand; contactUrl: string | null }) {
   return (
-    <Box className="no-print" sx={{ bgcolor: 'rgba(255,255,255,.92)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}`, position: 'sticky', top: 0, zIndex: 10 }}>
+    <Box className="no-print" sx={{ bgcolor: tokens.glassStrong, backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}`, position: 'sticky', top: 0, zIndex: 10 }}>
       <Stack direction="row" sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, sm: 3 }, height: 62, alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
         {/* No celular a capa já mostra a marca: o topo fica só com o selo e o contato. */}
         <Stack direction="row" spacing={0.75} sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', color: tokens.textSecondary }}>

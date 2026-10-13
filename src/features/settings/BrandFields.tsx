@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Box, Button, ButtonBase, Stack, TextField, Typography } from '@mui/material';
 import { Check, ImagePlus, Trash2 } from 'lucide-react';
-import { BRAND_SWATCHES } from '@/lib/color';
+import { BRAND_SWATCHES, SWATCH_NAMES } from '@/lib/color';
 import { getPublicMediaUrl } from '@/lib/supabase';
 import { friendlyError } from '@/lib/errors';
 import { uploadLogo, validateLogoFile } from '@/services/organizations';
@@ -19,12 +19,13 @@ export function BrandColorPicker({ value, onChange }: { value: string | null; on
             key={c}
             role="radio"
             aria-checked={value?.toUpperCase() === c}
-            aria-label={`Cor ${c}`}
+            aria-label={SWATCH_NAMES[c] ?? `Cor ${c}`}
+            title={SWATCH_NAMES[c]}
             onClick={() => {
               onChange(c);
               setCustom(c);
             }}
-            sx={{ width: 34, height: 34, borderRadius: '10px', bgcolor: c, color: '#fff', boxShadow: value?.toUpperCase() === c ? `0 0 0 2px #fff, 0 0 0 4px ${c}` : 'none' }}
+            sx={{ width: 34, height: 34, borderRadius: '10px', bgcolor: c, color: '#fff', border: `1px solid ${tokens.borderStrong}`, boxShadow: value?.toUpperCase() === c ? `0 0 0 2px ${tokens.surface}, 0 0 0 4px ${c === '#18181B' ? tokens.textSecondary : c}` : 'none' }}
           >
             {value?.toUpperCase() === c && <Check size={16} strokeWidth={3} />}
           </ButtonBase>

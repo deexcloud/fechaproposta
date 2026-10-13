@@ -4,8 +4,9 @@ import { FormProvider, useForm, useFormContext, useWatch, type FieldErrors } fro
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Box, Button, Card, Chip, IconButton, Stack, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material';
-import { ArrowLeft, Eye, LayoutTemplate, PenLine, Send } from 'lucide-react';
+import { ArrowLeft, Eye, LayoutTemplate, PenLine, Save, Send } from 'lucide-react';
 import { BrandLoader, ErrorState } from '@/components/common';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useNotify } from '@/components/NotifyProvider';
 import { ProposalDocument, type DocumentData } from '@/components/ProposalDocument';
 import { useCurrentOrganization } from '@/features/organizations/OrganizationProvider';
@@ -127,6 +128,7 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
   const [view, setView] = useState<'form' | 'preview'>('form');
   const [saving, setSaving] = useState<null | 'draft' | 'send'>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [leaveTo, setLeaveTo] = useState<string | null>(null);
   const submitted = useRef(false);
 
   const form = useForm<EditorValues>({ resolver: zodResolver(editorSchema(mode)), defaultValues: initial, mode: 'onTouched' });
@@ -143,6 +145,24 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
     };
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [formState.isDirty]);
+
+  // Links internos (Voltar, menu lateral) com alterações não salvas pedem confirmação,
+  // em vez de descartar o trabalho em silêncio. Captura antes do roteador tratar o clique.
+  useEffect(() => {
+    if (!formState.isDirty) return;
+    const onClick = (e: MouseEvent) => {
+      if (submitted.current || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement | null)?.closest('a');
+      if (!a || a.target === '_blank' || a.origin !== window.location.origin) return;
+      const to = a.pathname + a.search + a.hash;
+      if (a.pathname === window.location.pathname) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setLeaveTo(to);
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
   }, [formState.isDirty]);
 
   const save = (intent: 'draft' | 'send') =>
@@ -221,7 +241,7 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
           sx={{
             position: 'sticky', top: { xs: 0, md: 0 }, zIndex: 15, alignItems: 'center',
             mx: { xs: -2, sm: -3, lg: -5 }, px: { xs: 1, sm: 3, lg: 5 }, py: 1.25, mb: 2.5, mt: { xs: -2.5, md: -4 },
-            bgcolor: 'rgba(248,245,238,.92)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${tokens.border}`,
+            bgcolor: tokens.glass, backdropFilter: 'blur(12px)', borderBottom: `1px solid ${tokens.border}`,
           }}
         >
           <IconButton component={RouterLink} to={back} aria-label="Voltar"><ArrowLeft size={19} /></IconButton>
@@ -244,6 +264,13 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
                   {proposalId ? 'Salvar' : 'Salvar rascunho'}
                 </Button>
               </Tooltip>
+              <Tooltip title="Salvar rascunho">
+                <span>
+                  <IconButton type="submit" aria-label={proposalId ? 'Salvar' : 'Salvar rascunho'} loading={saving === 'draft'} disabled={blocked || Boolean(saving)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, border: `1px solid ${tokens.border}` }}>
+                    <Save size={18} />
+                  </IconButton>
+                </span>
+              </Tooltip>
               <Button variant="contained" startIcon={<Send />} loading={saving === 'send'} disabled={blocked || Boolean(saving)} onClick={() => save('send')}>
                 <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Salvar e enviar</Box>
                 <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Enviar</Box>
@@ -265,7 +292,7 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
                 </Stack>
                 <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
                   {templates.data!.slice(0, 6).map((t) => (
-                    <Chip key={t.id} label={t.name} onClick={() => applyTemplate(t.id)} sx={{ bgcolor: '#fff' }} />
+                    <Chip key={t.id} label={t.name} onClick={() => applyTemplate(t.id)} sx={{ bgcolor: tokens.surface, border: `1px solid ${tokens.border}` }} />
                   ))}
                 </Stack>
               </Card>
@@ -316,6 +343,19 @@ function Editor({ mode, initial, proposalId, templateId, code, title }: { mode: 
           </Box>
         </Box>
       </Box>
+      <ConfirmDialog
+        open={leaveTo !== null}
+        title="Sair sem salvar?"
+        message="Você tem alterações que ainda não foram salvas. Se sair agora, elas serão perdidas."
+        confirmLabel="Sair sem salvar"
+        cancelLabel="Continuar editando"
+        danger
+        onClose={() => setLeaveTo(null)}
+        onConfirm={() => {
+          submitted.current = true;
+          navigate(leaveTo!);
+        }}
+      />
     </FormProvider>
   );
 }

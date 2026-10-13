@@ -139,7 +139,7 @@ export function ProposalDetailPage() {
             <Button variant="outlined" startIcon={<PenLine />} component={RouterLink} to={`/painel/propostas/${p.id}/editar`}>Editar</Button>
           )}
           {primary}
-          <IconButton aria-label="Mais ações" onClick={(e) => setMenu(e.currentTarget)} sx={{ border: `1px solid ${tokens.border}`, bgcolor: '#fff' }}>
+          <IconButton aria-label="Mais ações" onClick={(e) => setMenu(e.currentTarget)} sx={{ border: `1px solid ${tokens.border}`, bgcolor: tokens.surface }}>
             <MoreHorizontal size={18} />
           </IconButton>
           <Menu anchorEl={menu} open={Boolean(menu)} onClose={() => setMenu(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
@@ -211,7 +211,7 @@ export function ProposalDetailPage() {
                 <Box component="img" src={acceptance.data.signature_data} alt={`Assinatura de ${acceptance.data.signer_name}`} sx={{ mt: 1.5, maxWidth: '100%', maxHeight: 80, bgcolor: '#fff', borderRadius: '8px', p: 1 }} />
               )}
               {acceptance.data.signature_mode === 'typed' && (
-                <Typography sx={{ mt: 1.5, fontFamily: '"Instrument Serif", serif', fontSize: 30, fontStyle: 'italic', bgcolor: '#fff', borderRadius: '8px', px: 1.5, py: 0.5 }}>{acceptance.data.signer_name}</Typography>
+                <Typography sx={{ mt: 1.5, fontFamily: '"Instrument Serif", serif', fontSize: 30, fontStyle: 'italic', bgcolor: '#fff', color: '#18181B', borderRadius: '8px', px: 1.5, py: 0.5 }}>{acceptance.data.signer_name}</Typography>
               )}
               {acceptance.data.signature_mode === 'manual' && (
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Registrado pela equipe{acceptance.data.signature_data ? `: “${acceptance.data.signature_data}”` : '.'}</Typography>

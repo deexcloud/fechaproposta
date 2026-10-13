@@ -15,7 +15,7 @@ import { addDays, onlyDigits, todayISO } from '@/lib/format';
 import { TRIAL_DAYS } from '@/lib/pricing';
 import { createOrganization, updateOrganization } from '@/services/organizations';
 import type { Organization } from '@/types';
-import { tokens } from '@/theme/tokens';
+import { shadows, tokens } from '@/theme/tokens';
 
 const nameSchema = z.object({ name: z.string().trim().min(2, 'Informe o nome da empresa.').max(80, 'Nome muito longo.') });
 
@@ -164,7 +164,7 @@ export function OnboardingPage() {
       {/* Prévia ao vivo de uma proposta com a marca escolhida */}
       <Box sx={{ display: { xs: 'none', lg: 'block' }, bgcolor: tokens.muted, borderLeft: `1px solid ${tokens.border}`, p: 6, overflow: 'hidden' }} aria-hidden>
         <Typography variant="overline" color="text.secondary">Assim seu cliente vai ver</Typography>
-        <Card sx={{ mt: 2, maxWidth: 680, mx: 'auto', transform: 'rotate(-0.6deg)', boxShadow: '0 30px 60px -30px rgba(20,26,22,.25)', pointerEvents: 'none', borderRadius: '18px' }}>
+        <Card sx={{ mt: 2, maxWidth: 680, mx: 'auto', transform: 'rotate(-0.6deg)', boxShadow: shadows.xl, pointerEvents: 'none', borderRadius: '18px' }}>
           <ProposalDocument
             compact
             data={{

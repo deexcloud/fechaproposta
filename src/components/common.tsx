@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Alert, Box, Button, Card, Skeleton, Stack, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { tokens } from '@/theme/tokens';
+import { gradients, tokens } from '@/theme/tokens';
 
 /** Logo "fecha." — quadrado violeta com o check e o ponto na cor de destaque. */
 export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small' | 'medium' | 'large'; inverted?: boolean }) {
@@ -17,6 +17,8 @@ export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small
           height: mark,
           borderRadius: '8px',
           bgcolor: inverted ? '#fff' : tokens.primary,
+          backgroundImage: inverted ? 'none' : gradients.primary,
+          boxShadow: inverted ? 'none' : 'inset 0 1px 0 rgba(255,255,255,.2)',
           display: 'grid',
           placeItems: 'center',
         }}
@@ -26,7 +28,7 @@ export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small
         </Box>
       </Box>
       <Typography component="span" sx={{ fontWeight: 700, fontSize: font, letterSpacing: '-0.045em', lineHeight: 1, color: inverted ? '#fff' : tokens.textPrimary }}>
-        fecha<Box component="span" sx={{ color: inverted ? '#fff' : tokens.primary }}>.</Box>
+        fecha<Box component="span" sx={{ color: inverted ? '#fff' : tokens.accent }}>.</Box>
       </Typography>
     </Stack>
   );

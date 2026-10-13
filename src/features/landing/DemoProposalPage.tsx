@@ -10,7 +10,7 @@ import { TRIAL_DAYS } from '@/lib/pricing';
 import { AcceptedCelebration, DecisionPanel, MobileDecisionBar, PublicHeader } from '@/features/public/Decision';
 import { AcceptDialog, ChangesDialog, DeclineDialog } from '@/features/public/PublicDialogs';
 import { demoProposal } from './demo';
-import { tokens } from '@/theme/tokens';
+import { palettes, tokens } from '@/theme/tokens';
 
 type Outcome = { kind: 'accepted'; name: string } | { kind: 'changes' } | { kind: 'declined' };
 
@@ -22,7 +22,7 @@ export function DemoProposalPage() {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const totals = computeTotals(data.items, data.discount, selected, (item, i) => item.id ?? i);
   const org = data.organization;
-  const brand = { bg: org.brand_color ?? tokens.primary, fg: textOn(org.brand_color ?? tokens.primary) };
+  const brand = { bg: org.brand_color ?? palettes.light.primary, fg: textOn(org.brand_color ?? palettes.light.primary) };
   const open = outcome?.kind !== 'accepted' && outcome?.kind !== 'declined';
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   const finish = (next: Outcome) => {
