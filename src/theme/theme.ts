@@ -7,7 +7,6 @@ const focusRing = { outline: 'none', boxShadow: shadows.ring };
 const globalCss = {
   '@keyframes fp-fade-up': { from: { opacity: 0, transform: 'translateY(6px)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-pulse': { '0%': { transform: 'scale(1)', opacity: 0.6 }, '100%': { transform: 'scale(2.4)', opacity: 0 } },
-  '@keyframes fp-float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
   '@keyframes fp-pop': { from: { opacity: 0, transform: 'translateY(10px) scale(.94)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-in-left': { from: { opacity: 0, transform: 'translateX(-48px)' }, to: { opacity: 1, transform: 'none' } },
   '@keyframes fp-in-right': { from: { opacity: 0, transform: 'translateX(48px)' }, to: { opacity: 1, transform: 'none' } },
@@ -24,7 +23,7 @@ const globalCss = {
   '[data-reveal="scale"]': { transform: 'scale(.96)' },
   '[data-reveal][data-visible]': { opacity: 1, transform: 'none' },
   '@media (prefers-reduced-motion: reduce)': {
-    '*, *::before, *::after': { animationDuration: '0.01ms !important', animationIterationCount: '1 !important', transitionDuration: '0.01ms !important' },
+    '*, *::before, *::after': { animationDuration: '0.01ms !important', transitionDuration: '0.01ms !important' },
     '[data-reveal]': { opacity: 1, transform: 'none' },
   },
   '@media print': {

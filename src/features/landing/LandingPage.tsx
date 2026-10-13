@@ -134,7 +134,7 @@ function HeroVisual() {
       </Card>
 
       {/* Celular do cliente */}
-      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#000', border: '1px solid rgba(255,255,255,.12)', p: 1.25, zIndex: 2, boxShadow: '0 40px 90px -30px rgba(0,0,0,.9), 0 0 80px -20px rgba(109,76,245,.45)', animation: 'fp-in-right .9s .05s cubic-bezier(.2,.7,.2,1) both, fp-float 7s 1.2s ease-in-out infinite' }}>
+      <Box sx={{ position: framed, right: 0, top: 0, width: 262, height: 530, flexShrink: 0, borderRadius: '40px', bgcolor: '#000', border: '1px solid rgba(255,255,255,.12)', p: 1.25, zIndex: 2, boxShadow: '0 40px 90px -30px rgba(0,0,0,.9), 0 0 80px -20px rgba(109,76,245,.45)', animation: 'fp-in-right .9s .05s cubic-bezier(.2,.7,.2,1) both' }}>
         <Box className="fp-light" sx={{ bgcolor: '#fff', color: tokens.textPrimary, borderRadius: '31px', height: '100%', overflow: 'hidden', position: 'relative' }}>
           <Box sx={{ px: 2.25, pt: 3.5, pb: 2, borderTop: `4px solid ${tokens.primary}`, background: `linear-gradient(180deg, ${tokens.accentSoft}, #fff 80%)` }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
