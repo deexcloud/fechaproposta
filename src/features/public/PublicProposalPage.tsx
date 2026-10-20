@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Button, Card, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, Skeleton, Stack, Typography, type SxProps, type Theme } from '@mui/material';
 import { BadgeCheck, Download, MessageCircle, ShieldCheck } from 'lucide-react';
 import { BrandMark, Mono } from '@/components/common';
 import { ProposalDocument } from '@/components/ProposalDocument';
@@ -53,6 +53,26 @@ function NotFound() {
         <Box sx={{ pt: 3, opacity: 0.6 }}><BrandMark size="small" /></Box>
       </Stack>
     </Box>
+  );
+}
+
+/**
+ * Selo discreto do FechaProposta: quem recebe proposta muitas vezes também vende serviço.
+ * `pitch` é a versão logo depois do aceite, com convite para criar as próprias.
+ */
+function MadeWith({ pitch, sx }: { pitch?: boolean; sx?: SxProps<Theme> }) {
+  return (
+    <Typography
+      variant="caption"
+      color="text.secondary"
+      className="no-print"
+      sx={[{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', columnGap: 0.75, rowGap: 0.5, mt: 2, textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]}
+    >
+      {pitch ? 'Também vende serviço? Crie propostas assim com' : 'Proposta enviada com'}
+      <Box component="a" href={`/?ref=${pitch ? 'aceite' : 'proposta'}`} target="_blank" rel="noopener" aria-label="FechaProposta (abre em nova aba)" sx={{ color: 'inherit', display: 'inline-flex', minHeight: 24, alignItems: 'center' }}>
+        <BrandMark size="small" />
+      </Box>
+    </Typography>
   );
 }
 
@@ -186,11 +206,16 @@ export function PublicProposalPage() {
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ px: { xs: 2, sm: 0 }, pt: { xs: 2, sm: 0 } }} className="no-print">
             {celebrate && p.acceptance && (
-              <AcceptedCelebration name={p.acceptance.signer_name} orgName={org.name} nextStep={p.next_step} brand={brand} />
+              <>
+                <AcceptedCelebration name={p.acceptance.signer_name} orgName={org.name} nextStep={p.next_step} brand={brand} />
+                <MadeWith pitch sx={{ mt: -1, mb: 3 }} />
+              </>
             )}
             {!celebrate && <StateBanner p={p} contact={contact} />}
           </Box>
           <ProposalDocument data={p} selectable={open} selected={p.acceptance?.selected_items ?? selected} onToggleOptional={toggle} />
+          {/* No computador o selo fica embaixo do painel lateral. */}
+          <MadeWith sx={{ display: { md: 'none' }, pb: 1 }} />
         </Box>
 
         <Box className="no-print" sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 88 }}>
@@ -215,9 +240,7 @@ export function PublicProposalPage() {
               <Button fullWidth sx={{ mt: 2 }} variant="outlined" startIcon={<Download />} onClick={() => window.print()}>Baixar PDF</Button>
             </Card>
           )}
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mt: 2, justifyContent: 'center' }}>
-            Proposta enviada com <Box component="a" href="/" target="_blank" sx={{ color: 'inherit', display: 'inline-flex' }}><BrandMark size="small" /></Box>
-          </Typography>
+          <MadeWith />
         </Box>
       </Box>
 
