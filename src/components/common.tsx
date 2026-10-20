@@ -3,6 +3,40 @@ import { Alert, Box, Button, Card, Skeleton, Stack, Typography } from '@mui/mate
 import type { SxProps, Theme } from '@mui/material/styles';
 import { gradients, tokens } from '@/theme/tokens';
 
+export const MAIN_ID = 'conteudo';
+
+/** Primeiro item do Tab: pula o menu e vai direto ao conteúdo (WCAG 2.4.1). Só aparece com foco. */
+export function SkipLink() {
+  return (
+    <Box
+      component="a"
+      href={`#${MAIN_ID}`}
+      onClick={(e: React.MouseEvent) => {
+        e.preventDefault();
+        document.getElementById(MAIN_ID)?.focus();
+      }}
+      sx={{
+        position: 'fixed',
+        top: 8,
+        left: 8,
+        zIndex: 2000,
+        px: 2,
+        py: 1.25,
+        borderRadius: '10px',
+        bgcolor: tokens.surfaceElevated,
+        color: tokens.textPrimary,
+        fontWeight: 600,
+        textDecoration: 'none',
+        outline: `2px solid ${tokens.accentText}`,
+        transform: 'translateY(-150%)',
+        '&:focus': { transform: 'none' },
+      }}
+    >
+      Pular para o conteúdo
+    </Box>
+  );
+}
+
 /** Logo "fecha." — quadrado violeta com o check e o ponto na cor de destaque. */
 export function BrandMark({ size = 'medium', inverted = false }: { size?: 'small' | 'medium' | 'large'; inverted?: boolean }) {
   const font = size === 'small' ? 19 : size === 'large' ? 30 : 23;

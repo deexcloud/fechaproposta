@@ -18,7 +18,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { BrandMark } from '@/components/common';
+import { BrandMark, MAIN_ID, SkipLink } from '@/components/common';
 import { Reveal } from '@/components/Reveal';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
@@ -209,6 +209,7 @@ export function LandingPage() {
 
   return (
     <Box sx={{ overflowX: 'clip' }}>
+      <SkipLink />
       {/* Topo */}
       <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 20, bgcolor: tokens.glass, backdropFilter: 'blur(14px)', borderBottom: `1px solid ${tokens.border}` }}>
         <Stack direction="row" sx={{ maxWidth: 1120, mx: 'auto', px: PAGE_PX, height: 64, alignItems: 'center', justifyContent: 'space-between' }}>
@@ -235,7 +236,7 @@ export function LandingPage() {
         </Stack>
       </Drawer>
 
-      <main>
+      <main id={MAIN_ID} tabIndex={-1} style={{ outline: 'none' }}>
         {/* Abertura */}
         <Box component="section" sx={{ px: PAGE_PX, pt: { xs: 6, md: 9 }, pb: { xs: 6, md: 10 }, background: 'radial-gradient(700px 420px at 75% 30%, rgba(109,76,245,.22), transparent 70%), radial-gradient(600px 360px at 10% 0%, rgba(79,70,229,.14), transparent 70%)' }}>
           {/* Lado a lado só em tela grande; abaixo disso, texto primeiro e a ilustração centralizada. */}
@@ -489,7 +490,7 @@ export function LandingPage() {
       <Box component="footer" sx={{ borderTop: `1px solid ${tokens.border}`, px: PAGE_PX, py: 4 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ maxWidth: 1120, mx: 'auto', justifyContent: 'space-between', alignItems: { sm: 'center' } }}>
           <BrandMark size="small" />
-          <Stack direction="row" spacing={2.5}>
+          <Stack direction="row" sx={{ flexWrap: 'wrap', columnGap: 2.5, '& a': { py: 0.75, display: 'inline-block' } }}>
             {help && (
               <Typography component="a" href={help} target="_blank" rel="noopener" variant="body2" color="text.secondary" sx={{ textDecoration: 'none' }}>Suporte</Typography>
             )}

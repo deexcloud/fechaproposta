@@ -38,7 +38,7 @@ import {
   Users,
   MessageCircle,
 } from 'lucide-react';
-import { BrandMark } from '@/components/common';
+import { BrandMark, MAIN_ID, SkipLink } from '@/components/common';
 import { CommandPalette } from '@/components/CommandPalette';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { useOrganization } from '@/features/organizations/OrganizationProvider';
@@ -228,6 +228,7 @@ export function AppLayout() {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
+      <SkipLink />
       {/* Menu lateral (computador) */}
       <Drawer
         variant="permanent"
@@ -279,7 +280,7 @@ export function AppLayout() {
           </Stack>
         )}
 
-        <Box component="main" sx={{ flexGrow: 1, px: { xs: 2, sm: 3, lg: 5 }, py: { xs: 2.5, md: 4 }, pb: { xs: immersive ? 2 : 12, md: 6 } }}>
+        <Box component="main" id={MAIN_ID} tabIndex={-1} sx={{ outline: 'none', flexGrow: 1, px: { xs: 2, sm: 3, lg: 5 }, py: { xs: 2.5, md: 4 }, pb: { xs: immersive ? 2 : 12, md: 6 } }}>
           <Box sx={{ maxWidth: 1240, mx: 'auto' }}>
             <PaymentReturnNotice />
             {!immersive && <SubscriptionBanner />}

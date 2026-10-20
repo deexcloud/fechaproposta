@@ -135,7 +135,7 @@ export function PublicProposalPage() {
   const [celebrate, setCelebrate] = useState(false);
 
   useEffect(() => {
-    if (p) document.title = `${p.title} · ${p.organization.name}`;
+    document.title = p ? `${p.title} · ${p.organization.name}` : 'Proposta · FechaProposta';
   }, [p]);
 
   const totals = useMemo(() => (p ? computeTotals(p.items, p.discount, selected, (item) => item.id) : null), [p, selected]);
@@ -182,7 +182,7 @@ export function PublicProposalPage() {
     <Box sx={{ minHeight: '100dvh', bgcolor: tokens.background, pb: { xs: open ? 17 : 4, md: 8 }, '@media print': { bgcolor: '#fff', pb: 0 } }}>
       <PublicHeader orgName={org.name} logo={logo} brand={brand} contactUrl={contact} />
 
-      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 0, sm: 3 }, pt: { xs: 0, sm: 4 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 340px' }, alignItems: 'start' }}>
+      <Box component="main" sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 0, sm: 3 }, pt: { xs: 0, sm: 4 }, display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 340px' }, alignItems: 'start' }}>
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ px: { xs: 2, sm: 0 }, pt: { xs: 2, sm: 0 } }} className="no-print">
             {celebrate && p.acceptance && (

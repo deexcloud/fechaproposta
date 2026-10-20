@@ -92,6 +92,34 @@ O sistema já trata bem a maioria das heurísticas: estados de carregando/vazio/
 
 **Animações da landing:** seções e cards aparecem ao rolar (subindo, pelos lados ou crescendo, em cascata), e no topo o painel entra pela esquerda, o celular pela direita e fica flutuando. Feito sem biblioteca (`src/components/Reveal.tsx` + CSS), animando só opacidade e posição, que o navegador processa sem travar. Respeita "reduzir movimento" do sistema. Peso: cerca de +0,4 KB comprimido no total desta rodada.
 
-## 5. Como continuar
+## 5. Quarta rodada: leis de UX, SEO, Web Vitals e WCAG (19/10/2026)
+
+### Corrigido
+| Área | Problema | Sev. | Correção |
+|---|---|---|---|
+| SEO / privacidade | Proposta do cliente (`/p/:token`), painel e convites podiam ser indexados pelo Google | 3 | `X-Robots-Tag: noindex` no `vercel.json` e `<meta name="robots">` por rota (`src/lib/seo.ts`). |
+| SEO | Sem `robots.txt` nem `sitemap.xml` | 2 | Gerados no build com o domínio do site (`vite.config.ts`). |
+| SEO | Sem `canonical` | 1 | Canonical nas páginas públicas (início, exemplo, criar conta, termos, privacidade). |
+| WCAG 2.4.2 | Login, cadastro e painel ficavam com o título da página anterior | 2 | Título por rota ("Propostas · FechaProposta"); link inválido de proposta vira "Proposta". |
+| WCAG 2.4.1 | Sem atalho para pular o menu pelo teclado | 2 | "Pular para o conteúdo" no primeiro Tab da landing e do painel. |
+| WCAG 1.3.1 | Página do cliente sem região `main` para leitor de tela | 2 | Conteúdo da proposta marcado como `main`. |
+| WCAG 2.5.8 / Fitts | Links do rodapé com 22px de altura | 1 | 34px e quebra de linha no celular. |
+
+### Conferido e ok
+- **Fitts:** CTAs da landing com 40–52px no celular; nenhum alvo abaixo de 24px em 375px.
+- **Hick:** preço com só duas escolhas (mensal/anual, anual pré-selecionado); semestral citado no texto, sem virar terceiro botão.
+- **Posição serial:** menu do painel começa em Início/Propostas e termina em Configurações; FAQ começa pela dúvida mais comum (celular).
+- **Web Vitals (build local, sem limitar rede):** LCP ~0,3 s, CLS 0. JS inicial ~100 KB comprimido; landing, painel e proposta carregam sob demanda.
+
+### Depende de ferramenta externa ou decisão
+| Item | Como fazer |
+|---|---|
+| Core Web Vitals reais | Rodar PageSpeed Insights no domínio publicado (celular). O CSS da Google Fonts bloqueia a renderização; se o LCP passar de 2,5 s, hospedar as fontes no próprio site. |
+| Contraste e leitor de tela completos | Rodar axe DevTools ou WAVE em cada tela logada e testar com NVDA. |
+| Mapas de calor / gravações | Microsoft Clarity (gratuito). Exige liberar o domínio no CSP do `vercel.json` e aviso de cookies; não gravar `/p/:token` (dados do cliente). |
+| Funil / AARRR / HEART | Eventos sugeridos: `signup` → `onboarding_done` → `proposal_created` → `proposal_sent` → `proposal_viewed` → `proposal_accepted` (momento "uau") → `checkout_started` → `subscribed`. Métrica norte: propostas aceitas por conta ativa por mês. Boa parte já sai do banco (status das propostas), sem ferramenta nova. |
+| Testes A/B | Só com tráfego suficiente (centenas de visitas por variação). Primeiro candidato: texto do CTA do topo. |
+
+## 6. Como continuar
 
 Use o prompt em [`docs/prompts/heuristicas-nielsen.md`](prompts/heuristicas-nielsen.md), uma área por vez (painel, editor, página pública, landing), para aprofundar e corrigir o que sobrar.

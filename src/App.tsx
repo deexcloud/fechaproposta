@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Link as RouterLink, Route, Routes, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, CssBaseline, Stack, Typography } from '@mui/material';
@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '@/theme/theme';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { isStaleBuildError, reloadForNewVersion } from '@/lib/staleBuild';
+import { applyRouteMeta } from '@/lib/seo';
 import { BrandLoader, ConfigMissingScreen } from '@/components/common';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LightScope } from '@/components/LightScope';
@@ -78,6 +79,8 @@ function NotFoundPage() {
 
 function AppRoutes() {
   const { pathname } = useLocation();
+  // Roda depois das páginas: só define o título das que não definem o próprio.
+  useEffect(() => applyRouteMeta(pathname), [pathname]);
   return (
     <ErrorBoundary resetKey={pathname}>
       <Suspense fallback={<BrandLoader />}>
