@@ -107,7 +107,7 @@ O sistema já trata bem a maioria das heurísticas: estados de carregando/vazio/
 
 ### Conferido e ok
 - **Fitts:** CTAs da landing com 40–52px no celular; nenhum alvo abaixo de 24px em 375px.
-- **Hick:** preço com só duas escolhas (mensal/anual, anual pré-selecionado); semestral citado no texto, sem virar terceiro botão.
+- **Hick:** preço com três períodos (mensal/semestral/anual, anual pré-selecionado), os mesmos do pagamento no painel. Em 20/10 o semestral virou botão: antes só aparecia no texto e a landing não batia com o painel.
 - **Posição serial:** menu do painel começa em Início/Propostas e termina em Configurações; FAQ começa pela dúvida mais comum (celular).
 - **Web Vitals (build local, sem limitar rede):** LCP ~0,3 s, CLS 0. JS inicial ~100 KB comprimido; landing, painel e proposta carregam sob demanda.
 

@@ -22,7 +22,7 @@ import { BrandMark, MAIN_ID, SkipLink } from '@/components/common';
 import { Reveal } from '@/components/Reveal';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { money } from '@/lib/format';
-import { ANNUAL_PLAN, MONTHLY_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS } from '@/lib/pricing';
+import { ANNUAL_PLAN, PLAN_FEATURES, PLANS, PRICE_FROM, PRICE_MONTHLY, planDiscountPct, planSavings, TRIAL_DAYS, type Plan } from '@/lib/pricing';
 import { supportUrl } from '@/lib/support';
 import { BeforeAfter, MobileStickyCta, RoiCalculator } from './sections';
 import { gradients, shadows, tokens } from '@/theme/tokens';
@@ -192,8 +192,9 @@ export function LandingPage() {
   const ctaLabel = user ? 'Abrir painel' : 'Criar minha primeira proposta';
   const [menuOpen, setMenuOpen] = useState(false);
   // O anual aparece primeiro: ancora no preço cheio riscado e mostra a economia.
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('annual');
-  const shownPlan = billing === 'annual' ? ANNUAL_PLAN : MONTHLY_PLAN;
+  // Os mesmos três períodos do pagamento no painel.
+  const [months, setMonths] = useState<Plan['months']>(ANNUAL_PLAN.months);
+  const shownPlan = PLANS.find((p) => p.months === months) ?? ANNUAL_PLAN;
   const help = supportUrl();
 
   useEffect(() => {
@@ -389,24 +390,26 @@ export function LandingPage() {
                   <Typography sx={{ fontWeight: 650 }}>FechaProposta</Typography>
                   <Box sx={{ fontSize: 12, fontWeight: 600, px: 1, py: 0.25, borderRadius: '6px', bgcolor: tokens.accentSoft, color: tokens.accentText }}>{TRIAL_DAYS} dias grátis</Box>
                 </Stack>
-                <ToggleButtonGroup exclusive fullWidth size="small" value={billing} onChange={(_, v) => v && setBilling(v)} aria-label="Período" sx={{ mt: 2.5 }}>
-                  <ToggleButton value="monthly" sx={{ textTransform: 'none', fontWeight: 600 }}>Mensal</ToggleButton>
-                  <ToggleButton value="annual" sx={{ textTransform: 'none', fontWeight: 600, gap: 0.75 }}>
-                    Anual
-                    <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.successText }}>-{planDiscountPct(ANNUAL_PLAN)}%</Box>
-                  </ToggleButton>
+                <ToggleButtonGroup exclusive fullWidth size="small" value={months} onChange={(_, v) => v && setMonths(v)} aria-label="Período" sx={{ mt: 2.5 }}>
+                  {PLANS.map((p) => (
+                    <ToggleButton key={p.months} value={p.months} sx={{ textTransform: 'none', fontWeight: 600, flexDirection: 'column', py: 0.75, lineHeight: 1.3 }}>
+                      {p.label}
+                      {/* O mensal guarda o espaço para os três botões terem a mesma altura. */}
+                      <Box component="span" sx={{ fontSize: 11.5, fontWeight: 700, color: tokens.successText, visibility: p.months > 1 ? 'visible' : 'hidden' }}>-{planDiscountPct(p) || 0}%</Box>
+                    </ToggleButton>
+                  ))}
                 </ToggleButtonGroup>
                 <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline', mt: 2 }}>
-                  {billing === 'annual' && (
+                  {shownPlan.months > 1 && (
                     <Typography sx={{ fontSize: 22, fontWeight: 600, color: tokens.textSecondary, textDecoration: 'line-through' }}>{money(PRICE_MONTHLY).replace(',00', '')}</Typography>
                   )}
                   <Typography sx={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.05em' }}>{money(shownPlan.perMonth).replace(',00', '')}</Typography>
                   <Typography color="text.secondary">/ mês</Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary">
-                  {billing === 'annual'
-                    ? `${money(ANNUAL_PLAN.total).replace(',00', '')} por ano. Você economiza ${money(planSavings(ANNUAL_PLAN)).replace(',00', '')}.`
-                    : `Menos de ${money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia. Também tem semestral a ${money(PLANS[1].perMonth).replace(',00', '')}/mês.`}{' '}
+                  {shownPlan.months > 1
+                    ? `${money(shownPlan.total).replace(',00', '')} ${shownPlan.months === 12 ? 'por ano' : 'a cada 6 meses'}. Você economiza ${money(planSavings(shownPlan)).replace(',00', '')}.`
+                    : `Menos de ${money(Math.ceil(PRICE_MONTHLY / 30)).replace(',00', '')} por dia.`}{' '}
                   Pix ou cartão.
                 </Typography>
                 <Stack spacing={1.25} sx={{ my: 3 }}>
